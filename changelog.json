@@ -1,7 +1,15 @@
 {
-  "description": "AURASATH 6.1.1 — Universal playlist & album import (Spotify, Apple Music, Amazon Music), Spotify account login & dual Wrapped playback sync, Liked Songs import fix, smart shuffle overhaul, and overall performance optimizations.",
+  "description": "AURASATH 1.0.0 — Initial Official Release. Liquid Glass UI, full YouTube Music streaming, synced lyrics, Spotify account login & dual Wrapped playback sync, universal playlist & album importer, smart shuffle, and Discord Rich Presence.",
   "image": "",
   "changelog": [
+    {
+      "title": "Initial Official Launch (v1.0.0)",
+      "items": [
+        "Welcome to the debut release of AURASATH — the premier open-source music player with Liquid Glass aesthetic.",
+        "Ad-free background streaming and offline caching powered by YouTube Music and ExoPlayer Media3.",
+        "Official Discord Rich Presence integration displaying live playback, album art, and artist details."
+      ]
+    },
     {
       "title": "Universal Playlist & Album Importer",
       "items": [
@@ -27,14 +35,6 @@
       ]
     },
     {
-      "title": "Device Compatibility & Crash Fixes",
-      "items": [
-        "Fixed critical ExceptionInInitializerError crash on Vivo, Honor, Motorola, Samsung, and Realme devices caused by font variation settings.",
-        "Fixed ConcurrentModificationException crash during dynamic Spotify recommendations background indexing.",
-        "Strengthened Proguard and R8 optimization keep rules for typography and serialization across all architectures."
-      ]
-    },
-    {
       "title": "Visual Engine & Cover Art Overhaul",
       "items": [
         "Crystal-clear high-resolution album art: eliminated blurry/pixelated thumbnails across YouTube Music and Spotify feeds by dynamically serving up to 800x800 and 640x640 covers.",
@@ -43,21 +43,12 @@
       ]
     },
     {
-      "title": "Audio Playback & Crossfade Polish",
+      "title": "Audio Playback & Stability",
       "items": [
-        "Instant crossfade activation: changes to crossfade toggles and duration now immediately apply to the actively playing song without requiring a track change or restart.",
+        "Instant crossfade activation: changes to crossfade toggles and duration immediately apply to the actively playing song without requiring track restarts.",
+        "Fixed device-specific font variation crashes on Vivo, Honor, Motorola, Samsung, and Realme devices.",
         "Optimized gapless transition detection."
-      ]
-    },
-    {
-      "title": "Admin Panel Enhancements & Mashup Studio",
-      "items": [
-        "Added real-time search filtering and status chips across all User Suggestions and Bug Reports.",
-        "One-tap Admin quick replies for rapid issue triaging ('Fixed in v6.1.1!', 'Investigating now', etc.).",
-        "Added Bug Report deletion support to keep issue queues clean and actionable.",
-        "New Mashup Studio (AI DJ Lab): interactive admin console to configure and preview real-time multi-track beat matching, stem isolation, and line-by-line / verse-by-verse transitions."
       ]
     }
   ]
 }
-

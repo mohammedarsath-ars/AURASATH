@@ -133,26 +133,23 @@ fun AboutScreen(
                 )
                 // Elevated Logo Container
                 Surface(
-                    shape = RoundedCornerShape(26.dp),
-                    color = MaterialTheme.colorScheme.surfaceContainerHigh.copy(alpha = 0.7f),
+                    shape = RoundedCornerShape(22.dp),
+                    color = Color.Transparent,
                     border = BorderStroke(
                         1.5.dp,
-                        MaterialTheme.colorScheme.outlineVariant.copy(alpha = 0.45f)
+                        MaterialTheme.colorScheme.primary.copy(alpha = 0.5f)
                     ),
-                    shadowElevation = 8.dp,
-                    modifier = Modifier.size(92.dp)
+                    shadowElevation = 10.dp,
+                    modifier = Modifier.size(88.dp)
                 ) {
-                    Box(
-                        contentAlignment = Alignment.Center,
-                        modifier = Modifier.padding(14.dp)
-                    ) {
-                        Image(
-                            painter = painterResource(R.drawable.aurasath_logo),
-                            contentDescription = stringResource(R.string.wrapped_logo_content_description),
-                            modifier = Modifier.size(64.dp),
-                            contentScale = ContentScale.Fit
-                        )
-                    }
+                    Image(
+                        painter = painterResource(R.drawable.aurasath_logo),
+                        contentDescription = stringResource(R.string.wrapped_logo_content_description),
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .clip(RoundedCornerShape(22.dp)),
+                        contentScale = ContentScale.Crop
+                    )
                 }
             }
 
@@ -183,8 +180,10 @@ fun AboutScreen(
                 Image(
                     painter = painterResource(R.drawable.aurasath_logo),
                     contentDescription = null,
-                    modifier = Modifier.size(20.dp),
-                    colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.primary)
+                    modifier = Modifier
+                        .size(18.dp)
+                        .clip(RoundedCornerShape(4.dp)),
+                    contentScale = ContentScale.Crop
                 )
 
                 Text(

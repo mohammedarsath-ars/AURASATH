@@ -3,8 +3,8 @@
   <h3>AURASATH is an open-source, Liquid Glass music player for Android</h3>
 
   <p>
-    <a href="https://github.com/mohammedarsath-ars/AURASATH/releases/tag/v6.1.1">
-      <img src="https://img.shields.io/badge/%E2%AC%87%EF%B8%8F%20DOWNLOAD%20AURASATH%206.1.1-4CAF50?style=for-the-badge&logo=android&logoColor=white" alt="Download AURASATH v6.1.1">
+    <a href="https://github.com/mohammedarsath-ars/AURASATH/releases/tag/v1.0.0">
+      <img src="https://img.shields.io/badge/%E2%AC%87%EF%B8%8F%20DOWNLOAD%20AURASATH%201.0.0-4CAF50?style=for-the-badge&logo=android&logoColor=white" alt="Download AURASATH v1.0.0">
     </a>
   </p>
   <p>
@@ -28,9 +28,7 @@
 
 <h2>🎵 About AURASATH</h2>
 
-<p><b>AURASATH</b> is a free, open-source music player for Android that streams from YouTube Music, built with <b>Jetpack Compose</b> on a <b>Media3</b> ExoPlayer core. The UI is a custom <b>Liquid Glass</b> design system — frosted, refractive surfaces, iOS-style bouncy scrolling, and progressive blur chrome — instead of stock Material widgets.</p>
-
-<p>AURASATH started as a fork of <a href="https://github.com/cosmictaserdev-creator/Convx">CONVX</a>; see <a href="#-credits">Credits</a> below.</p>
+<p><b>AURASATH</b> is a modern, open-source music player for Android that streams from YouTube Music, crafted with <b>Jetpack Compose</b> on a <b>Media3</b> ExoPlayer core. The UI features a signature <b>Liquid Glass</b> design system — frosted, refractive surfaces, iOS-style bouncy scrolling, and progressive blur chrome.</p>
 
 <hr>
 

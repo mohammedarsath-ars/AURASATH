@@ -2951,17 +2951,17 @@ class MainActivity : ComponentActivity() {
                         scaleY = pulseScale2
                         alpha = pulseAlpha2 * emblemAlpha
                     }
-                    .border(2.dp, MaterialTheme.colorScheme.primary, CircleShape)
+                    .border(1.5.dp, MaterialTheme.colorScheme.primary.copy(alpha = 0.4f), RoundedCornerShape(42.dp))
             )
             Box(
                 modifier = Modifier
-                    .size(150.dp)
+                    .size(130.dp)
                     .graphicsLayer {
                         scaleX = pulseScale1
                         scaleY = pulseScale1
                         alpha = pulseAlpha1 * emblemAlpha
                     }
-                    .border(2.5.dp, MaterialTheme.colorScheme.primary, CircleShape)
+                    .border(2.dp, MaterialTheme.colorScheme.primary.copy(alpha = 0.6f), RoundedCornerShape(36.dp))
             )
 
             // Center AURASATH Emblem Card
@@ -2975,23 +2975,20 @@ class MainActivity : ComponentActivity() {
                 }
             ) {
                 Surface(
-                    shape = CircleShape,
-                    color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.95f),
-                    border = androidx.compose.foundation.BorderStroke(2.dp, MaterialTheme.colorScheme.primary.copy(alpha = 0.6f)),
-                    shadowElevation = 0.dp,
-                    modifier = Modifier.size(108.dp)
+                    shape = RoundedCornerShape(26.dp),
+                    color = Color.Transparent,
+                    border = androidx.compose.foundation.BorderStroke(1.5.dp, MaterialTheme.colorScheme.primary.copy(alpha = 0.6f)),
+                    shadowElevation = 12.dp,
+                    modifier = Modifier.size(96.dp)
                 ) {
-                    Box(
-                        contentAlignment = Alignment.Center,
-                        modifier = Modifier.padding(18.dp)
-                    ) {
-                        Image(
-                            painter = painterResource(com.aurasath.music.R.drawable.aurasath_logo),
-                            contentDescription = "AURASATH Logo",
-                            modifier = Modifier.fillMaxSize(),
-                            contentScale = androidx.compose.ui.layout.ContentScale.Fit
-                        )
-                    }
+                    Image(
+                        painter = painterResource(com.aurasath.music.R.drawable.aurasath_logo),
+                        contentDescription = "AURASATH Logo",
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .clip(RoundedCornerShape(26.dp)),
+                        contentScale = androidx.compose.ui.layout.ContentScale.Crop
+                    )
                 }
 
                 Spacer(Modifier.height(24.dp))
