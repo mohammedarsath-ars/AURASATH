@@ -214,6 +214,8 @@ import com.aurasath.music.models.MediaMetadata
 import com.aurasath.music.playback.ExoDownloadService
 import com.aurasath.music.constants.AmbientEdgeGlowEnabledKey
 import com.aurasath.music.constants.AmbientEdgeGlowIntensityKey
+import com.aurasath.music.ui.component.FluidAudioVisualizer
+import com.aurasath.music.ui.component.DjQuickBar
 import com.aurasath.music.ui.component.AmbientEdgeGlow
 import com.aurasath.music.ui.component.BottomSheet
 import com.aurasath.music.ui.component.BottomSheetState
@@ -2735,7 +2737,18 @@ fun BottomSheetPlayer(
             }
             seekControls()
 
-            Spacer(Modifier.height(if (useNewPlayerDesign) 24.dp else 8.dp))
+            FluidAudioVisualizer(
+                isPlaying = effectiveIsPlaying,
+                modifier = Modifier
+                    .padding(horizontal = PlayerHorizontalPadding, vertical = 2.dp)
+            )
+
+            DjQuickBar(
+                playerConnection = playerConnection,
+                modifier = Modifier.padding(vertical = 2.dp)
+            )
+
+            Spacer(Modifier.height(if (useNewPlayerDesign) 16.dp else 6.dp))
 
             AnimatedVisibility(
                 // fullscreenLyricsCollapseTop repurposed: on, the controls stay

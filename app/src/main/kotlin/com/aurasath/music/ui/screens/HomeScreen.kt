@@ -1285,27 +1285,15 @@ fun HomeScreen(
             modifier = Modifier.fillMaxSize(),
             contentAlignment = Alignment.TopStart
         ) {
-            // Base fill with rich ambient atmospheric gradient aura
+            // Base fill with rich ambient atmospheric fluid aurora mesh
             val homeBgBase = rememberAppBackgroundColor(MaterialTheme.colorScheme.background)
             val globalAccent = rememberGlobalAccentColors().first
             val tertiaryColor = MaterialTheme.colorScheme.tertiary
-            Box(
-                modifier = Modifier
-                    .matchParentSize()
-                    .background(homeBgBase)
-            )
-            Box(
-                modifier = Modifier
-                    .matchParentSize()
-                    .background(
-                        Brush.verticalGradient(
-                            0.0f to globalAccent.copy(alpha = 0.22f),
-                            0.20f to tertiaryColor.copy(alpha = 0.14f),
-                            0.45f to globalAccent.copy(alpha = 0.06f),
-                            0.75f to Color.Transparent,
-                            1.0f to Color.Transparent,
-                        )
-                    )
+            LiveAuroraMeshBackground(
+                modifier = Modifier.matchParentSize(),
+                baseColor = homeBgBase,
+                primaryAccent = globalAccent,
+                secondaryAccent = tertiaryColor,
             )
             HomeImageBackground(contentLoaded = homePage != null)
 
@@ -1494,6 +1482,20 @@ fun HomeScreen(
                                 )
                             }
                         }
+                    }
+                }
+
+                if (!localOnly) {
+                    item(key = "home_vibe_deck", contentType = "vibe_deck") {
+                        var activeVibeId by rememberSaveable { mutableStateOf<String?>(null) }
+                        HomeVibeDeck(
+                            activeVibeId = activeVibeId,
+                            onVibeSelected = { vibe ->
+                                activeVibeId = if (activeVibeId == vibe.id) null else vibe.id
+                                navController.navigate("search/${java.net.URLEncoder.encode(vibe.query, "UTF-8")}")
+                            },
+                            modifier = Modifier.animateItem()
+                        )
                     }
                 }
 

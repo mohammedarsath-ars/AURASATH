@@ -267,6 +267,7 @@ import com.aurasath.music.playback.MusicService
 import com.aurasath.music.playback.MusicService.MusicBinder
 import com.aurasath.music.playback.PlayerConnection
 import com.aurasath.music.playback.queues.YouTubeQueue
+import com.aurasath.music.ui.component.TopDynamicIsland
 import com.aurasath.music.ui.component.AppFloatingNavBar
 import com.aurasath.music.ui.component.AppFloatingNowPlayingPill
 import com.aurasath.music.ui.component.AppFloatingSideBar
@@ -2594,6 +2595,25 @@ class MainActivity : ComponentActivity() {
                     ListenTogetherOverlay(
                         manager = LocalListenTogetherManager.current,
                         playerConnection = playerConnection,
+                    )
+
+                    // AURASATH Top Floating Dynamic Island
+                    TopDynamicIsland(
+                        mediaMetadata = playerMediaMetadata,
+                        isPlaying = playerConnection?.isPlaying?.collectAsStateWithLifecycle()?.value ?: false,
+                        visible = (playerBottomSheetState.isCollapsed || playerBottomSheetState.isDismissed) && !inSearchInputScreen,
+                        onClick = {
+                            coroutineScope.launch {
+                                playerBottomSheetState.expandSoft()
+                            }
+                        },
+                        onPlayPauseClick = {
+                            playerConnection?.togglePlayPause()
+                        },
+                        modifier = Modifier
+                            .align(Alignment.TopCenter)
+                            .windowInsetsPadding(WindowInsets.statusBars)
+                            .zIndex(80f)
                     )
 
 
