@@ -248,7 +248,7 @@ fun AppFloatingSideBar(
             if (!collapsed) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Text(
-                        text = "Beat",
+                        text = "AURA",
                         fontFamily = rememberBrandFontFamily(),
                         fontWeight = FontWeight.Bold,
                         fontSize = 22.sp,
@@ -256,7 +256,7 @@ fun AppFloatingSideBar(
                         color = glassConfig.textColor,
                     )
                     Text(
-                        text = "Wave",
+                        text = "SATH",
                         fontFamily = rememberBrandFontFamily(),
                         fontWeight = FontWeight.ExtraBold,
                         fontSize = 22.sp,

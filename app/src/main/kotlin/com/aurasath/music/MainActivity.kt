@@ -1817,7 +1817,7 @@ class MainActivity : ComponentActivity() {
                                                      modifier = Modifier.padding(start = 4.dp)
                                                  ) {
                                                      Text(
-                                                         text = "Beat",
+                                                         text = "AURA",
                                                          style = MaterialTheme.typography.titleLarge.copy(
                                                              fontFamily = rememberBrandFontFamily(),
                                                              fontWeight = FontWeight.Bold,
@@ -1827,7 +1827,7 @@ class MainActivity : ComponentActivity() {
                                                          color = LocalAccentTextColor.current,
                                                      )
                                                      Text(
-                                                         text = "Wave",
+                                                         text = "SATH",
                                                          style = MaterialTheme.typography.titleLarge.copy(
                                                              fontFamily = rememberBrandFontFamily(),
                                                              fontWeight = FontWeight.ExtraBold,

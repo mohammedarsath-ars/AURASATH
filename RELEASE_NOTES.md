@@ -35,3 +35,4 @@ Welcome to **AURASATH v6.1.1** — a free, open-source, Liquid Glass music playe
 1. Download **`AURASATH-v6.1.1.apk`** from the Assets section below.
 2. Open the APK on your Android device and tap **Install** (allow installation from your browser/file manager if prompted).
 3. **Compatibility**: Android 8.0 (Oreo) and higher.
+
