@@ -22,7 +22,10 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -62,6 +65,7 @@ fun DjQuickBar(
     val scrollState = rememberScrollState()
 
     val currentSpeed = playerConnection.player.playbackParameters.speed
+    var selectedModeId by rememberSaveable { mutableStateOf("original") }
 
     Row(
         modifier = modifier
@@ -72,7 +76,7 @@ fun DjQuickBar(
         verticalAlignment = Alignment.CenterVertically
     ) {
         DjQuickModes.forEach { mode ->
-            val isActive = abs(currentSpeed - mode.speed) < 0.03f
+            val isActive = selectedModeId == mode.id || abs(currentSpeed - mode.speed) < 0.03f
 
             val chipBg by animateColorAsState(
                 targetValue = if (isActive) mode.accentColor.copy(alpha = 0.25f) else Color.White.copy(alpha = 0.08f),
@@ -93,6 +97,7 @@ fun DjQuickBar(
                     .border(1.dp, chipBorder, RoundedCornerShape(12.dp))
                     .clickable {
                         haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+                        selectedModeId = mode.id
                         val pitch = 2f.pow(mode.semitones.toFloat() / 12)
                         playerConnection.player.playbackParameters = PlaybackParameters(mode.speed, pitch)
                     }
@@ -119,3 +124,4 @@ fun DjQuickBar(
         }
     }
 }
+

@@ -2101,32 +2101,19 @@ private fun LazyListScope.heroSection(
             val heroSubtitle = remember(top.id) {
                 top.artists.joinToString { it.name }
             }
-            HomeHeroCard(
+            CinematicHeroCard(
                 title = top.song.title,
                 subtitle = heroSubtitle,
                 thumbnailUrl = top.song.thumbnailUrl,
-                onPlay = {
+                tag = "FEATURED SPOTLIGHT",
+                badge = "⚡ HI-RES LOSSLESS",
+                onPlayClick = {
                     deps.playerConnection.playQueue(
                         ListQueue(
                             title = top.song.title,
                             items = quickPicks.orEmpty().map { it.toMediaItem() },
                         )
                     )
-                },
-                onShuffle = {
-                    val quickList = quickPicks.orEmpty().map { it.toMediaItem() }
-                    if (quickList.isNotEmpty()) {
-                        deps.playerConnection.playQueue(
-                            ListQueue(
-                                title = top.song.title,
-                                items = quickList.shuffled(),
-                            )
-                        )
-                    } else {
-                        deps.playerConnection.playQueue(
-                            YouTubeQueue.radio(top.toMediaMetadata())
-                        )
-                    }
                 },
                 onClick = {
                     val quickList = quickPicks.orEmpty().map { it.toMediaItem() }
