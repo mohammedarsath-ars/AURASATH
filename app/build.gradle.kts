@@ -37,12 +37,12 @@ plugins {
 }
 
 android {
-    namespace = "com.beatwave.music"
+    namespace = "com.aurasath.music"
     compileSdk = 37
     ndkVersion = "27.0.12077973"
 
     defaultConfig {
-        applicationId = "com.beatwave.music"
+        applicationId = "com.aurasath.music"
         minSdk = 26
         targetSdk = 36
         versionCode = appVersionCode

@@ -5,7 +5,7 @@ plugins {
 }
 
 android {
-    namespace = "com.beatwave.music.artistvideo"
+    namespace = "com.aurasath.music.artistvideo"
     compileSdk = 36
 
     defaultConfig {

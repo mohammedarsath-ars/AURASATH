@@ -4,7 +4,7 @@ plugins {
 }
 
 android {
-    namespace = "com.beatwave.music.musixmatch"
+    namespace = "com.aurasath.music.musixmatch"
     compileSdk = 36
 
     defaultConfig {

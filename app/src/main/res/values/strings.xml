@@ -3,7 +3,7 @@
 <!-- Upstream InnerTune strings -->
 <!-- Do not add new features here -->
 <!-- Try to re-use strings here, but be careful on its usage e.g. verb vs noun -->
-<!-- "InnerTune" is replaced with "BeatWave" -->
+<!-- "InnerTune" is replaced with "AURASATH" -->
 <!-- Translators: Do not modify this file for translations, use InnerTune's Weblate instead. -->
 
 <resources>
@@ -597,8 +597,8 @@
     <string name="diy_rotation">Rotation</string>
     <string name="diy_size">Size</string>
     <string name="recommended_because_listened">Because you listened to</string>
-    <string name="beatwave_sync">AURASATH Sync</string>
-    <string name="beatwave_sync_desc">Collaborative live rooms, shared playlists &amp; real-time chat with friends</string>
+    <string name="aurasath_sync">AURASATH Sync</string>
+    <string name="aurasath_sync_desc">Collaborative live rooms, shared playlists &amp; real-time chat with friends</string>
     <string name="share_sync_link">Share Sync Link</string>
     <string name="save_as_playlist">Save as Playlist</string>
     <string name="saved_to_playlists">Saved to playlists</string>

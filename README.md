@@ -3,8 +3,8 @@
   <h3>AURASATH is an open-source, Liquid Glass music player for Android</h3>
 
   <p>
-    <a href="https://github.com/beatlabs790/BeatWave/releases/tag/v5.0.0">
-      <img src="https://img.shields.io/badge/%E2%AC%87%EF%B8%8F%20DOWNLOAD%20BEATWAVE%201.5.2-4CAF50?style=for-the-badge&logo=android&logoColor=white" alt="Download BeatWave v5.1.2">
+    <a href="https://github.com/mohammedarsath-ars/AURASATH/releases/tag/v6.1.1">
+      <img src="https://img.shields.io/badge/%E2%AC%87%EF%B8%8F%20DOWNLOAD%20AURASATH%206.1.1-4CAF50?style=for-the-badge&logo=android&logoColor=white" alt="Download AURASATH v6.1.1">
     </a>
   </p>
   <p>
@@ -182,7 +182,7 @@
       <td width="40%" align="left">
         <b>💡 Built On</b>
         <ul>
-          <li><strong><a href="https://github.com/vivizzz007/vivi-music">vivi-music</a></strong> by <strong>Vividh P Ashokan</strong> — the project BeatWave was forked from.</li>
+          <li><strong><a href="https://github.com/vivizzz007/vivi-music">vivi-music</a></strong> by <strong>Vividh P Ashokan</strong> — the project AURASATH was forked from.</li>
           <li>The <strong>Apple Music Player V17</strong> full-screen player style (Settings → Player Theme) is ported from <a href="https://github.com/vivizzz007/vivi-music">vivi-music</a>'s Apple Music player UI, GPL-3.0.</li>
         </ul>
       </td>

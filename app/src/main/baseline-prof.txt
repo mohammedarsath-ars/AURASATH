@@ -20,43 +20,43 @@
 # attached device.
 
 # --- Application and entry points -------------------------------------------
-HSPLcom/beatwave/music/App;-><init>()V
-HSPLcom/beatwave/music/App;->onCreate()V
-HSPLcom/beatwave/music/App;->newImageLoader(Landroid/content/Context;)Lcoil3/ImageLoader;
-HSPLcom/beatwave/music/MainActivity;-><init>()V
-HSPLcom/beatwave/music/MainActivity;->onCreate(Landroid/os/Bundle;)V
-Lcom/beatwave/music/App;
-Lcom/beatwave/music/MainActivity;
-Lcom/beatwave/music/WelcomeActivity;
+HSPLcom/aurasath/music/App;-><init>()V
+HSPLcom/aurasath/music/App;->onCreate()V
+HSPLcom/aurasath/music/App;->newImageLoader(Landroid/content/Context;)Lcoil3/ImageLoader;
+HSPLcom/aurasath/music/MainActivity;-><init>()V
+HSPLcom/aurasath/music/MainActivity;->onCreate(Landroid/os/Bundle;)V
+Lcom/aurasath/music/App;
+Lcom/aurasath/music/MainActivity;
+Lcom/aurasath/music/WelcomeActivity;
 
 # --- Hilt generated graph ----------------------------------------------------
-Lcom/beatwave/music/Hilt_App;
-Lcom/beatwave/music/Hilt_MainActivity;
-Lcom/beatwave/music/DaggerApp_HiltComponents_SingletonC**;
-Lcom/beatwave/music/di/**;
+Lcom/aurasath/music/Hilt_App;
+Lcom/aurasath/music/Hilt_MainActivity;
+Lcom/aurasath/music/DaggerApp_HiltComponents_SingletonC**;
+Lcom/aurasath/music/di/**;
 Ldagger/hilt/android/internal/**;
 
 # --- Theme, typography, and the design system read on the first frame --------
-HSPLcom/beatwave/music/ui/theme/**->**(**)**
-Lcom/beatwave/music/ui/theme/**;
-Lcom/beatwave/music/constants/**;
+HSPLcom/aurasath/music/ui/theme/**->**(**)**
+Lcom/aurasath/music/ui/theme/**;
+Lcom/aurasath/music/constants/**;
 
 # --- Preferences: read synchronously during startup --------------------------
-HSPLcom/beatwave/music/utils/DataStoreKt;->**(**)**
-Lcom/beatwave/music/utils/DataStoreKt;
+HSPLcom/aurasath/music/utils/DataStoreKt;->**(**)**
+Lcom/aurasath/music/utils/DataStoreKt;
 Landroidx/datastore/**;
 
 # --- Player surfaces mounted with the first composition ----------------------
-Lcom/beatwave/music/ui/component/**;
-Lcom/beatwave/music/ui/screens/HomeScreen**;
-Lcom/beatwave/music/ui/player/MiniPlayer**;
-Lcom/beatwave/music/ui/player/AppleMiniPlayer**;
-Lcom/beatwave/music/playback/PlayerConnection**;
+Lcom/aurasath/music/ui/component/**;
+Lcom/aurasath/music/ui/screens/HomeScreen**;
+Lcom/aurasath/music/ui/player/MiniPlayer**;
+Lcom/aurasath/music/ui/player/AppleMiniPlayer**;
+Lcom/aurasath/music/playback/PlayerConnection**;
 
 # --- Room: the home feed's first queries -------------------------------------
 Landroidx/room/**;
 Landroidx/sqlite/**;
-Lcom/beatwave/music/db/**;
+Lcom/aurasath/music/db/**;
 
 # --- Compose runtime ---------------------------------------------------------
 # The composer, snapshot system and slot table run for every composable on the
