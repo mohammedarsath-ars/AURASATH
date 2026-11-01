@@ -1,8 +1,5 @@
 blank_issues_enabled: false
 contact_links:
-  - name: 💬 Join the Community (Telegram)
-    url: https://t.me/+Nen-QpiY0tk1OTE9
-    about: Ask questions, chat with developers, or share your setups.
   - name: ❓ GitHub Discussions
     url: https://github.com/mohammedarsath-ars/AURASATH/discussions
     about: Use this for Q&A and general ideas that are not yet feature requests.
