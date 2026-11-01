@@ -3004,7 +3004,7 @@ class MainActivity : ComponentActivity() {
                 Spacer(Modifier.height(6.dp))
 
                 Text(
-                    text = "SOUND IN MOTION",
+                    text = "YOUR SOUND • YOUR UNIVERSE",
                     style = MaterialTheme.typography.labelSmall,
                     letterSpacing = 2.sp,
                     color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.6f)
