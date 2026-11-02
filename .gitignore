@@ -29,6 +29,7 @@ proguard/
 
 # Log Files
 *.log
+hs_err_pid*.log
 
 # Android Studio Navigation editor temp files
 .navigation/
@@ -120,6 +121,7 @@ app/keystore/
 !SECURITY.md
 !.github/CONTRIBUTING.md
 !.github/pull_request_template.md
+!supabase/DEPLOY.md
 app/src/main/kotlin/com/designRefrence/
 
 # Upstream marketing/store assets — not used by the build
