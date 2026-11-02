@@ -25,6 +25,12 @@ class CustomDownloadManager {
 
         downloadJob = CoroutineScope(Dispatchers.IO).launch {
             try {
+                if (!apkUrl.startsWith("https://", ignoreCase = true)) {
+                    withContext(Dispatchers.Main) {
+                        onError("Insecure URL: HTTPS is required")
+                    }
+                    return@launch
+                }
                 val url = URL(apkUrl)
                 val connection = url.openConnection() as HttpURLConnection
                 connection.requestMethod = "GET"

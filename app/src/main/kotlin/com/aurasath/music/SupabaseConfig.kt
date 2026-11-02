@@ -22,7 +22,8 @@ data class AppUpdateRow(
     val title: String,
     val description: String,
     val update_type: String, // "optional" or "force"
-    val apk_url: String? = null
+    val apk_url: String? = null,
+    val sha256: String? = null
 )
 
 @Serializable

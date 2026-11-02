@@ -117,6 +117,7 @@ object SupabaseService {
             put("description", update.description)
             put("update_type", update.update_type)
             update.apk_url?.let { put("apk_url", it) }
+            update.sha256?.let { put("sha256", it) }
         }
         val res = callAdminApi("publish_update", payload = payload)
         if (res.isSuccess) Result.success(Unit) else Result.failure(res.exceptionOrNull() ?: Exception("Failed to publish update"))

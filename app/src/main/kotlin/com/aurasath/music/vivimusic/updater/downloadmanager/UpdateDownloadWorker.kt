@@ -22,6 +22,14 @@ class UpdateDownloadWorker(private val context: Context, workerParams: WorkerPar
         val version = inputData.getString("version") ?: "unknown"
         val fileSize = inputData.getString("file_size") ?: ""
 
+        if (!apkUrl.startsWith("https://", ignoreCase = true)) {
+            DownloadNotificationManager.showDownloadFailed(
+                version,
+                "Insecure URL: HTTPS is required"
+            )
+            return@withContext Result.failure()
+        }
+
         DownloadNotificationManager.showDownloadStarting(version, fileSize)
 
         try {
@@ -95,6 +103,13 @@ class UpdateDownloadWorker(private val context: Context, workerParams: WorkerPar
                         var entry = zis.nextEntry
                         while (entry != null) {
                             if (!entry.isDirectory && entry.name.endsWith(".apk")) {
+                                val destinationFile = File(downloadDir, entry.name)
+                                val canonicalDestPath = destinationFile.canonicalPath
+                                val canonicalDirPath = downloadDir.canonicalPath
+                                if (!canonicalDestPath.startsWith(canonicalDirPath + File.separator)) {
+                                    entry = zis.nextEntry
+                                    continue
+                                }
                                 FileOutputStream(targetApkFile).use { fos ->
                                     zis.copyTo(fos)
                                 }
@@ -128,6 +143,21 @@ class UpdateDownloadWorker(private val context: Context, workerParams: WorkerPar
                 downloadFile
             }
 
+            val expectedSha256 = inputData.getString("sha256")
+            if (!expectedSha256.isNullOrBlank()) {
+                val actualSha256 = computeSha256(finalFile)
+                if (!actualSha256.equals(expectedSha256.trim(), ignoreCase = true)) {
+                    if (finalFile.exists()) {
+                        finalFile.delete()
+                    }
+                    DownloadNotificationManager.showDownloadFailed(
+                        version,
+                        "SHA-256 verification failed"
+                    )
+                    return@withContext Result.failure()
+                }
+            }
+
             DownloadNotificationManager.showDownloadComplete(version, finalFile.absolutePath)
 
             Result.success(workDataOf("file_path" to finalFile.absolutePath))
@@ -138,5 +168,17 @@ class UpdateDownloadWorker(private val context: Context, workerParams: WorkerPar
             )
             Result.failure()
         }
+    }
+
+    private fun computeSha256(file: File): String {
+        val digest = java.security.MessageDigest.getInstance("SHA-256")
+        file.inputStream().use { stream ->
+            val buffer = ByteArray(8192)
+            var bytesRead: Int
+            while (stream.read(buffer).also { bytesRead = it } != -1) {
+                digest.update(buffer, 0, bytesRead)
+            }
+        }
+        return digest.digest().joinToString("") { "%02x".format(it) }
     }
 }

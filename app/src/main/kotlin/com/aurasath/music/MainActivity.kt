@@ -2674,9 +2674,11 @@ class MainActivity : ComponentActivity() {
                                 Button(
                                     onClick = {
                                         update.apk_url?.let { url ->
-                                            try {
-                                                uriHandler.openUri(url)
-                                            } catch (_: Exception) {}
+                                            if (url.startsWith("https://", ignoreCase = true)) {
+                                                try {
+                                                    uriHandler.openUri(url)
+                                                } catch (_: Exception) {}
+                                            }
                                         }
                                         if (update.update_type != "force") {
                                             pendingUpdate = null
