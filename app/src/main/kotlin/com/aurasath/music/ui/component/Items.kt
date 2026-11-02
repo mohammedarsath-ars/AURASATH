@@ -737,14 +737,15 @@ fun AlbumListItem(
     showLikedIcon: Boolean = true,
     badges: @Composable RowScope.() -> Unit = {
         val database = LocalDatabase.current
+        val allDownloads = LocalDownloads.current
 
-        val songs by produceState<List<Song>>(initialValue = emptyList(), album.id) {
-            withContext(Dispatchers.IO) {
-                value = database.albumSongs(album.id).first()
+        val songs by produceState<List<Song>>(initialValue = emptyList(), album.id, allDownloads.isEmpty()) {
+            if (allDownloads.isNotEmpty()) {
+                withContext(Dispatchers.IO) {
+                    value = database.albumSongs(album.id).first()
+                }
             }
         }
-
-        val allDownloads = LocalDownloads.current
 
         val downloadState by remember(songs, allDownloads) {
             derivedStateOf {
@@ -825,14 +826,15 @@ fun AlbumGridItem(
     showLikedIcon: Boolean = true,
     badges: @Composable RowScope.() -> Unit = {
         val database = LocalDatabase.current
+        val allDownloads = LocalDownloads.current
 
-        val songs by produceState<List<Song>>(initialValue = emptyList(), album.id) {
-            withContext(Dispatchers.IO) {
-                value = database.albumSongs(album.id).first()
+        val songs by produceState<List<Song>>(initialValue = emptyList(), album.id, allDownloads.isEmpty()) {
+            if (allDownloads.isNotEmpty()) {
+                withContext(Dispatchers.IO) {
+                    value = database.albumSongs(album.id).first()
+                }
             }
         }
-
-        val allDownloads = LocalDownloads.current
 
         val downloadState by remember(songs, allDownloads) {
             derivedStateOf {
@@ -937,14 +939,15 @@ fun PlaylistListItem(
     flat: Boolean = false,
     badges: @Composable RowScope.() -> Unit = {
         val database = LocalDatabase.current
+        val allDownloads = LocalDownloads.current
 
-        val songs by produceState<List<Song>>(initialValue = emptyList(), playlist.id) {
-            withContext(Dispatchers.IO) {
-                value = database.playlistSongs(playlist.id).first().map { it.song }
+        val songs by produceState<List<Song>>(initialValue = emptyList(), playlist.id, allDownloads.isEmpty()) {
+            if (allDownloads.isNotEmpty()) {
+                withContext(Dispatchers.IO) {
+                    value = database.playlistSongs(playlist.id).first().map { it.song }
+                }
             }
         }
-
-        val allDownloads = LocalDownloads.current
 
         val downloadState by remember(songs, allDownloads) {
             derivedStateOf {
@@ -1053,14 +1056,15 @@ fun PlaylistGridItem(
     thumbnailOverrideUrl: String? = null,
     badges: @Composable RowScope.() -> Unit = {
         val database = LocalDatabase.current
+        val allDownloads = LocalDownloads.current
 
-        val songs by produceState<List<Song>>(initialValue = emptyList(), playlist.id) {
-            withContext(Dispatchers.IO) {
-                value = database.playlistSongs(playlist.id).first().map { it.song }
+        val songs by produceState<List<Song>>(initialValue = emptyList(), playlist.id, allDownloads.isEmpty()) {
+            if (allDownloads.isNotEmpty()) {
+                withContext(Dispatchers.IO) {
+                    value = database.playlistSongs(playlist.id).first().map { it.song }
+                }
             }
         }
-
-        val allDownloads = LocalDownloads.current
 
         val downloadState by remember(songs, allDownloads) {
             derivedStateOf {

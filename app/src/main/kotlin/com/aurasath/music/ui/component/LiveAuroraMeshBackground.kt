@@ -67,6 +67,30 @@ fun LiveAuroraMeshBackground(
     val electricCyan = remember { Color(0xFF00E5FF) }
     val deepViolet = remember { Color(0xFF7C4DFF) }
 
+    // Pre-allocate color lists to eliminate garbage collection pauses during scroll & 120fps animation
+    val orb1Colors = remember(primaryAccent, intensity) {
+        listOf(
+            primaryAccent.copy(alpha = 0.28f * intensity),
+            primaryAccent.copy(alpha = 0.12f * intensity),
+            Color.Transparent
+        )
+    }
+
+    val orb2Colors = remember(deepViolet, secondaryAccent, intensity) {
+        listOf(
+            deepViolet.copy(alpha = 0.24f * intensity),
+            secondaryAccent.copy(alpha = 0.10f * intensity),
+            Color.Transparent
+        )
+    }
+
+    val orb3Colors = remember(electricCyan, intensity) {
+        listOf(
+            electricCyan.copy(alpha = 0.18f * intensity),
+            Color.Transparent
+        )
+    }
+
     Box(modifier = modifier.fillMaxSize()) {
         Canvas(modifier = Modifier.fillMaxSize()) {
             val width = size.width
@@ -82,11 +106,7 @@ fun LiveAuroraMeshBackground(
             val orb1Radius = width * 0.75f
             drawCircle(
                 brush = Brush.radialGradient(
-                    colors = listOf(
-                        primaryAccent.copy(alpha = 0.28f * intensity),
-                        primaryAccent.copy(alpha = 0.12f * intensity),
-                        Color.Transparent
-                    ),
+                    colors = orb1Colors,
                     center = Offset(orb1X, orb1Y),
                     radius = orb1Radius
                 ),
@@ -100,11 +120,7 @@ fun LiveAuroraMeshBackground(
             val orb2Radius = width * 0.85f
             drawCircle(
                 brush = Brush.radialGradient(
-                    colors = listOf(
-                        deepViolet.copy(alpha = 0.24f * intensity),
-                        secondaryAccent.copy(alpha = 0.10f * intensity),
-                        Color.Transparent
-                    ),
+                    colors = orb2Colors,
                     center = Offset(orb2X, orb2Y),
                     radius = orb2Radius
                 ),
@@ -118,10 +134,7 @@ fun LiveAuroraMeshBackground(
             val orb3Radius = width * 0.65f
             drawCircle(
                 brush = Brush.radialGradient(
-                    colors = listOf(
-                        electricCyan.copy(alpha = 0.18f * intensity),
-                        Color.Transparent
-                    ),
+                    colors = orb3Colors,
                     center = Offset(orb3X, orb3Y),
                     radius = orb3Radius
                 ),

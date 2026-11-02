@@ -1392,8 +1392,7 @@ fun HomeScreen(
                                 end = AppleTokens.Gutter,
                                 top = AppleTokens.ItemGap,
                                 bottom = 4.dp,
-                            )
-                            .animateItem(),
+                            ),
                         verticalAlignment = Alignment.CenterVertically,
                         horizontalArrangement = Arrangement.SpaceBetween,
                     ) {
@@ -1497,8 +1496,7 @@ fun HomeScreen(
                                 activeVibeId = if (activeVibeId == vibe.id) null else vibe.id
                                 navController.navigate("search/${java.net.URLEncoder.encode(vibe.query, "UTF-8")}")
                             },
-                            modifier = Modifier.animateItem()
-                        )
+                            )
                     }
                 }
 
@@ -1519,8 +1517,7 @@ fun HomeScreen(
                             ) + moodChips.map { chip -> chip to chip.title },
                             currentValue = selectedChip,
                             onValueUpdate = { chip -> viewModel.toggleChip(chip) },
-                            modifier = Modifier.animateItem(),
-                        )
+                            )
                     }
                 }
 
@@ -1626,8 +1623,7 @@ fun HomeScreen(
                 if (isLoading) {
                     item(key = "loading_shimmer", contentType = "shimmer") {
                         ShimmerHost(
-                            modifier = Modifier.animateItem()
-                        ) {
+                            ) {
                             repeat(2) {
                                 TextPlaceholder(
                                     height = 36.dp,
@@ -1865,8 +1861,7 @@ private fun LazyListScope.localHomeContent(
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = AppleTokens.Gutter)
-                .animateItem(),
+                .padding(horizontal = AppleTokens.Gutter),
             horizontalArrangement = Arrangement.spacedBy(AppleTokens.ItemGap),
         ) {
             Button(
@@ -1920,8 +1915,7 @@ private fun LazyListScope.localHomeContent(
         item(key = "local_albums_title", contentType = "section_title") {
             NavigationTitle(
                 title = stringResource(R.string.albums),
-                modifier = Modifier.animateItem(),
-            )
+                )
         }
         localItemRows(deps, "local_album", albums.take(LocalShelfRows * columns), columns)
     }
@@ -1930,8 +1924,7 @@ private fun LazyListScope.localHomeContent(
         item(key = "local_artists_title", contentType = "section_title") {
             NavigationTitle(
                 title = stringResource(R.string.artists),
-                modifier = Modifier.animateItem(),
-            )
+                )
         }
         localItemRows(deps, "local_artist", artists.take(LocalShelfRows * columns), columns)
     }
@@ -1940,8 +1933,7 @@ private fun LazyListScope.localHomeContent(
         item(key = "local_playlists_title", contentType = "section_title") {
             NavigationTitle(
                 title = stringResource(R.string.playlists),
-                modifier = Modifier.animateItem(),
-            )
+                )
         }
         val shownPlaylists = playlists.take(LocalListPreview)
         itemsIndexed(
@@ -1963,8 +1955,7 @@ private fun LazyListScope.localHomeContent(
         item(key = "local_folders_title", contentType = "section_title") {
             NavigationTitle(
                 title = stringResource(R.string.folders),
-                modifier = Modifier.animateItem(),
-            )
+                )
         }
         // Built once for the whole section, not per row -- a per-row scan over every
         // local song to find a folder thumbnail is the same "expensive work in a
@@ -2033,7 +2024,7 @@ private fun LazyListScope.localSongShelf(
     item(key = key + "_title", contentType = "section_title") {
         NavigationTitle(
             title = stringResource(titleRes),
-            modifier = Modifier.animateItem(),
+            
             onPlayAllClick = {
                 deps.playerConnection.playQueue(
                     ListQueue(items = songs.map { it.toMediaItem() }, startIndex = 0),
@@ -2049,7 +2040,6 @@ private fun LazyListScope.localSongShelf(
             modifier = Modifier
                 .fillMaxWidth()
                 .height(SpotlightCardHeight)
-                .animateItem()
                 .bleedStart(deps.sideInset),
         ) {
             items(songs, key = { it.id }, contentType = { "spotlight_card" }) { song ->
@@ -2135,8 +2125,7 @@ private fun LazyListScope.heroSection(
                     }
                 },
                 modifier = Modifier
-                    .padding(horizontal = AppleTokens.Gutter)
-                    .animateItem(),
+                    .padding(horizontal = AppleTokens.Gutter),
             )
         }
     }
@@ -2155,8 +2144,7 @@ private fun LazyListScope.speedDialSection(
         item(key = "speed_dial_title", contentType = "section_title") {
             NavigationTitle(
                 title = stringResource(R.string.speed_dial),
-                modifier = Modifier.animateItem(),
-            )
+                )
         }
 
         item(key = "speed_dial_list", contentType = "speed_dial_list") {
@@ -2199,8 +2187,7 @@ private fun LazyListScope.speedDialSection(
             Column(
                 modifier =
                     Modifier
-                        .fillMaxWidth()
-                        .animateItem(),
+                        .fillMaxWidth(),
             ) {
                 HorizontalPager(
                     state = pagerState,
@@ -2392,7 +2379,7 @@ private fun LazyListScope.quickPicksSection(
             val quickPicksTitle = stringResource(R.string.quick_picks)
             NavigationTitle(
                 title = quickPicksTitle,
-                modifier = Modifier.animateItem(),
+                
                 onPlayAllClick = {
                     deps.playerConnection.playQueue(
                         ListQueue(
@@ -2419,7 +2406,7 @@ private fun LazyListScope.quickPicksSection(
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(ListItemHeight * QuickPicksGridRows)
-                    .animateItem().bleedStart(deps.sideInset)
+                    .bleedStart(deps.sideInset)
             ) {
                 itemsIndexed(
                     items = distinctQuickPicks,
@@ -2494,15 +2481,14 @@ private fun LazyListScope.communityPlaylistsSection(
         item(key = "community_playlists_title", contentType = "section_title") {
             NavigationTitle(
                 title = stringResource(R.string.from_the_community),
-                modifier = Modifier.animateItem(),
-            )
+                )
         }
 
         item(key = "community_playlists_content", contentType = "carousel") {
             LazyRow(
                 contentPadding = PaddingValues(horizontal = AppleTokens.Gutter).plusStart(deps.sideInset),
                 horizontalArrangement = Arrangement.spacedBy(16.dp),
-                modifier = Modifier.animateItem().bleedStart(deps.sideInset)
+                modifier = Modifier.bleedStart(deps.sideInset)
             ) {
                 items(items = playlists, key = { it.playlist.id }) { item ->
                     CommunityPlaylistCard(
@@ -2609,8 +2595,7 @@ private fun LazyListScope.keepListeningSection(
         item(key = "keep_listening_title", contentType = "section_title") {
             NavigationTitle(
                 title = stringResource(R.string.recently_played),
-                modifier = Modifier.animateItem(),
-            )
+                )
         }
 
         // Wide layout: the most recent item becomes a hero tile with the next four
@@ -2625,8 +2610,7 @@ private fun LazyListScope.keepListeningSection(
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(horizontal = AppleTokens.Gutter)
-                        .animateItem(),
+                        .padding(horizontal = AppleTokens.Gutter),
                     horizontalArrangement = Arrangement.spacedBy(AppleTokens.ItemGap),
                 ) {
                     Box(Modifier.weight(1f)) { deps.localGridItem(hero) }
@@ -2668,7 +2652,6 @@ private fun LazyListScope.keepListeningSection(
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(SpotlightCardHeight)
-                        .animateItem()
                         .bleedStart(deps.sideInset),
                 ) {
                     items(
@@ -2740,8 +2723,7 @@ private fun LazyListScope.accountPlaylistsSection(
                 onClick = {
                     deps.navController.navigate("account")
                 },
-                modifier = Modifier.animateItem(),
-            )
+                )
         }
 
         item(key = "account_playlists_list", contentType = "carousel") {
@@ -2751,7 +2733,7 @@ private fun LazyListScope.accountPlaylistsSection(
                 contentPadding = WindowInsets.systemBars
                     .only(WindowInsetsSides.Horizontal)
                     .asPaddingValues().plusStart(deps.sideInset),
-                modifier = Modifier.animateItem().bleedStart(deps.sideInset)
+                modifier = Modifier.bleedStart(deps.sideInset)
             ) {
                 items(
                     items = distinctAccountPlaylists,
@@ -2777,7 +2759,7 @@ private fun LazyListScope.forgottenFavoritesSection(
             val forgottenFavoritesTitle = stringResource(R.string.forgotten_favorites)
             NavigationTitle(
                 title = forgottenFavoritesTitle,
-                modifier = Modifier.animateItem(),
+                
                 onPlayAllClick = {
                     deps.playerConnection.playQueue(
                         ListQueue(
@@ -2806,7 +2788,7 @@ private fun LazyListScope.forgottenFavoritesSection(
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(ListItemHeight * rows)
-                    .animateItem().bleedStart(deps.sideInset)
+                    .bleedStart(deps.sideInset)
             ) {
                 itemsIndexed(
                     items = distinctForgottenFavorites,
@@ -2901,8 +2883,7 @@ private fun LazyListScope.lastPlayedRecommendationSection(
                         is Playlist -> {}
                     }
                 },
-                modifier = Modifier.animateItem(),
-            )
+                )
         }
 
         item(key = "last_played_rec_list", contentType = "carousel") {
@@ -2910,7 +2891,7 @@ private fun LazyListScope.lastPlayedRecommendationSection(
                 contentPadding = WindowInsets.systemBars
                     .only(WindowInsetsSides.Horizontal)
                     .asPaddingValues().plusStart(deps.sideInset),
-                modifier = Modifier.animateItem().bleedStart(deps.sideInset)
+                modifier = Modifier.bleedStart(deps.sideInset)
             ) {
                 items(items = recommendation.items, key = { it.id }) { item ->
                     deps.ytGridItem(item)
@@ -2954,8 +2935,7 @@ private fun LazyListScope.similarRecommendationsSection(
                         is Playlist -> {}
                     }
                 },
-                modifier = Modifier.animateItem(),
-            )
+                )
         }
 
         item(key = "similar_to_list_${section.index}", contentType = "carousel") {
@@ -2963,7 +2943,7 @@ private fun LazyListScope.similarRecommendationsSection(
                 contentPadding = WindowInsets.systemBars
                     .only(WindowInsetsSides.Horizontal)
                     .asPaddingValues().plusStart(deps.sideInset),
-                modifier = Modifier.animateItem().bleedStart(deps.sideInset)
+                modifier = Modifier.bleedStart(deps.sideInset)
             ) {
                 items(items = recommendation.items, key = { it.id }) { item ->
                     deps.ytGridItem(item)
@@ -3030,8 +3010,7 @@ private fun LazyListScope.homePageSection(
                         )
                     }
                 } else null,
-                modifier = Modifier.animateItem(),
-            )
+                )
         }
 
         if (isSongsOnlySection) {
@@ -3048,7 +3027,7 @@ private fun LazyListScope.homePageSection(
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(ListItemHeight * SongGridRows)
-                        .animateItem().bleedStart(deps.sideInset)
+                        .bleedStart(deps.sideInset)
                 ) {
                     itemsIndexed(
                         items = distinctSectionSongs,
@@ -3112,7 +3091,7 @@ private fun LazyListScope.homePageSection(
                     contentPadding = WindowInsets.systemBars
                         .only(WindowInsetsSides.Horizontal)
                         .asPaddingValues().plusStart(deps.sideInset),
-                    modifier = Modifier.animateItem().bleedStart(deps.sideInset)
+                    modifier = Modifier.bleedStart(deps.sideInset)
                 ) {
                     items(items = sectionData.items, key = { it.id }) { item ->
                         deps.ytGridItem(item)
@@ -3140,8 +3119,7 @@ private fun LazyListScope.moodAndGenresSection(
                 onClick = {
                     deps.navController.navigate("mood_and_genres")
                 },
-                modifier = Modifier.animateItem(),
-            )
+                )
         }
         item(key = "mood_and_genres_list", contentType = "grid_carousel") {
             // Two rows, two columns per screenful, scrolling sideways — so a 2x2
@@ -3160,7 +3138,6 @@ private fun LazyListScope.moodAndGenresSection(
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(cardHeight * 2 + gap)
-                    .animateItem()
                     .bleedStart(deps.sideInset),
             ) {
                 items(items = moodAndGenres, key = { it.title }) {

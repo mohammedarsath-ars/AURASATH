@@ -54,6 +54,14 @@ fun FluidAudioVisualizer(
         label = "vizPhase"
     )
 
+    val gradientColors = remember(accentColor, primaryColor) {
+        listOf(
+            accentColor,
+            primaryColor.copy(alpha = 0.85f),
+            primaryColor.copy(alpha = 0.35f)
+        )
+    }
+
     Canvas(
         modifier = modifier
             .fillMaxWidth()
@@ -68,11 +76,7 @@ fun FluidAudioVisualizer(
         val barWidth = ((totalWidth - totalSpacing) / barCount).coerceAtLeast(2f)
 
         val gradient = Brush.verticalGradient(
-            colors = listOf(
-                accentColor,
-                primaryColor.copy(alpha = 0.85f),
-                primaryColor.copy(alpha = 0.35f)
-            ),
+            colors = gradientColors,
             startY = 0f,
             endY = canvasHeight
         )

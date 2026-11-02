@@ -152,7 +152,7 @@ fun OnlineSearchScreen(
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.Bold,
                     color = contentColor,
-                    modifier = Modifier.padding(start = 16.dp, top = 16.dp, bottom = 8.dp).animateItem()
+                    modifier = Modifier.padding(start = 16.dp, top = 16.dp, bottom = 8.dp)
                 )
             }
         }
@@ -174,13 +174,13 @@ fun OnlineSearchScreen(
                 onFillTextField = {
                     onQueryChange(TextFieldValue(history.query, TextRange(history.query.length)))
                 },
-                modifier = Modifier.animateItem(),
+                modifier = Modifier,
             )
         }
 
         if (viewState.history.isNotEmpty() && viewState.suggestions.isNotEmpty()) {
             item(key = "history_suggestion_spacer") {
-                Spacer(modifier = Modifier.height(16.dp).animateItem())
+                Spacer(modifier = Modifier.height(16.dp))
             }
         }
 
@@ -191,7 +191,7 @@ fun OnlineSearchScreen(
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.Bold,
                     color = contentColor,
-                    modifier = Modifier.padding(start = 16.dp, top = 8.dp, bottom = 8.dp).animateItem()
+                    modifier = Modifier.padding(start = 16.dp, top = 8.dp, bottom = 8.dp)
                 )
             }
         }
@@ -208,13 +208,13 @@ fun OnlineSearchScreen(
                 onFillTextField = {
                     onQueryChange(TextFieldValue(query, TextRange(query.length)))
                 },
-                modifier = Modifier.animateItem(),
+                modifier = Modifier,
             )
         }
 
         if (viewState.suggestions.isNotEmpty()) {
             item(key = "suggestions_bottom_spacer") {
-                Spacer(modifier = Modifier.height(16.dp).animateItem())
+                Spacer(modifier = Modifier.height(16.dp))
             }
         }
 
@@ -225,7 +225,7 @@ fun OnlineSearchScreen(
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.Bold,
                     color = contentColor,
-                    modifier = Modifier.padding(start = 16.dp, top = 8.dp).animateItem()
+                    modifier = Modifier.padding(start = 16.dp, top = 8.dp)
                 )
             }
             item(key = "search_divider_spacer") {
@@ -357,7 +357,7 @@ fun OnlineSearchScreen(
                             }
                         }
                     )
-                    .animateItem()
+                    
             )
         }
     }

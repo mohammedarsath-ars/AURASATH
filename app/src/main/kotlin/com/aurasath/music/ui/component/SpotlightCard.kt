@@ -1,4 +1,4 @@
-﻿/**
+/**
  * AURASATH Project (C) 2026
  * Licensed under GPL-3.0 | See git history for contributors
  */
@@ -65,7 +65,7 @@ private const val ReflectionDarken = 0.51f
 /** The reflection is a mirror of the art, so it wants more colour, not less. */
 private const val ReflectionSaturation = 1.5f
 
-private val ReflectionBlurRadius = 24.dp
+private val ReflectionBlurRadius = 12.dp
 
 /**
  * A tall artwork card whose lower portion is the same artwork mirrored, blurred and
@@ -120,7 +120,7 @@ fun SpotlightCard(
                 .size(artworkSize),
         )
 
-        if (reflectionsSupported) {
+        if (reflectionsSupported && !thumbnailUrl.isNullOrEmpty()) {
             SpotlightReflection(
                 thumbnailUrl = thumbnailUrl,
                 artworkSize = artworkSize,

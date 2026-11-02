@@ -84,6 +84,30 @@ fun CinematicHeroCard(
     val primaryColor = MaterialTheme.colorScheme.primary
     val neonGlow = remember { Color(0xFF00E5FF) }
 
+    val borderBrush = remember(primaryColor, neonGlow) {
+        Brush.linearGradient(
+            colors = listOf(
+                primaryColor.copy(alpha = 0.6f),
+                neonGlow.copy(alpha = 0.2f),
+                Color.Transparent
+            )
+        )
+    }
+
+    val overlayBrush = remember {
+        Brush.horizontalGradient(
+            0.0f to Color.Black.copy(alpha = 0.88f),
+            0.55f to Color.Black.copy(alpha = 0.70f),
+            1.0f to Color.Black.copy(alpha = 0.40f)
+        )
+    }
+
+    val glassHighlightBrush = remember {
+        Brush.horizontalGradient(
+            listOf(Color.White.copy(alpha = 0.35f), Color.Transparent)
+        )
+    }
+
     Box(
         modifier = modifier
             .fillMaxWidth()
@@ -93,13 +117,7 @@ fun CinematicHeroCard(
             .background(Color(0xFF0F111A))
             .border(
                 width = 1.2.dp,
-                brush = Brush.linearGradient(
-                    colors = listOf(
-                        primaryColor.copy(alpha = 0.6f),
-                        neonGlow.copy(alpha = 0.2f),
-                        Color.Transparent
-                    )
-                ),
+                brush = borderBrush,
                 shape = RoundedCornerShape(26.dp)
             )
             .clickable(onClick = onClick)
@@ -118,13 +136,7 @@ fun CinematicHeroCard(
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .background(
-                    Brush.horizontalGradient(
-                        0.0f to Color.Black.copy(alpha = 0.88f),
-                        0.55f to Color.Black.copy(alpha = 0.70f),
-                        1.0f to Color.Black.copy(alpha = 0.40f)
-                    )
-                )
+                .background(overlayBrush)
         )
 
         // Glass highlight edge
@@ -132,11 +144,7 @@ fun CinematicHeroCard(
             modifier = Modifier
                 .fillMaxWidth()
                 .height(1.dp)
-                .background(
-                    Brush.horizontalGradient(
-                        listOf(Color.White.copy(alpha = 0.35f), Color.Transparent)
-                    )
-                )
+                .background(glassHighlightBrush)
         )
 
         // Content
