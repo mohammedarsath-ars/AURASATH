@@ -149,13 +149,13 @@ object SupabaseService {
 
     suspend fun submitSuggestion(userName: String, instaId: String?, content: String): Result<Long> = withContext(Dispatchers.IO) {
         try {
-            val suggestion = SuggestionRow(
-                user_name = userName,
-                insta_id = instaId,
-                content = content,
-                status = "pending"
-            )
-            val bodyStr = json.encodeToString(suggestion)
+            val payload = buildJsonObject {
+                put("user_name", userName)
+                if (!instaId.isNullOrBlank()) put("insta_id", instaId)
+                put("content", content)
+                put("status", "pending")
+            }
+            val bodyStr = payload.toString()
             val request = Request.Builder()
                 .url("${SupabaseConfig.URL}/rest/v1/suggestions")
                 .post(bodyStr.toRequestBody(mediaType))
@@ -213,14 +213,14 @@ object SupabaseService {
 
     suspend fun submitBugReport(userName: String, instaId: String?, description: String, deviceInfo: String): Result<Long> = withContext(Dispatchers.IO) {
         try {
-            val bugReport = BugReportRow(
-                user_name = userName,
-                insta_id = instaId,
-                description = description,
-                device_info = deviceInfo,
-                status = "pending"
-            )
-            val bodyStr = json.encodeToString(bugReport)
+            val payload = buildJsonObject {
+                put("user_name", userName)
+                if (!instaId.isNullOrBlank()) put("insta_id", instaId)
+                put("description", description)
+                put("device_info", deviceInfo)
+                put("status", "pending")
+            }
+            val bodyStr = payload.toString()
             val request = Request.Builder()
                 .url("${SupabaseConfig.URL}/rest/v1/bug_reports")
                 .post(bodyStr.toRequestBody(mediaType))
