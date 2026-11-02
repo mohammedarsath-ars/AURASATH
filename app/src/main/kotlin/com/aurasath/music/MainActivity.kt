@@ -564,17 +564,14 @@ class MainActivity : ComponentActivity() {
         runCatching { installSplashScreen() }
         super.onCreate(savedInstanceState)
 
-        // Cached Supabase credentials, read after the splash is up.
+        // Clean up any obsolete cached credentials from the retired remote config endpoint.
         try {
-            val cachedUrl = dataStore.get(CachedSupabaseUrlKey, "")
-            val cachedAnon = dataStore.get(CachedSupabaseAnonKey, "")
-            val cachedJwks = dataStore.get(CachedSupabaseJwksUrlKey, "")
-            if (cachedUrl.isNotBlank() && cachedAnon.isNotBlank()) {
-                com.aurasath.music.SupabaseConfig.init(
-                    url = cachedUrl,
-                    anon = cachedAnon,
-                    jwks = cachedJwks.ifBlank { com.aurasath.music.BuildConfig.SUPABASE_JWKS_URL }
-                )
+            lifecycleScope.launch(Dispatchers.IO) {
+                dataStore.edit { prefs ->
+                    prefs.remove(CachedSupabaseUrlKey)
+                    prefs.remove(CachedSupabaseAnonKey)
+                    prefs.remove(CachedSupabaseJwksUrlKey)
+                }
             }
         } catch (_: Throwable) {}
         window.decorView.layoutDirection = View.LAYOUT_DIRECTION_LTR
@@ -1472,42 +1469,6 @@ class MainActivity : ComponentActivity() {
                         handleDeepLinkIntent(intent, navController)
                     }
 
-                    try {
-                        kotlinx.coroutines.withContext(kotlinx.coroutines.Dispatchers.IO) {
-                            val client = okhttp3.OkHttpClient()
-                            val request = okhttp3.Request.Builder()
-                                .url("https://config6767.vercel.app/")
-                                .build()
-                            client.newCall(request).execute().use { response ->
-                                if (response.isSuccessful) {
-                                    val body = response.body?.string()
-                                    if (body != null) {
-                                        val jsonObject = org.json.JSONObject(body)
-                                        val urlVal = jsonObject.optString("supabase_url")
-                                        val anonVal = jsonObject.optString("supabase_anon_key")
-                                        val jwksVal = jsonObject.optString("supabase_jwks_url")
-
-                                        if (!urlVal.isNullOrBlank() && !anonVal.isNullOrBlank()) {
-                                            // Save to local cache
-                                            dataStore.edit { prefs ->
-                                                prefs[CachedSupabaseUrlKey] = urlVal
-                                                prefs[CachedSupabaseAnonKey] = anonVal
-                                                if (!jwksVal.isNullOrBlank()) {
-                                                    prefs[CachedSupabaseJwksUrlKey] = jwksVal
-                                                }
-                                            }
-                                            // Update in-memory configurations in real-time
-                                            com.aurasath.music.SupabaseConfig.init(
-                                                url = urlVal,
-                                                anon = anonVal,
-                                                jwks = if (!jwksVal.isNullOrBlank()) jwksVal else com.aurasath.music.BuildConfig.SUPABASE_JWKS_URL
-                                            )
-                                        }
-                                    }
-                                }
-                            }
-                        }
-                    } catch (_: Exception) {}
 
                     try {
                         val updateResult = com.aurasath.music.api.SupabaseService.checkLatestUpdate()
