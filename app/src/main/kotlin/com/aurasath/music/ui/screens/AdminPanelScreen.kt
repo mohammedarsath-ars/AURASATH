@@ -46,6 +46,21 @@ fun AdminPanelScreen(
 ) {
     val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
+
+    DisposableEffect(Unit) {
+        SupabaseService.onAuthFailureListener = {
+            Toast.makeText(context, "Incorrect password", Toast.LENGTH_SHORT).show()
+            navController.navigateUp()
+        }
+        if (!SupabaseService.hasAdminSession()) {
+            Toast.makeText(context, "Incorrect password", Toast.LENGTH_SHORT).show()
+            navController.navigateUp()
+        }
+        onDispose {
+            SupabaseService.onAuthFailureListener = null
+        }
+    }
+
     var selectedTab by remember { mutableStateOf(0) }
     val tabs = listOf("Publish Update", "Publish News", "Test Wrapped", "Suggestions", "Bug Reports")
 

@@ -50,9 +50,12 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.navigation.NavController
-import com.aurasath.music.BuildConfig
 import com.aurasath.music.LocalPlayerAwareWindowInsets
+import com.aurasath.music.api.SupabaseService
+import kotlinx.coroutines.launch
 import com.aurasath.music.ui.component.IconButton
 import com.aurasath.music.ui.component.Material3SettingsGroup
 import com.aurasath.music.ui.component.Material3SettingsItem
@@ -79,6 +82,8 @@ fun SettingsScreen(
 
     var showAdminPasswordDialog by rememberSaveable { mutableStateOf(false) }
     var passwordInput by rememberSaveable { mutableStateOf("") }
+    val coroutineScope = rememberCoroutineScope()
+    var isVerifyingPassword by remember { mutableStateOf(false) }
 
     if (showAdminPasswordDialog) {
         androidx.compose.material3.AlertDialog(
@@ -99,18 +104,20 @@ fun SettingsScreen(
             },
             confirmButton = {
                 androidx.compose.material3.TextButton(
+                    enabled = !isVerifyingPassword,
                     onClick = {
-                        if (BuildConfig.ADMIN_PASSWORD.isNotBlank() && passwordInput == BuildConfig.ADMIN_PASSWORD) {
-                            showAdminPasswordDialog = false
-                            passwordInput = ""
-                            navController.navigate("admin_panel")
-                        } else {
-                            val message = if (BuildConfig.ADMIN_PASSWORD.isBlank()) {
-                                "Admin panel is disabled (no password configured at build time)"
+                        if (isVerifyingPassword) return@TextButton
+                        isVerifyingPassword = true
+                        coroutineScope.launch {
+                            val res = SupabaseService.verifyAdminPassword(passwordInput)
+                            isVerifyingPassword = false
+                            if (res.isSuccess) {
+                                showAdminPasswordDialog = false
+                                passwordInput = ""
+                                navController.navigate("admin_panel")
                             } else {
-                                "Incorrect password"
+                                android.widget.Toast.makeText(context, "Incorrect password", android.widget.Toast.LENGTH_SHORT).show()
                             }
-                            android.widget.Toast.makeText(context, message, android.widget.Toast.LENGTH_SHORT).show()
                         }
                     }
                 ) {

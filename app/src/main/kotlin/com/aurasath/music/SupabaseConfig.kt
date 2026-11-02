@@ -5,13 +5,11 @@ import kotlinx.serialization.Serializable
 object SupabaseConfig {
     var URL: String = BuildConfig.SUPABASE_URL
     var ANON_KEY: String = BuildConfig.SUPABASE_PUBLISHABLE_KEY
-    var SECRET_KEY: String = BuildConfig.SUPABASE_SECRET_KEY
     var JWKS_URL: String = BuildConfig.SUPABASE_JWKS_URL
 
-    fun init(url: String, anon: String, secret: String, jwks: String) {
+    fun init(url: String, anon: String, jwks: String) {
         URL = url
         ANON_KEY = anon
-        SECRET_KEY = secret
         JWKS_URL = jwks
     }
 }

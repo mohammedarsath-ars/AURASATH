@@ -244,7 +244,6 @@ import com.aurasath.music.constants.PauseSearchHistoryKey
 import com.aurasath.music.constants.LastSeenNewsIdKey
 import com.aurasath.music.constants.CachedSupabaseUrlKey
 import com.aurasath.music.constants.CachedSupabaseAnonKey
-import com.aurasath.music.constants.CachedSupabaseSecretKey
 import com.aurasath.music.constants.CachedSupabaseJwksUrlKey
 import com.aurasath.music.constants.PlaylistSortType
 import com.aurasath.music.constants.PureBlackKey
@@ -569,13 +568,11 @@ class MainActivity : ComponentActivity() {
         try {
             val cachedUrl = dataStore.get(CachedSupabaseUrlKey, "")
             val cachedAnon = dataStore.get(CachedSupabaseAnonKey, "")
-            val cachedSecret = dataStore.get(CachedSupabaseSecretKey, "")
             val cachedJwks = dataStore.get(CachedSupabaseJwksUrlKey, "")
-            if (cachedUrl.isNotBlank() && cachedAnon.isNotBlank() && cachedSecret.isNotBlank()) {
+            if (cachedUrl.isNotBlank() && cachedAnon.isNotBlank()) {
                 com.aurasath.music.SupabaseConfig.init(
                     url = cachedUrl,
                     anon = cachedAnon,
-                    secret = cachedSecret,
                     jwks = cachedJwks.ifBlank { com.aurasath.music.BuildConfig.SUPABASE_JWKS_URL }
                 )
             }
@@ -1153,12 +1150,7 @@ class MainActivity : ComponentActivity() {
 
                 val onSearch: (String) -> Unit = remember(localOnlyMode, navController, onQueryChange, playerConnection) {
                     { searchQuery ->
-                        if (BuildConfig.ADMIN_PASSWORD.isNotBlank() && searchQuery == BuildConfig.ADMIN_PASSWORD) {
-                            searchKeyboardActive = false
-                            searchOverlayOpen = false
-                            onQueryChange(TextFieldValue())
-                            navController.navigate("admin_panel")
-                        } else if (searchQuery.isNotEmpty()) {
+                        if (searchQuery.isNotEmpty()) {
                             searchKeyboardActive = false
                             searchOverlayOpen = false
                             when (val parsedUrl = YouTubeUrlParser.parse(searchQuery)) {
@@ -1493,15 +1485,13 @@ class MainActivity : ComponentActivity() {
                                         val jsonObject = org.json.JSONObject(body)
                                         val urlVal = jsonObject.optString("supabase_url")
                                         val anonVal = jsonObject.optString("supabase_anon_key")
-                                        val secretVal = jsonObject.optString("supabase_secret_key")
                                         val jwksVal = jsonObject.optString("supabase_jwks_url")
 
-                                        if (!urlVal.isNullOrBlank() && !anonVal.isNullOrBlank() && !secretVal.isNullOrBlank()) {
+                                        if (!urlVal.isNullOrBlank() && !anonVal.isNullOrBlank()) {
                                             // Save to local cache
                                             dataStore.edit { prefs ->
                                                 prefs[CachedSupabaseUrlKey] = urlVal
                                                 prefs[CachedSupabaseAnonKey] = anonVal
-                                                prefs[CachedSupabaseSecretKey] = secretVal
                                                 if (!jwksVal.isNullOrBlank()) {
                                                     prefs[CachedSupabaseJwksUrlKey] = jwksVal
                                                 }
@@ -1510,7 +1500,6 @@ class MainActivity : ComponentActivity() {
                                             com.aurasath.music.SupabaseConfig.init(
                                                 url = urlVal,
                                                 anon = anonVal,
-                                                secret = secretVal,
                                                 jwks = if (!jwksVal.isNullOrBlank()) jwksVal else com.aurasath.music.BuildConfig.SUPABASE_JWKS_URL
                                             )
                                         }

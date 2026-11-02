@@ -68,11 +68,6 @@ android {
             ?: System.getenv("SUPABASE_PUBLISHABLE_KEY") 
             ?: "sb_publishable_naEdCcOYTrfNdbm3OLN4tw_Ea7mkqWn"
 
-        val supabaseSecretKey = envProperties.getProperty("SUPABASE_SECRET_KEY") 
-            ?: localProperties.getProperty("SUPABASE_SECRET_KEY") 
-            ?: System.getenv("SUPABASE_SECRET_KEY") 
-            ?: ""
-
         val supabaseJwksUrl = envProperties.getProperty("SUPABASE_JWKS_URL") 
             ?: localProperties.getProperty("SUPABASE_JWKS_URL") 
             ?: System.getenv("SUPABASE_JWKS_URL") 
@@ -80,15 +75,7 @@ android {
 
         buildConfigField("String", "SUPABASE_URL", "\"$supabaseUrl\"")
         buildConfigField("String", "SUPABASE_PUBLISHABLE_KEY", "\"$supabasePublishableKey\"")
-        buildConfigField("String", "SUPABASE_SECRET_KEY", "\"$supabaseSecretKey\"")
         buildConfigField("String", "SUPABASE_JWKS_URL", "\"$supabaseJwksUrl\"")
-
-        // Admin panel password from .env, local.properties, or environment variables
-        val adminPassword = envProperties.getProperty("ADMIN_PASSWORD")
-            ?: localProperties.getProperty("ADMIN_PASSWORD")
-            ?: System.getenv("ADMIN_PASSWORD")
-            ?: ""
-        buildConfigField("String", "ADMIN_PASSWORD", "\"$adminPassword\"")
 
 //add nightly build label support
         val isNightly = project.hasProperty("nightly") && project.property("nightly") == "true"
