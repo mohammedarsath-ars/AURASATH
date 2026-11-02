@@ -182,10 +182,13 @@ import com.aurasath.music.playback.queues.YouTubeQueue
 import com.aurasath.music.ui.component.AlbumGridItem
 import com.aurasath.music.ui.component.ArtistGridItem
 import com.aurasath.music.ui.component.ChipsRow
+import com.aurasath.music.ui.component.CinematicHeroCard
 import com.aurasath.music.ui.component.HideOnScrollFAB
 import com.aurasath.music.ui.component.HomeHeroCard
 import com.aurasath.music.ui.component.HomeImageBackground
+import com.aurasath.music.ui.component.HomeVibeDeck
 import com.aurasath.music.ui.component.ListItem
+import com.aurasath.music.ui.component.LiveAuroraMeshBackground
 import com.aurasath.music.ui.component.LocalBottomSheetPageState
 import com.aurasath.music.ui.component.LocalMenuState
 import com.aurasath.music.ui.component.MenuState
