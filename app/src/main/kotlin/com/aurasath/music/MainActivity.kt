@@ -530,6 +530,7 @@ class MainActivity : ComponentActivity() {
     }
 
     override fun onDestroy() {
+        hasShownStartupSplash = false
         super.onDestroy()
         // Covers a deliberate back-out, where the activity really is finishing. The swipe
         // -from-recents case is handled in MusicService.onTaskRemoved instead: there
@@ -836,7 +837,7 @@ class MainActivity : ComponentActivity() {
                     )
             ) {
                 // App Startup Animated Splash Overlay & Opening Entrance Animation
-                var showAppSplash by remember { mutableStateOf(!hasShownStartupSplash) }
+                var showAppSplash by rememberSaveable { mutableStateOf(!hasShownStartupSplash) }
                 val appEntranceScale by animateFloatAsState(
                     targetValue = if (showAppSplash) 0.95f else 1.0f,
                     animationSpec = tween(durationMillis = 550, easing = FastOutSlowInEasing),
@@ -2807,7 +2808,7 @@ class MainActivity : ComponentActivity() {
 
         LaunchedEffect(Unit) {
             emblemEntered = true
-            delay(850L)
+            delay(1750L)
             isVisible = false
             delay(450L)
             safeDismiss()
@@ -2815,35 +2816,35 @@ class MainActivity : ComponentActivity() {
 
         val alphaAnim by animateFloatAsState(
             targetValue = if (isVisible) 1f else 0f,
-            animationSpec = tween(durationMillis = 400, easing = FastOutSlowInEasing),
+            animationSpec = tween(durationMillis = 420, easing = FastOutSlowInEasing),
             label = "splashAlpha",
             finishedListener = { if (!isVisible) safeDismiss() }
         )
 
         val scaleAnim by animateFloatAsState(
-            targetValue = if (isVisible) 1f else 1.15f,
-            animationSpec = tween(durationMillis = 400, easing = FastOutSlowInEasing),
+            targetValue = if (isVisible) 1f else 1.10f,
+            animationSpec = tween(durationMillis = 420, easing = FastOutSlowInEasing),
             label = "splashScale"
         )
 
         val emblemScale by animateFloatAsState(
-            targetValue = if (emblemEntered) 1f else 0.72f,
+            targetValue = if (emblemEntered) 1f else 0.58f,
             animationSpec = spring(
-                dampingRatio = Spring.DampingRatioMediumBouncy,
-                stiffness = Spring.StiffnessMediumLow
+                dampingRatio = 0.65f,
+                stiffness = Spring.StiffnessLow
             ),
             label = "emblemScale"
         )
         val emblemAlpha by animateFloatAsState(
             targetValue = if (emblemEntered) 1f else 0f,
-            animationSpec = tween(durationMillis = 350, easing = FastOutSlowInEasing),
+            animationSpec = tween(durationMillis = 380, easing = FastOutSlowInEasing),
             label = "emblemAlpha"
         )
 
         val infiniteTransition = rememberInfiniteTransition(label = "pulseRing")
         val pulseScale1 by infiniteTransition.animateFloat(
             initialValue = 0.95f,
-            targetValue = 1.38f,
+            targetValue = 1.45f,
             animationSpec = infiniteRepeatable(
                 animation = tween(1200, easing = LinearEasing),
                 repeatMode = RepeatMode.Restart
@@ -2851,7 +2852,7 @@ class MainActivity : ComponentActivity() {
             label = "pulse1"
         )
         val pulseAlpha1 by infiniteTransition.animateFloat(
-            initialValue = 0.6f,
+            initialValue = 0.65f,
             targetValue = 0f,
             animationSpec = infiniteRepeatable(
                 animation = tween(1200, easing = LinearEasing),
@@ -2862,7 +2863,7 @@ class MainActivity : ComponentActivity() {
 
         val pulseScale2 by infiniteTransition.animateFloat(
             initialValue = 0.95f,
-            targetValue = 1.65f,
+            targetValue = 1.78f,
             animationSpec = infiniteRepeatable(
                 animation = tween(1600, easing = LinearEasing),
                 repeatMode = RepeatMode.Restart
@@ -2870,7 +2871,7 @@ class MainActivity : ComponentActivity() {
             label = "pulse2"
         )
         val pulseAlpha2 by infiniteTransition.animateFloat(
-            initialValue = 0.4f,
+            initialValue = 0.45f,
             targetValue = 0f,
             animationSpec = infiniteRepeatable(
                 animation = tween(1600, easing = LinearEasing),
@@ -2878,6 +2879,86 @@ class MainActivity : ComponentActivity() {
             ),
             label = "pulseAlpha2"
         )
+
+        val pulseScale3 by infiniteTransition.animateFloat(
+            initialValue = 0.95f,
+            targetValue = 2.10f,
+            animationSpec = infiniteRepeatable(
+                animation = tween(2000, easing = LinearEasing),
+                repeatMode = RepeatMode.Restart
+            ),
+            label = "pulse3"
+        )
+        val pulseAlpha3 by infiniteTransition.animateFloat(
+            initialValue = 0.30f,
+            targetValue = 0f,
+            animationSpec = infiniteRepeatable(
+                animation = tween(2000, easing = LinearEasing),
+                repeatMode = RepeatMode.Restart
+            ),
+            label = "pulseAlpha3"
+        )
+
+        // Musical equalizer soundwave animations
+        val eqTransition = rememberInfiniteTransition(label = "eqWave")
+        val bar1Height by eqTransition.animateFloat(
+            initialValue = 5f,
+            targetValue = 18f,
+            animationSpec = infiniteRepeatable(
+                animation = tween(420, easing = FastOutSlowInEasing),
+                repeatMode = RepeatMode.Reverse
+            ),
+            label = "bar1"
+        )
+        val bar2Height by eqTransition.animateFloat(
+            initialValue = 7f,
+            targetValue = 24f,
+            animationSpec = infiniteRepeatable(
+                animation = tween(360, delayMillis = 80, easing = FastOutSlowInEasing),
+                repeatMode = RepeatMode.Reverse
+            ),
+            label = "bar2"
+        )
+        val bar3Height by eqTransition.animateFloat(
+            initialValue = 9f,
+            targetValue = 28f,
+            animationSpec = infiniteRepeatable(
+                animation = tween(480, delayMillis = 40, easing = FastOutSlowInEasing),
+                repeatMode = RepeatMode.Reverse
+            ),
+            label = "bar3"
+        )
+        val bar4Height by eqTransition.animateFloat(
+            initialValue = 6f,
+            targetValue = 22f,
+            animationSpec = infiniteRepeatable(
+                animation = tween(390, delayMillis = 120, easing = FastOutSlowInEasing),
+                repeatMode = RepeatMode.Reverse
+            ),
+            label = "bar4"
+        )
+        val bar5Height by eqTransition.animateFloat(
+            initialValue = 4f,
+            targetValue = 16f,
+            animationSpec = infiniteRepeatable(
+                animation = tween(440, delayMillis = 160, easing = FastOutSlowInEasing),
+                repeatMode = RepeatMode.Reverse
+            ),
+            label = "bar5"
+        )
+
+        val primaryColor = MaterialTheme.colorScheme.primary
+        val bgBrush = remember(primaryColor) {
+            Brush.radialGradient(
+                colors = listOf(
+                    primaryColor.copy(alpha = 0.22f),
+                    primaryColor.copy(alpha = 0.06f),
+                    Color(0xFF090A0E),
+                    Color(0xFF030305),
+                ),
+                radius = 900f
+            )
+        }
 
         Box(
             modifier = Modifier
@@ -2887,7 +2968,7 @@ class MainActivity : ComponentActivity() {
                     scaleX = scaleAnim
                     scaleY = scaleAnim
                 }
-                .background(MaterialTheme.colorScheme.background)
+                .background(bgBrush)
                 .clickable(
                     interactionSource = remember { androidx.compose.foundation.interaction.MutableInteractionSource() },
                     indication = null
@@ -2896,29 +2977,39 @@ class MainActivity : ComponentActivity() {
                 },
             contentAlignment = Alignment.Center
         ) {
-            // Expanding Sonic Ripples
+            // Expanding Sonic Ripples (Triple Harmonic Rings)
             Box(
                 modifier = Modifier
-                    .size(150.dp)
+                    .size(170.dp)
+                    .graphicsLayer {
+                        scaleX = pulseScale3
+                        scaleY = pulseScale3
+                        alpha = pulseAlpha3 * emblemAlpha
+                    }
+                    .border(1.dp, primaryColor.copy(alpha = 0.3f), RoundedCornerShape(48.dp))
+            )
+            Box(
+                modifier = Modifier
+                    .size(145.dp)
                     .graphicsLayer {
                         scaleX = pulseScale2
                         scaleY = pulseScale2
                         alpha = pulseAlpha2 * emblemAlpha
                     }
-                    .border(1.5.dp, MaterialTheme.colorScheme.primary.copy(alpha = 0.4f), RoundedCornerShape(42.dp))
+                    .border(1.5.dp, primaryColor.copy(alpha = 0.5f), RoundedCornerShape(42.dp))
             )
             Box(
                 modifier = Modifier
-                    .size(130.dp)
+                    .size(125.dp)
                     .graphicsLayer {
                         scaleX = pulseScale1
                         scaleY = pulseScale1
                         alpha = pulseAlpha1 * emblemAlpha
                     }
-                    .border(2.dp, MaterialTheme.colorScheme.primary.copy(alpha = 0.6f), RoundedCornerShape(36.dp))
+                    .border(2.dp, primaryColor.copy(alpha = 0.75f), RoundedCornerShape(36.dp))
             )
 
-            // Center AURASATH Emblem Card
+            // Center AURASATH Emblem & Musical Preloader Deck
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Center,
@@ -2930,9 +3021,9 @@ class MainActivity : ComponentActivity() {
             ) {
                 Surface(
                     shape = RoundedCornerShape(26.dp),
-                    color = Color.Transparent,
-                    border = androidx.compose.foundation.BorderStroke(1.5.dp, MaterialTheme.colorScheme.primary.copy(alpha = 0.6f)),
-                    shadowElevation = 12.dp,
+                    color = Color.Black.copy(alpha = 0.4f),
+                    border = androidx.compose.foundation.BorderStroke(1.5.dp, primaryColor.copy(alpha = 0.7f)),
+                    shadowElevation = 16.dp,
                     modifier = Modifier.size(96.dp)
                 ) {
                     Image(
@@ -2951,8 +3042,8 @@ class MainActivity : ComponentActivity() {
                     text = "AURASATH",
                     style = MaterialTheme.typography.headlineMedium,
                     fontWeight = FontWeight.ExtraBold,
-                    letterSpacing = 4.sp,
-                    color = MaterialTheme.colorScheme.primary
+                    letterSpacing = 5.sp,
+                    color = primaryColor
                 )
 
                 Spacer(Modifier.height(6.dp))
@@ -2960,9 +3051,54 @@ class MainActivity : ComponentActivity() {
                 Text(
                     text = "YOUR SOUND • YOUR UNIVERSE",
                     style = MaterialTheme.typography.labelSmall,
-                    letterSpacing = 2.sp,
-                    color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.6f)
+                    letterSpacing = 2.5.sp,
+                    color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.65f)
                 )
+
+                Spacer(Modifier.height(20.dp))
+
+                // Rhythmic Equalizer Soundwave Preloader
+                Row(
+                    horizontalArrangement = Arrangement.spacedBy(4.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier.height(30.dp)
+                ) {
+                    Box(
+                        modifier = Modifier
+                            .width(3.5.dp)
+                            .height(bar1Height.dp)
+                            .clip(RoundedCornerShape(2.dp))
+                            .background(primaryColor.copy(alpha = 0.7f))
+                    )
+                    Box(
+                        modifier = Modifier
+                            .width(3.5.dp)
+                            .height(bar2Height.dp)
+                            .clip(RoundedCornerShape(2.dp))
+                            .background(primaryColor)
+                    )
+                    Box(
+                        modifier = Modifier
+                            .width(3.5.dp)
+                            .height(bar3Height.dp)
+                            .clip(RoundedCornerShape(2.dp))
+                            .background(primaryColor)
+                    )
+                    Box(
+                        modifier = Modifier
+                            .width(3.5.dp)
+                            .height(bar4Height.dp)
+                            .clip(RoundedCornerShape(2.dp))
+                            .background(primaryColor)
+                    )
+                    Box(
+                        modifier = Modifier
+                            .width(3.5.dp)
+                            .height(bar5Height.dp)
+                            .clip(RoundedCornerShape(2.dp))
+                            .background(primaryColor.copy(alpha = 0.7f))
+                    )
+                }
             }
         }
     }

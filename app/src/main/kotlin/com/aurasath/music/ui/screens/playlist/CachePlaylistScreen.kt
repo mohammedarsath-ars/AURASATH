@@ -639,7 +639,7 @@ private fun CachePlaylistHeader(
     val downloads by com.aurasath.music.LocalDownloadUtil.current.downloads.collectAsState()
     val isPlaying by playerConnection.isEffectivelyPlaying.collectAsState()
     val mediaMetadata by playerConnection.mediaMetadata.collectAsState()
-    val cacheLength = remember(songs) { songs.fastSumBy { it.song.duration ?: 0 } }
+    val cacheLength = remember(songs) { songs.fastSumBy { it.song.duration } }
 
     val heroUrl = songs.firstOrNull()?.thumbnailUrl
     val heroSource = com.aurasath.music.ui.component.rememberHeroSource(

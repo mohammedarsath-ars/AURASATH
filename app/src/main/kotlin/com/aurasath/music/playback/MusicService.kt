@@ -3554,7 +3554,7 @@ class MusicService :
                 }
 
                 val streamUrl = nonNullPlayback.streamUrl
-                Timber.tag("SpineDebug").d("DataSourceResolver: resolved mediaId=$mediaId isSpineStream=${nonNullPlayback.isSpineStream} isTidalStream=${nonNullPlayback.isTidalStream} streamUrl=${streamUrl?.take(120)}")
+                Timber.tag("SpineDebug").d("DataSourceResolver: resolved mediaId=$mediaId isSpineStream=${nonNullPlayback.isSpineStream} isTidalStream=${nonNullPlayback.isTidalStream} streamUrl=${streamUrl.take(120)}")
 
                 if (nonNullPlayback.isTidalStream || nonNullPlayback.isSpineStream) {
                     losslessStreamMediaIds.add(mediaId)
