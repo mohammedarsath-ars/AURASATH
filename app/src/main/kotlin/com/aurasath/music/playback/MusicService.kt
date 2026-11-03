@@ -1753,13 +1753,14 @@ class MusicService :
             // Track original queue size for shuffle playlist first feature
             originalQueueSize = initialStatus.items.size
             if (queue.preloadItem != null) {
+                val validIndex = initialStatus.mediaItemIndex.coerceIn(0, initialStatus.items.size - 1)
                 player.addMediaItems(
                     0,
-                    initialStatus.items.subList(0, initialStatus.mediaItemIndex)
+                    initialStatus.items.subList(0, validIndex)
                 )
                 player.addMediaItems(
                     initialStatus.items.subList(
-                        initialStatus.mediaItemIndex + 1,
+                        validIndex + 1,
                         initialStatus.items.size
                     )
                 )

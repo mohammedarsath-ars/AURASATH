@@ -474,8 +474,8 @@ fun AutoPlaylistScreen(
                                                 playerConnection.playQueue(
                                                     ListQueue(
                                                         title = playlistName,
-                                                        items = songs.map { it.toMediaItem() },
-                                                        startIndex = songs.indexOfFirst { it.id == song.id },
+                                                        items = filteredSongs.map { it.toMediaItem() },
+                                                        startIndex = index.coerceIn(0, (filteredSongs.size - 1).coerceAtLeast(0)),
                                                     ),
                                                 )
                                             }

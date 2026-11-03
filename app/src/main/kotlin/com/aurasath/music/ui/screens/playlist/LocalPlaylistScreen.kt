@@ -879,11 +879,12 @@ fun LocalPlaylistScreen(
                                         } else if (song.song.id == mediaMetadata?.id) {
                                             playerConnection.togglePlayPause()
                                         } else {
+                                            val currentList = if (isSearching) filteredSongs else mutableSongs
                                             playerConnection.playQueue(
                                                 ListQueue(
                                                     title = playlist!!.playlist.name,
-                                                    items = songs.map { it.song.toMediaItem() },
-                                                    startIndex = songs.indexOfFirst { it.map.id == song.map.id },
+                                                    items = currentList.map { it.song.toMediaItem() },
+                                                    startIndex = index.coerceIn(0, (currentList.size - 1).coerceAtLeast(0)),
                                                 ),
                                             )
                                         }

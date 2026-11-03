@@ -485,8 +485,8 @@ fun TopPlaylistScreen(
                                             playerConnection.playQueue(
                                                 ListQueue(
                                                     title = name,
-                                                    items = songs!!.map { it.toMediaItem() },
-                                                    startIndex = songs!!.indexOfFirst { it.id == song.id }
+                                                    items = filteredSongs.map { it.toMediaItem() },
+                                                    startIndex = index.coerceIn(0, (filteredSongs.size - 1).coerceAtLeast(0)),
                                                 ),
                                             )
                                         }
