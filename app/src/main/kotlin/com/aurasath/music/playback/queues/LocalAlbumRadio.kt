@@ -18,7 +18,7 @@ import com.aurasath.music.models.toMediaMetadata
 class LocalAlbumRadio(
     private val albumWithSongs: AlbumWithSongs,
     private val startIndex: Int = 0,
-    override val preloadItem: MediaMetadata? = albumWithSongs.songs.getOrNull(startIndex)?.toMediaMetadata(),
+    override val preloadItem: MediaMetadata? = null,
 ) : Queue {
 
     private lateinit var playlistId: String

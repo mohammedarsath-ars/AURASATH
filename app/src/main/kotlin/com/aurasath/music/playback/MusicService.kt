@@ -1752,28 +1752,17 @@ class MusicService :
             if (initialStatus.items.isEmpty()) return@launch
             // Track original queue size for shuffle playlist first feature
             originalQueueSize = initialStatus.items.size
+            val validIndex = initialStatus.mediaItemIndex.coerceIn(0, (initialStatus.items.size - 1).coerceAtLeast(0))
             if (queue.preloadItem != null) {
-                val validIndex = initialStatus.mediaItemIndex.coerceIn(0, initialStatus.items.size - 1)
-                player.addMediaItems(
-                    0,
-                    initialStatus.items.subList(0, validIndex)
-                )
-                player.addMediaItems(
-                    initialStatus.items.subList(
-                        validIndex + 1,
-                        initialStatus.items.size
-                    )
+                player.setMediaItems(
+                    initialStatus.items,
+                    validIndex,
+                    if (player.currentMediaItemIndex == 0 && validIndex == 0) player.currentPosition else initialStatus.position
                 )
             } else {
                 player.setMediaItems(
                     initialStatus.items,
-                    if (initialStatus.mediaItemIndex >
-                        0
-                    ) {
-                        initialStatus.mediaItemIndex
-                    } else {
-                        0
-                    },
+                    validIndex,
                     initialStatus.position,
                 )
                 player.prepare()
