@@ -182,13 +182,10 @@ import com.aurasath.music.playback.queues.YouTubeQueue
 import com.aurasath.music.ui.component.AlbumGridItem
 import com.aurasath.music.ui.component.ArtistGridItem
 import com.aurasath.music.ui.component.ChipsRow
-import com.aurasath.music.ui.component.CinematicHeroCard
 import com.aurasath.music.ui.component.HideOnScrollFAB
 import com.aurasath.music.ui.component.HomeHeroCard
 import com.aurasath.music.ui.component.HomeImageBackground
-import com.aurasath.music.ui.component.HomeVibeDeck
 import com.aurasath.music.ui.component.ListItem
-import com.aurasath.music.ui.component.LiveAuroraMeshBackground
 import com.aurasath.music.ui.component.LocalBottomSheetPageState
 import com.aurasath.music.ui.component.LocalMenuState
 import com.aurasath.music.ui.component.MenuState
@@ -1288,16 +1285,30 @@ fun HomeScreen(
             modifier = Modifier.fillMaxSize(),
             contentAlignment = Alignment.TopStart
         ) {
-            // Base fill with rich ambient atmospheric fluid aurora mesh
+            // Base fill with rich ambient atmospheric gradient aura
             val homeBgBase = rememberAppBackgroundColor(MaterialTheme.colorScheme.background)
             val globalAccent = rememberGlobalAccentColors().first
             val tertiaryColor = MaterialTheme.colorScheme.tertiary
-            LiveAuroraMeshBackground(
-                modifier = Modifier.matchParentSize(),
-                baseColor = homeBgBase,
-                primaryAccent = globalAccent,
-                secondaryAccent = tertiaryColor,
+            val ambientGradient = remember(globalAccent, tertiaryColor) {
+                Brush.verticalGradient(
+                    0.0f to globalAccent.copy(alpha = 0.22f),
+                    0.20f to tertiaryColor.copy(alpha = 0.14f),
+                    0.45f to globalAccent.copy(alpha = 0.06f),
+                    0.75f to Color.Transparent,
+                    1.0f to Color.Transparent,
+                )
+            }
+            Box(
+                modifier = Modifier
+                    .matchParentSize()
+                    .background(homeBgBase)
             )
+            Box(
+                modifier = Modifier
+                    .matchParentSize()
+                    .background(ambientGradient)
+            )
+
             HomeImageBackground(contentLoaded = homePage != null)
 
             val horizontalLazyGridItemWidthFactor = if (maxWidth * 0.475f >= 320.dp) 0.475f else 0.9f
@@ -1484,19 +1495,6 @@ fun HomeScreen(
                                 )
                             }
                         }
-                    }
-                }
-
-                if (!localOnly) {
-                    item(key = "home_vibe_deck", contentType = "vibe_deck") {
-                        var activeVibeId by rememberSaveable { mutableStateOf<String?>(null) }
-                        HomeVibeDeck(
-                            activeVibeId = activeVibeId,
-                            onVibeSelected = { vibe ->
-                                activeVibeId = if (activeVibeId == vibe.id) null else vibe.id
-                                navController.navigate("search/${java.net.URLEncoder.encode(vibe.query, "UTF-8")}")
-                            },
-                            )
                     }
                 }
 
@@ -2094,19 +2092,32 @@ private fun LazyListScope.heroSection(
             val heroSubtitle = remember(top.id) {
                 top.artists.joinToString { it.name }
             }
-            CinematicHeroCard(
+            HomeHeroCard(
                 title = top.song.title,
                 subtitle = heroSubtitle,
                 thumbnailUrl = top.song.thumbnailUrl,
-                tag = "FEATURED SPOTLIGHT",
-                badge = "⚡ HI-RES LOSSLESS",
-                onPlayClick = {
+                onPlay = {
                     deps.playerConnection.playQueue(
                         ListQueue(
                             title = top.song.title,
                             items = quickPicks.orEmpty().map { it.toMediaItem() },
                         )
                     )
+                },
+                onShuffle = {
+                    val quickList = quickPicks.orEmpty().map { it.toMediaItem() }
+                    if (quickList.isNotEmpty()) {
+                        deps.playerConnection.playQueue(
+                            ListQueue(
+                                title = top.song.title,
+                                items = quickList.shuffled(),
+                            )
+                        )
+                    } else {
+                        deps.playerConnection.playQueue(
+                            YouTubeQueue.radio(top.toMediaMetadata())
+                        )
+                    }
                 },
                 onClick = {
                     val quickList = quickPicks.orEmpty().map { it.toMediaItem() }
