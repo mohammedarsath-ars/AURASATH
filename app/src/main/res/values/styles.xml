@@ -16,4 +16,8 @@
     <style name="Theme.Widget.AURASATH" parent="@android:style/Theme.DeviceDefault.DayNight">
         <item name="android:colorBackground">#E6E1E5</item>
     </style>
+
+    <!-- Widget Theme compatibility aliases -->
+    <style name="Theme.Widget.PulseWave" parent="Theme.Widget.AURASATH" />
+    <style name="Theme.Widget.BeatWave" parent="Theme.Widget.AURASATH" />
 </resources>

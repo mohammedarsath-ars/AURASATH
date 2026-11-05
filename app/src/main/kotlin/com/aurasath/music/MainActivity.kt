@@ -444,6 +444,10 @@ class MainActivity : ComponentActivity() {
         var hasShownStartupSplash = false
         private const val ACTION_SEARCH = "com.aurasath.music.action.SEARCH"
         private const val ACTION_LIBRARY = "com.aurasath.music.action.LIBRARY"
+        const val ACTION_EXPAND_PLAYER = "com.aurasath.music.action.EXPAND_PLAYER"
+        const val ACTION_OPEN_LYRICS = "com.aurasath.music.action.OPEN_LYRICS"
+        const val EXTRA_EXPAND_PLAYER = "expand_player"
+        const val EXTRA_OPEN_LYRICS = "open_lyrics"
 
         // Ignore a repeat bottom-nav navigate() to the same route within this
         // window, so the floating tab bar's predictive (press/drag) fire can't

@@ -39,8 +39,9 @@ object GitHubIssueService {
     /**
      * Checks if a GitHub Issue API token is configured.
      */
+    private const val GITHUB_ISSUE_TOKEN = ""
     val isApiConfigured: Boolean
-        get() = BuildConfig.GITHUB_ISSUE_TOKEN.isNotBlank()
+        get() = GITHUB_ISSUE_TOKEN.isNotBlank()
 
     /**
      * Constructs a prefilled GitHub issue URL with Markdown body, tags, and reporter info.
@@ -91,7 +92,7 @@ object GitHubIssueService {
         deviceInfo: String? = null,
         isBug: Boolean = true
     ): Result<GitHubIssueResult> = withContext(Dispatchers.IO) {
-        val token = BuildConfig.GITHUB_ISSUE_TOKEN
+        val token = GITHUB_ISSUE_TOKEN
         if (token.isBlank()) {
             return@withContext Result.failure(IllegalStateException("No GITHUB_ISSUE_TOKEN configured"))
         }

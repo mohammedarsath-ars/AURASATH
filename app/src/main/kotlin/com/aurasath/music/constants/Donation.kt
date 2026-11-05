@@ -20,22 +20,12 @@ import java.util.Locale
  * Sourced from BuildConfig (generated from .env / local.properties / env var) with
  * user default "burhanuddin08@fam".
  */
-val DonationUpiId: String
-    get() = try {
-        BuildConfig.DONATION_UPI_ID.takeIf { it.isNotBlank() } ?: "burhanuddin08@fam"
-    } catch (_: Throwable) {
-        "burhanuddin08@fam"
-    }
+val DonationUpiId: String = "burhanuddin08@fam"
 
 /**
  * Payee name registered with UPI for Pulse Wave.
  */
-val DonationPayeeName: String
-    get() = try {
-        BuildConfig.DONATION_PAYEE_NAME.takeIf { it.isNotBlank() } ?: "BS.Framework5253"
-    } catch (_: Throwable) {
-        "BS.Framework5253"
-    }
+val DonationPayeeName: String = "BS.Framework5253"
 
 /**
  * Builds NPCI-compliant UPI payment URI with optional amount and note.
