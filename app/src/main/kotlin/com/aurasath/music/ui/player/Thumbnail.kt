@@ -66,6 +66,11 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.mutableFloatStateOf
+import androidx.lifecycle.compose.LocalLifecycleOwner
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
@@ -320,6 +325,63 @@ fun Thumbnail(
     // Pre-calculate text color based on background style
     val textBackgroundColor = getTextColor(playerBackground)
     
+    // Gyroscopic 3D Parallax Tilt for Album Artwork
+    val lifecycleOwner = LocalLifecycleOwner.current
+    val sensorManager = remember { context.getSystemService(android.content.Context.SENSOR_SERVICE) as? android.hardware.SensorManager }
+    var rawPitch by remember { mutableFloatStateOf(0f) }
+    var rawRoll by remember { mutableFloatStateOf(0f) }
+
+    DisposableEffect(sensorManager, lifecycleOwner) {
+        if (sensorManager == null) return@DisposableEffect onDispose {}
+        val sensor = sensorManager.getDefaultSensor(android.hardware.Sensor.TYPE_ROTATION_VECTOR)
+            ?: sensorManager.getDefaultSensor(android.hardware.Sensor.TYPE_ACCELEROMETER)
+
+        val listener = object : android.hardware.SensorEventListener {
+            override fun onSensorChanged(event: android.hardware.SensorEvent?) {
+                if (event == null) return
+                if (event.sensor.type == android.hardware.Sensor.TYPE_ROTATION_VECTOR) {
+                    val rotationMatrix = FloatArray(9)
+                    android.hardware.SensorManager.getRotationMatrixFromVector(rotationMatrix, event.values)
+                    val orientation = FloatArray(3)
+                    android.hardware.SensorManager.getOrientation(rotationMatrix, orientation)
+                    val pitchDeg = (Math.toDegrees(orientation[1].toDouble()).toFloat()).coerceIn(-12f, 12f)
+                    val rollDeg = (Math.toDegrees(orientation[2].toDouble()).toFloat()).coerceIn(-12f, 12f)
+                    rawPitch = pitchDeg
+                    rawRoll = rollDeg
+                } else if (event.sensor.type == android.hardware.Sensor.TYPE_ACCELEROMETER) {
+                    val ax = event.values[0]
+                    val ay = event.values[1]
+                    rawRoll = (-ax * 1.5f).coerceIn(-12f, 12f)
+                    rawPitch = (ay * 1.5f).coerceIn(-12f, 12f)
+                }
+            }
+
+            override fun onAccuracyChanged(s: android.hardware.Sensor?, accuracy: Int) {}
+        }
+
+        sensorManager.registerListener(listener, sensor, android.hardware.SensorManager.SENSOR_DELAY_UI)
+        onDispose {
+            sensorManager.unregisterListener(listener)
+        }
+    }
+
+    val animatedPitch by androidx.compose.animation.core.animateFloatAsState(
+        targetValue = rawPitch,
+        animationSpec = androidx.compose.animation.core.spring(
+            stiffness = androidx.compose.animation.core.Spring.StiffnessLow,
+            dampingRatio = androidx.compose.animation.core.Spring.DampingRatioLowBouncy
+        ),
+        label = "gyroPitch"
+    )
+    val animatedRoll by androidx.compose.animation.core.animateFloatAsState(
+        targetValue = rawRoll,
+        animationSpec = androidx.compose.animation.core.spring(
+            stiffness = androidx.compose.animation.core.Spring.StiffnessLow,
+            dampingRatio = androidx.compose.animation.core.Spring.DampingRatioLowBouncy
+        ),
+        label = "gyroRoll"
+    )
+
     // Grid state
     val thumbnailLazyGridState = rememberLazyGridState()
     
@@ -639,6 +701,9 @@ private fun ThumbnailItem(
     currentMediaId: String? = null,
     currentMediaThumbnail: String? = null,
     playerBackground: PlayerBackgroundStyle = PlayerBackgroundStyle.DEFAULT,
+    pitchAngle: Float = 0f,
+    rollAngle: Float = 0f,
+    isCurrentItem: Boolean = true,
     modifier: Modifier = Modifier,
 ) {
     val (artworkStyle) = rememberEnumPreference(PlayerArtworkStyleKey, defaultValue = PlayerArtworkStyle.CARD)
@@ -741,6 +806,11 @@ private fun ThumbnailItem(
                 )
                 .hideWhileMorphing()
                 .graphicsLayer {
+                    if (isCurrentItem) {
+                        rotationX = -pitchAngle
+                        rotationY = rollAngle
+                        cameraDistance = 16f * density
+                    }
                     rotationZ = rotation.value
                 }
                 .clip(
