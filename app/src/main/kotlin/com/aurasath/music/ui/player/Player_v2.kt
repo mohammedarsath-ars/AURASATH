@@ -40,6 +40,7 @@ import androidx.compose.ui.draw.scale
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
@@ -226,6 +227,62 @@ fun PlayerV2(
             lifecycleOwner.lifecycle.removeObserver(observer)
         }
     }
+
+    // Gyroscopic 3D Parallax Tilt for Album Artwork
+    val sensorManager = remember { context.getSystemService(android.content.Context.SENSOR_SERVICE) as? android.hardware.SensorManager }
+    var rawPitch by remember { mutableFloatStateOf(0f) }
+    var rawRoll by remember { mutableFloatStateOf(0f) }
+
+    DisposableEffect(sensorManager, lifecycleOwner) {
+        if (sensorManager == null) return@DisposableEffect onDispose {}
+        val sensor = sensorManager.getDefaultSensor(android.hardware.Sensor.TYPE_ROTATION_VECTOR)
+            ?: sensorManager.getDefaultSensor(android.hardware.Sensor.TYPE_ACCELEROMETER)
+
+        val listener = object : android.hardware.SensorEventListener {
+            override fun onSensorChanged(event: android.hardware.SensorEvent?) {
+                if (event == null) return
+                if (event.sensor.type == android.hardware.Sensor.TYPE_ROTATION_VECTOR) {
+                    val rotationMatrix = FloatArray(9)
+                    android.hardware.SensorManager.getRotationMatrixFromVector(rotationMatrix, event.values)
+                    val orientation = FloatArray(3)
+                    android.hardware.SensorManager.getOrientation(rotationMatrix, orientation)
+                    val pitchDeg = (Math.toDegrees(orientation[1].toDouble()).toFloat()).coerceIn(-12f, 12f)
+                    val rollDeg = (Math.toDegrees(orientation[2].toDouble()).toFloat()).coerceIn(-12f, 12f)
+                    rawPitch = pitchDeg
+                    rawRoll = rollDeg
+                } else if (event.sensor.type == android.hardware.Sensor.TYPE_ACCELEROMETER) {
+                    val ax = event.values[0]
+                    val ay = event.values[1]
+                    rawRoll = (-ax * 1.5f).coerceIn(-12f, 12f)
+                    rawPitch = (ay * 1.5f).coerceIn(-12f, 12f)
+                }
+            }
+
+            override fun onAccuracyChanged(s: android.hardware.Sensor?, accuracy: Int) {}
+        }
+
+        sensorManager.registerListener(listener, sensor, android.hardware.SensorManager.SENSOR_DELAY_UI)
+        onDispose {
+            sensorManager.unregisterListener(listener)
+        }
+    }
+
+    val animatedPitch by androidx.compose.animation.core.animateFloatAsState(
+        targetValue = rawPitch,
+        animationSpec = androidx.compose.animation.core.spring(
+            stiffness = androidx.compose.animation.core.Spring.StiffnessLow,
+            dampingRatio = androidx.compose.animation.core.Spring.DampingRatioLowBouncy
+        ),
+        label = "gyroPitch"
+    )
+    val animatedRoll by androidx.compose.animation.core.animateFloatAsState(
+        targetValue = rawRoll,
+        animationSpec = androidx.compose.animation.core.spring(
+            stiffness = androidx.compose.animation.core.Spring.StiffnessLow,
+            dampingRatio = androidx.compose.animation.core.Spring.DampingRatioLowBouncy
+        ),
+        label = "gyroRoll"
+    )
 
     val storedPlayerBackground by rememberEnumPreference(
         key = PlayerBackgroundStyleKey,
@@ -644,6 +701,11 @@ fun PlayerV2(
                                         // flight; without this both are on screen from
                                         // the handoff onward.
                                         .hideWhileMorphing()
+                                        .graphicsLayer {
+                                            rotationX = -animatedPitch
+                                            rotationY = animatedRoll
+                                            cameraDistance = 16f * density
+                                        }
                                         .customSoftShadow(
                                             elevation = playerThumbnailShadowElevation.dp, 
                                             cornerRadius = 16.dp, 

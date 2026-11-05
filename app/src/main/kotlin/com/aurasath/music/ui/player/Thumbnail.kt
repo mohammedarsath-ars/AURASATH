@@ -571,6 +571,7 @@ fun Thumbnail(
                                 item.mediaId.ifEmpty { "unknown_${item.hashCode()}" }
                             }
                         ) { item ->
+                            val isCurrentItem = item.mediaId == mediaMetadata?.id
                             ThumbnailItem(
                                 item = item,
                                 dimensions = dimensions,
@@ -585,7 +586,10 @@ fun Thumbnail(
                                 isListenTogetherGuest = isListenTogetherGuest,
                                 currentMediaId = mediaMetadata?.id,
                                 currentMediaThumbnail = mediaMetadata?.thumbnailUrl,
-                                playerBackground = playerBackground
+                                playerBackground = playerBackground,
+                                pitchAngle = animatedPitch,
+                                rollAngle = animatedRoll,
+                                isCurrentItem = isCurrentItem
                             )
                 }
             }
