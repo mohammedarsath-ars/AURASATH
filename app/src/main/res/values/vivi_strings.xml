@@ -1305,5 +1305,4 @@
     <string name="widget_nothing_player">Nothing OS Player</string>
     <string name="widget_playlist_title">Quick Playlist Launcher</string>
     <string name="widget_queue_title">Queue Preview</string>
-    <string name="queue_widget_description">Music player with queue preview</string>
 </resources>
