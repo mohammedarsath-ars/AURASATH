@@ -1725,6 +1725,10 @@ class MusicService :
         }
 
         currentQueue = queue
+        val playlistIdToTrack = queue.playlistId
+        if (playlistIdToTrack != null) {
+            PlaylistPlaybackTracker.saveActivePlaylist(this, playlistIdToTrack)
+        }
         queueTitle = null
         val persistShuffleAcrossQueues = dataStore.get(PersistentShuffleAcrossQueuesKey, false)
         val previousShuffleEnabled = player.shuffleModeEnabled
@@ -3687,7 +3691,37 @@ class MusicService :
     // ExoPlayer state must be read on its application thread (main), so only the
     // file IO goes to the worker; the single worker serializes saves so a newer
     // snapshot can't be overwritten by an older one.
+
+    fun updateActivePlaylistProgress(specifiedMediaItem: androidx.media3.common.MediaItem? = null) {
+        val activePid = currentQueue?.playlistId
+            ?: PlaylistPlaybackTracker.getActivePlaylist(this)
+        val curItem = specifiedMediaItem ?: player.currentMediaItem
+        if (activePid != null && curItem != null) {
+            if (player.playbackState == Player.STATE_ENDED) {
+                val nextIndex = (player.currentMediaItemIndex + 1) % player.mediaItemCount.coerceAtLeast(1)
+                val nextItem = if (player.mediaItemCount > 0) player.getMediaItemAt(nextIndex) else curItem
+                PlaylistPlaybackTracker.savePlaylistProgress(
+                    context = this,
+                    playlistId = activePid,
+                    songId = nextItem.mediaId,
+                    songIndex = nextIndex,
+                    positionMs = 0L,
+                )
+                return
+            }
+            val curPos = player.currentPosition
+            PlaylistPlaybackTracker.savePlaylistProgress(
+                context = this,
+                playlistId = activePid,
+                songId = curItem.mediaId,
+                songIndex = player.currentMediaItemIndex,
+                positionMs = curPos,
+            )
+        }
+    }
+
     private fun saveQueueToDisk() {
+        updateActivePlaylistProgress()
         val queue = currentQueue
         val title = queueTitle
         val items = player.mediaItems.mapNotNull { it.metadata }
@@ -3849,6 +3883,7 @@ class MusicService :
      * is the thing still holding playback, so it is also the thing that can stop it.
      */
     override fun onTaskRemoved(rootIntent: Intent?) {
+        updateActivePlaylistProgress()
         if (dataStore.get(StopMusicOnTaskClearKey, false)) {
             Timber.tag(TAG).d("Task removed with stop-on-task-clear enabled, stopping playback")
             player.stop()

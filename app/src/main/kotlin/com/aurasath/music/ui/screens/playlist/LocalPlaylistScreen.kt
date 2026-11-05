@@ -880,11 +880,16 @@ fun LocalPlaylistScreen(
                                             playerConnection.togglePlayPause()
                                         } else {
                                             val currentList = if (isSearching) filteredSongs else mutableSongs
+                                            val songIdx = index.coerceIn(0, (currentList.size - 1).coerceAtLeast(0))
+                                            playlist?.id?.let { pid ->
+                                                com.aurasath.music.playback.PlaylistPlaybackTracker.savePlaylistProgress(context, pid, song.song.id, songIdx)
+                                            }
                                             playerConnection.playQueue(
                                                 ListQueue(
                                                     title = playlist!!.playlist.name,
                                                     items = currentList.map { it.song.toMediaItem() },
-                                                    startIndex = index.coerceIn(0, (currentList.size - 1).coerceAtLeast(0)),
+                                                    startIndex = songIdx,
+                                                    playlistId = playlist?.id,
                                                 ),
                                             )
                                         }
@@ -1550,10 +1555,20 @@ fun LocalPlaylistHeader(
                         } else if (songs.any { it.song.id == mediaMetadata?.id }) {
                             playerConnection.player.play()
                         } else {
+                            val songIds = songs.map { it.song.id }
+                            val (startIndex, positionMs) = com.aurasath.music.playback.PlaylistPlaybackTracker.resolveStartProgress(context, playlist.id, songIds)
+                            if (startIndex > 0) {
+                                val songTitle = songs.getOrNull(startIndex)?.song?.title
+                                val msg = if (!songTitle.isNullOrBlank()) "Resuming from track #${startIndex + 1}: $songTitle" else "Resuming from track #${startIndex + 1}"
+                                android.widget.Toast.makeText(context, msg, android.widget.Toast.LENGTH_SHORT).show()
+                            }
                             playerConnection.playQueue(
                                 ListQueue(
                                     title = playlist.playlist.name,
                                     items = songs.map { it.song.toMediaItem() },
+                                    startIndex = startIndex,
+                                    position = positionMs,
+                                    playlistId = playlist.id,
                                 )
                             )
                         }
