@@ -78,27 +78,6 @@ fun AboutScreen(
     val uriHandler = LocalUriHandler.current
     val context = LocalContext.current
 
-    // Luxury Breathing Aura Animation
-    val infiniteTransition = rememberInfiniteTransition(label = "AuraPulse")
-    val pulseScale by infiniteTransition.animateFloat(
-        initialValue = 1f,
-        targetValue = 1.14f,
-        animationSpec = infiniteRepeatable(
-            animation = tween(2200, easing = FastOutSlowInEasing),
-            repeatMode = RepeatMode.Reverse
-        ),
-        label = "pulseScale"
-    )
-    val pulseAlpha by infiniteTransition.animateFloat(
-        initialValue = 0.35f,
-        targetValue = 0.65f,
-        animationSpec = infiniteRepeatable(
-            animation = tween(2200, easing = FastOutSlowInEasing),
-            repeatMode = RepeatMode.Reverse
-        ),
-        label = "pulseAlpha"
-    )
-
     Column(
         Modifier
             .windowInsetsPadding(LocalPlayerAwareWindowInsets.current)
@@ -112,57 +91,7 @@ fun AboutScreen(
                 .padding(top = 28.dp, bottom = 18.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Box(
-                contentAlignment = Alignment.Center,
-                modifier = Modifier.padding(bottom = 16.dp)
-            ) {
-                // Breathing Dynamic Ambient Halo
-                Box(
-                    modifier = Modifier
-                        .size(116.dp)
-                        .graphicsLayer {
-                            scaleX = pulseScale
-                            scaleY = pulseScale
-                            alpha = pulseAlpha
-                        }
-                        .background(
-                            brush = Brush.radialGradient(
-                                colors = listOf(
-                                    MaterialTheme.colorScheme.primary.copy(alpha = 0.5f),
-                                    Color(0xFF833AB4).copy(alpha = 0.25f),
-                                    Color.Transparent
-                                )
-                            ),
-                            shape = CircleShape
-                        )
-                )
-
-                // Elevated Squircle Container
-                Surface(
-                    shape = RoundedCornerShape(26.dp),
-                    color = Color.Transparent,
-                    border = BorderStroke(
-                        1.5.dp,
-                        Brush.linearGradient(
-                            listOf(
-                                MaterialTheme.colorScheme.primary.copy(alpha = 0.8f),
-                                Color(0xFF833AB4).copy(alpha = 0.6f)
-                            )
-                        )
-                    ),
-                    shadowElevation = 14.dp,
-                    modifier = Modifier.size(94.dp)
-                ) {
-                    Image(
-                        painter = painterResource(R.drawable.aurasath_logo),
-                        contentDescription = stringResource(R.string.wrapped_logo_content_description),
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .clip(RoundedCornerShape(26.dp)),
-                        contentScale = ContentScale.Crop
-                    )
-                }
-            }
+            AuraLogo()
 
             Text(
                 text = "AURASATH",
@@ -541,3 +470,82 @@ fun AboutScreen(
         scrollBehavior = scrollBehavior
     )
 }
+
+/**
+ * Isolated Aura Halo Logo to avoid recomposing the parent screen during 120 FPS animation
+ */
+@Composable
+private fun AuraLogo() {
+    val infiniteTransition = rememberInfiniteTransition(label = "AuraPulse")
+    val pulseScale by infiniteTransition.animateFloat(
+        initialValue = 1f,
+        targetValue = 1.14f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(2200, easing = FastOutSlowInEasing),
+            repeatMode = RepeatMode.Reverse
+        ),
+        label = "pulseScale"
+    )
+    val pulseAlpha by infiniteTransition.animateFloat(
+        initialValue = 0.35f,
+        targetValue = 0.65f,
+        animationSpec = infiniteRepeatable(
+            animation = tween(2200, easing = FastOutSlowInEasing),
+            repeatMode = RepeatMode.Reverse
+        ),
+        label = "pulseAlpha"
+    )
+
+    Box(
+        contentAlignment = Alignment.Center,
+        modifier = Modifier.padding(bottom = 16.dp)
+    ) {
+        // Breathing Dynamic Ambient Halo (Draw phase only)
+        Box(
+            modifier = Modifier
+                .size(116.dp)
+                .graphicsLayer {
+                    scaleX = pulseScale
+                    scaleY = pulseScale
+                    alpha = pulseAlpha
+                }
+                .background(
+                    brush = Brush.radialGradient(
+                        colors = listOf(
+                            MaterialTheme.colorScheme.primary.copy(alpha = 0.5f),
+                            Color(0xFF833AB4).copy(alpha = 0.25f),
+                            Color.Transparent
+                        )
+                    ),
+                    shape = CircleShape
+                )
+        )
+
+        // Elevated Squircle Container
+        Surface(
+            shape = RoundedCornerShape(26.dp),
+            color = Color.Transparent,
+            border = BorderStroke(
+                1.5.dp,
+                Brush.linearGradient(
+                    listOf(
+                        MaterialTheme.colorScheme.primary.copy(alpha = 0.8f),
+                        Color(0xFF833AB4).copy(alpha = 0.6f)
+                    )
+                )
+            ),
+            shadowElevation = 14.dp,
+            modifier = Modifier.size(94.dp)
+        ) {
+            Image(
+                painter = painterResource(R.drawable.aurasath_logo),
+                contentDescription = stringResource(R.string.wrapped_logo_content_description),
+                modifier = Modifier
+                    .fillMaxSize()
+                    .clip(RoundedCornerShape(26.dp)),
+                contentScale = ContentScale.Crop
+            )
+        }
+    }
+}
+

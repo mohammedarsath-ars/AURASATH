@@ -48,6 +48,7 @@
         android:allowBackup="false"
         android:appCategory="audio"
         android:banner="@mipmap/tv_banner"
+        android:hardwareAccelerated="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:enableOnBackInvokedCallback="true"
         android:fullBackupContent="@xml/backup_rules"
@@ -59,6 +60,10 @@
         android:supportsRtl="false"
         android:theme="@style/Theme.AURASATH"
         tools:targetApi="tiramisu">
+        <property
+            android:name="android.window.PROPERTY_COMPAT_ALLOW_HIGH_REFRESH_RATE"
+            android:value="true" />
+
         <uses-library
             android:name="org.apache.http.legacy"
             android:required="false" />
