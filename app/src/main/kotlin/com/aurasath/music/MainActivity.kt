@@ -201,6 +201,8 @@ import com.aurasath.music.constants.DisableScreenshotKey
 import com.aurasath.music.constants.DockedAccessoryHeight
 import com.aurasath.music.constants.DynamicThemeKey
 import com.aurasath.music.constants.EnableHighRefreshRateKey
+import com.aurasath.music.constants.EnableHapticFeedbackKey
+import com.aurasath.music.utils.HapticFeedbackHelper
 import com.aurasath.music.constants.EnableSettingsPopupKey
 import com.aurasath.music.constants.ForceTabletLayoutKey
 import com.aurasath.music.constants.IosOverscrollKey
@@ -648,7 +650,12 @@ class MainActivity : ComponentActivity() {
     ) {
         val enableDynamicTheme by rememberPreference(DynamicThemeKey, defaultValue = true)
         val enableHighRefreshRate by rememberPreference(EnableHighRefreshRateKey, defaultValue = true)
+        val enableHapticFeedback by rememberPreference(EnableHapticFeedbackKey, defaultValue = true)
         val context = LocalContext.current
+
+        LaunchedEffect(enableHapticFeedback) {
+            HapticFeedbackHelper.isEnabled = enableHapticFeedback
+        }
 
         LaunchedEffect(Unit) {
             if (getAutoUpdateCheckSetting(context)) {

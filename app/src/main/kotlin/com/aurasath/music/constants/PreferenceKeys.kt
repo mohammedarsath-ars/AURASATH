@@ -39,6 +39,7 @@ val V2PlayerIconsKey = stringPreferencesKey("v2PlayerIcons")
 /** JSON sticker arrangement drawn over the player. See ui/player/customize/DiyLayout.kt. */
 val DiyLayoutKey = stringPreferencesKey("diyLayout")
 val EnableHighRefreshRateKey = booleanPreferencesKey("enableHighRefreshRate")
+val EnableHapticFeedbackKey = booleanPreferencesKey("enableHapticFeedback")
 val DynamicThemeKey = booleanPreferencesKey("dynamicTheme")
 val SelectedThemeColorKey = intPreferencesKey("selectedThemeColor")
 val DarkModeKey = stringPreferencesKey("darkMode")

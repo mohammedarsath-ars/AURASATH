@@ -113,6 +113,8 @@ import com.aurasath.music.ui.utils.appTopBarWindowInsets
 import com.aurasath.music.constants.EnableSettingsPopupKey
 import com.aurasath.music.ui.utils.appTopBarWindowInsets
 import com.aurasath.music.constants.EnableHighRefreshRateKey
+import com.aurasath.music.constants.EnableHapticFeedbackKey
+import com.aurasath.music.utils.HapticFeedbackHelper
 import com.aurasath.music.ui.utils.appTopBarWindowInsets
 import com.aurasath.music.constants.EnableLyricsThumbnailPlayPauseKey
 import com.aurasath.music.constants.OneTapFullscreenLyricsKey
@@ -233,6 +235,10 @@ fun AppearanceSettings(
 
     val (enableHighRefreshRate, onEnableHighRefreshRateChange) = rememberPreference(
         EnableHighRefreshRateKey,
+        defaultValue = true
+    )
+    val (enableHapticFeedback, onEnableHapticFeedbackChange) = rememberPreference(
+        EnableHapticFeedbackKey,
         defaultValue = true
     )
     val (iosOverscroll, onIosOverscrollChange) = rememberPreference(
@@ -643,6 +649,38 @@ fun AppearanceSettings(
                             )
                         },
                         onClick = { onEnableHighRefreshRateChange(!enableHighRefreshRate) }
+                    )
+                )
+                add(
+                    Material3SettingsItem(
+                        icon = painterResource(R.drawable.vibrate),
+                        title = { Text("Haptic Feedback") },
+                        description = { Text("Tactile vibration response on controls and player interactions") },
+                        trailingContent = {
+                            Switch(
+                                checked = enableHapticFeedback,
+                                onCheckedChange = { newValue ->
+                                    onEnableHapticFeedbackChange(newValue)
+                                    HapticFeedbackHelper.isEnabled = newValue
+                                    if (newValue) HapticFeedbackHelper.click(context)
+                                },
+                                thumbContent = {
+                                    Icon(
+                                        painter = painterResource(
+                                            id = if (enableHapticFeedback) R.drawable.check else R.drawable.close
+                                        ),
+                                        contentDescription = null,
+                                        modifier = Modifier.size(SwitchDefaults.IconSize)
+                                    )
+                                }
+                            )
+                        },
+                        onClick = {
+                            val newValue = !enableHapticFeedback
+                            onEnableHapticFeedbackChange(newValue)
+                            HapticFeedbackHelper.isEnabled = newValue
+                            if (newValue) HapticFeedbackHelper.click(context)
+                        }
                     )
                 )
                 add(

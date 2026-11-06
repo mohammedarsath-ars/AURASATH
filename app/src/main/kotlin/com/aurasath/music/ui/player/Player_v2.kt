@@ -69,6 +69,7 @@ import androidx.compose.ui.text.style.TextAlign
 import com.aurasath.music.ui.theme.PlayerSliderColors
 import com.aurasath.music.utils.makeTimeString
 import com.aurasath.music.utils.rememberEnumPreference
+import com.aurasath.music.utils.HapticFeedbackHelper
 import com.aurasath.music.extensions.togglePlayPause
 import com.aurasath.music.ui.component.Lyrics
 import com.aurasath.music.ui.component.rememberBottomSheetState
@@ -1174,12 +1175,18 @@ fun PlayerV2(
                         valueRange = 0f..(if (duration == androidx.media3.common.C.TIME_UNSET) 0f else duration.toFloat()),
                         onValueChange = { value ->
                             if (!isListenTogetherGuest) {
-                                sliderPosition = value.toLong()
+                                val oldPos = sliderPosition ?: position
+                                val newPos = value.toLong()
+                                if (kotlin.math.abs(newPos - oldPos) >= 3000L) {
+                                    HapticFeedbackHelper.tick(context)
+                                }
+                                sliderPosition = newPos
                             }
                         },
                         onValueChangeFinished = {
                             if (!isListenTogetherGuest) {
                                 sliderPosition?.let { pos ->
+                                    HapticFeedbackHelper.click(context)
                                     playerConnection.player.seekTo(pos)
                                     position = pos
                                     sliderPosition = null
@@ -1229,7 +1236,7 @@ fun PlayerV2(
                         verticalAlignment = Alignment.CenterVertically
                     ) {
                         IconButton(
-                            onClick = { playerConnection.player.seekToPrevious() },
+                            onClick = { playerConnection.seekToPrevious() },
                             enabled = !isListenTogetherGuest && canSkipPrevious,
                             modifier = Modifier
                                 .size(56.dp)
@@ -1249,7 +1256,7 @@ fun PlayerV2(
                                 if (isListenTogetherGuest) {
                                     playerConnection.toggleMute()
                                 } else {
-                                    playerConnection.player.togglePlayPause()
+                                    playerConnection.togglePlayPause()
                                 }
                             },
                             modifier = Modifier.size(76.dp)
@@ -1273,7 +1280,7 @@ fun PlayerV2(
                         }
 
                         IconButton(
-                            onClick = { playerConnection.player.seekToNext() },
+                            onClick = { playerConnection.seekToNext() },
                             enabled = !isListenTogetherGuest && canSkipNext,
                             modifier = Modifier
                                 .size(56.dp)

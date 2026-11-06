@@ -25,6 +25,7 @@ import com.aurasath.music.extensions.metadata
 import com.aurasath.music.extensions.togglePlayPause
 import com.aurasath.music.playback.MusicService.MusicBinder
 import com.aurasath.music.playback.queues.Queue
+import com.aurasath.music.utils.HapticFeedbackHelper
 import com.aurasath.music.utils.reportException
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -321,6 +322,7 @@ class PlayerConnection(
 
     fun toggleLike() {
         try {
+            HapticFeedbackHelper.doubleClick(service)
             service.toggleLike()
         } catch (e: Exception) {
             Timber.tag(TAG).e(e, "Error in toggleLike")
@@ -337,6 +339,7 @@ class PlayerConnection(
 
     fun toggleLibrary() {
         try {
+            HapticFeedbackHelper.click(service)
             service.toggleLibrary()
         } catch (e: Exception) {
             Timber.tag(TAG).e(e, "Error in toggleLibrary")
@@ -345,6 +348,7 @@ class PlayerConnection(
 
     fun togglePlayPause() {
         try {
+            HapticFeedbackHelper.click(service)
             val castHandler = service.castConnectionHandler
             if (castHandler?.isCasting?.value == true) {
                 if (castHandler.castIsPlaying.value) {
@@ -407,6 +411,7 @@ class PlayerConnection(
      */
     fun seekTo(position: Long) {
         try {
+            HapticFeedbackHelper.tick(service)
             val castHandler = service.castConnectionHandler
             if (castHandler?.isCasting?.value == true) {
                 castHandler.seekTo(position)
@@ -420,6 +425,7 @@ class PlayerConnection(
 
     fun seekToNext() {
         try {
+            HapticFeedbackHelper.click(service)
             // When casting, use Cast skip instead of local player
             val castHandler = service.castConnectionHandler
             if (castHandler?.isCasting?.value == true) {
@@ -451,6 +457,7 @@ class PlayerConnection(
 
     fun seekToPrevious() {
         try {
+            HapticFeedbackHelper.click(service)
             // When casting, use Cast skip instead of local player
             val castHandler = service.castConnectionHandler
             if (castHandler?.isCasting?.value == true) {
