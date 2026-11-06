@@ -78,3 +78,4 @@ object HapticFeedbackHelper {
         } catch (_: Exception) {}
     }
 }
+
