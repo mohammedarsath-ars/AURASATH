@@ -170,12 +170,16 @@ class App : Application(), SingletonImageLoader.Factory {
         val locale = Locale.getDefault()
         val languageTag = locale.language
 
+        val country = settings[ContentCountryKey]?.takeIf { it != SYSTEM_DEFAULT }
+            ?: locale.country.takeIf { it in CountryCodeToName }
+            ?: "US"
+        val isIndia = country == "IN" || locale.country == "IN"
+
         YouTube.locale = YouTubeLocale(
-            gl = settings[ContentCountryKey]?.takeIf { it != SYSTEM_DEFAULT }
-                ?: locale.country.takeIf { it in CountryCodeToName }
-                ?: "US",
+            gl = country,
             hl = settings[ContentLanguageKey]?.takeIf { it != SYSTEM_DEFAULT }
-                ?: locale.language.takeIf { it in LanguageCodeToName }
+                ?: if (isIndia) "ta"
+                else locale.language.takeIf { it in LanguageCodeToName }
                 ?: languageTag.takeIf { it in LanguageCodeToName }
                 ?: "en"
         )
@@ -302,13 +306,17 @@ class App : Application(), SingletonImageLoader.Factory {
                         ?.let { Locale.forLanguageTag(it) }
                         ?: systemLocale
 
+                    val country = contentCountry?.takeIf { it != SYSTEM_DEFAULT }
+                        ?: effectiveAppLocale.country.takeIf { it in CountryCodeToName }
+                        ?: systemLocale.country.takeIf { it in CountryCodeToName }
+                        ?: "US"
+                    val isIndia = country == "IN" || systemLocale.country == "IN" || effectiveAppLocale.country == "IN"
+
                     YouTube.locale = YouTubeLocale(
-                        gl = contentCountry?.takeIf { it != SYSTEM_DEFAULT }
-                            ?: effectiveAppLocale.country.takeIf { it in CountryCodeToName }
-                            ?: systemLocale.country.takeIf { it in CountryCodeToName }
-                            ?: "US",
+                        gl = country,
                         hl = contentLanguage?.takeIf { it != SYSTEM_DEFAULT }
-                            ?: effectiveAppLocale.toLanguageTag().takeIf { it in LanguageCodeToName }
+                            ?: if (isIndia) "ta"
+                            else effectiveAppLocale.toLanguageTag().takeIf { it in LanguageCodeToName }
                             ?: effectiveAppLocale.language.takeIf { it in LanguageCodeToName }
                             ?: "en"
                     )

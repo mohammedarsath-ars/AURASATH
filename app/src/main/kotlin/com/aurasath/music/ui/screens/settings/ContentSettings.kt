@@ -210,7 +210,7 @@ fun ContentSettings(
     // Used only before Android 13
     val (appLanguage, onAppLanguageChange) = rememberPreference(key = AppLanguageKey, defaultValue = SYSTEM_DEFAULT)
 
-    val (contentLanguage, onContentLanguageChange) = rememberPreference(key = ContentLanguageKey, defaultValue = "system")
+    val (contentLanguage, onContentLanguageChange) = rememberPreference(key = ContentLanguageKey, defaultValue = "ta")
     val (contentCountry, onContentCountryChange) = rememberPreference(key = ContentCountryKey, defaultValue = "system")
     val (suggestionRegion, onSuggestionRegionChange) = rememberPreference(key = SuggestionRegionKey, defaultValue = "system")
     val (hideExplicit, onHideExplicitChange) = rememberPreference(key = HideExplicitKey, defaultValue = false)
@@ -415,7 +415,7 @@ fun ContentSettings(
             },
             title = stringResource(R.string.content_language),
             current = contentLanguage,
-            values = (listOf(SYSTEM_DEFAULT) + LanguageCodeToName.keys.toList()),
+            values = (listOf(SYSTEM_DEFAULT, "ta") + LanguageCodeToName.keys.filter { it != "ta" }.toList()),
             valueText = {
                 LanguageCodeToName.getOrElse(it) { stringResource(R.string.system_default) }
             }
@@ -455,7 +455,7 @@ fun ContentSettings(
             },
             title = stringResource(R.string.app_language),
             current = appLanguage,
-            values = (listOf(SYSTEM_DEFAULT) + LanguageCodeToName.keys.toList()),
+            values = (listOf(SYSTEM_DEFAULT, "ta") + LanguageCodeToName.keys.filter { it != "ta" }.toList()),
             valueText = {
                 LanguageCodeToName.getOrElse(it) { stringResource(R.string.system_default) }
             }

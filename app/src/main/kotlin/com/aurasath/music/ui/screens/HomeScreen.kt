@@ -190,6 +190,7 @@ import com.aurasath.music.ui.component.LocalBottomSheetPageState
 import com.aurasath.music.ui.component.LocalMenuState
 import com.aurasath.music.ui.component.MenuState
 import com.aurasath.music.ui.component.NavigationTitle
+import com.aurasath.music.ui.component.PlaylistGridItem
 import com.aurasath.music.ui.component.PlaylistListItem
 import com.aurasath.music.ui.component.RandomizeGridItem
 import com.aurasath.music.ui.component.SongGridItem
@@ -207,6 +208,7 @@ import com.aurasath.music.ui.component.shimmer.ShimmerHost
 import com.aurasath.music.ui.component.shimmer.TextPlaceholder
 import com.aurasath.music.ui.menu.AlbumMenu
 import com.aurasath.music.ui.menu.ArtistMenu
+import com.aurasath.music.ui.menu.PlaylistMenu
 import com.aurasath.music.ui.menu.SongMenu
 import com.aurasath.music.ui.menu.YouTubeAlbumMenu
 import com.aurasath.music.ui.menu.YouTubeArtistMenu
@@ -260,6 +262,7 @@ sealed class HomeSection(val id: String, val baseWeight: Int) {
     data object Hero : HomeSection("hero", 110)
     data object SpeedDial : HomeSection("speed_dial", 100)
     data object QuickPicks : HomeSection("quick_picks", 90)
+    data object LocalPlaylists : HomeSection("local_playlists", 88)
     data object LastPlayedRecommendation : HomeSection("last_played_recommendation", 85)
     data object DailyDiscover : HomeSection("daily_discover", 80)
     data object KeepListening : HomeSection("keep_listening", 50)
@@ -1094,6 +1097,7 @@ fun HomeScreen(
         dailyDiscover,
         keepListening,
         accountPlaylists,
+        localPlaylists,
         forgottenFavorites,
         communityPlaylists,
         similarRecommendations,
@@ -1112,6 +1116,7 @@ fun HomeScreen(
         // deleting the section's rendering code, so it is one line to bring back.
         // if (speedDialItems.isNotEmpty()) list.add(HomeSection.SpeedDial)
         if (quickPicks?.isNotEmpty() == true) list.add(HomeSection.QuickPicks)
+        if (localPlaylists.isNotEmpty()) list.add(HomeSection.LocalPlaylists)
         if (lastPlayedRecommendation != null) list.add(HomeSection.LastPlayedRecommendation)
         if (communityPlaylists?.isNotEmpty() == true) list.add(HomeSection.FromTheCommunity)
         if (dailyDiscover?.isNotEmpty() == true) list.add(HomeSection.DailyDiscover)
@@ -1595,6 +1600,7 @@ fun HomeScreen(
                     forgottenFavorites = forgottenFavorites,
                     dailyDiscover = dailyDiscover,
                     keepListening = keepListening,
+                    localPlaylists = localPlaylists,
                     accountPlaylists = accountPlaylists,
                     communityPlaylists = communityPlaylists,
                     similarRecommendations = similarRecommendations,
@@ -1767,6 +1773,7 @@ private fun LazyListScope.homeSectionsContent(
     forgottenFavorites: List<Song>?,
     dailyDiscover: List<DailyDiscoverItem>?,
     keepListening: List<LocalItem>?,
+    localPlaylists: List<Playlist>,
     accountPlaylists: List<PlaylistItem>?,
     communityPlaylists: List<CommunityPlaylistItem>?,
     similarRecommendations: List<SimilarRecommendation>?,
@@ -1796,6 +1803,7 @@ private fun LazyListScope.homeSectionsContent(
                 randomizeJob = randomizeJob,
             )
             HomeSection.QuickPicks -> quickPicksSection(deps, quickPicks, mediaMetadata, isPlaying, quickPicksSongMap)
+            HomeSection.LocalPlaylists -> localPlaylistsSection(deps, localPlaylists)
             HomeSection.LastPlayedRecommendation -> lastPlayedRecommendationSection(deps, lastPlayedRecommendation)
             HomeSection.FromTheCommunity -> communityPlaylistsSection(deps, communityPlaylists)
             HomeSection.DailyDiscover -> dailyDiscoverSection(deps, dailyDiscover)
@@ -2693,6 +2701,64 @@ private fun LocalItem.spotlightSubtitle(): String = when (this) {
     // Neither carries a second line worth showing: an artist's name is already the
     // title, and Playlist.title is playlist.name.
     is Artist, is Playlist -> ""
+}
+
+private fun LazyListScope.localPlaylistsSection(
+    deps: HomeSectionDeps,
+    playlists: List<Playlist>,
+) {
+    playlists.takeIf { it.isNotEmpty() }?.let { validPlaylists ->
+        item(key = "local_playlists_title", contentType = "section_title") {
+            NavigationTitle(
+                label = stringResource(R.string.imported_playlist).uppercase(),
+                title = stringResource(R.string.playlists),
+                onClick = {
+                    deps.navController.navigate("library/playlists")
+                }
+            )
+        }
+
+        item(key = "local_playlists_list", contentType = "carousel") {
+            val distinctPlaylists = remember(validPlaylists) { validPlaylists.distinctBy { it.id } }
+            LazyRow(
+                contentPadding = WindowInsets.systemBars
+                    .only(WindowInsetsSides.Horizontal)
+                    .asPaddingValues().plusStart(deps.sideInset),
+                horizontalArrangement = Arrangement.spacedBy(AppleTokens.ItemGap),
+                modifier = Modifier.bleedStart(deps.sideInset)
+            ) {
+                items(
+                    items = distinctPlaylists,
+                    key = { "home_local_playlist_${it.id}" },
+                ) { playlist ->
+                    PlaylistGridItem(
+                        playlist = playlist,
+                        fillMaxWidth = false,
+                        modifier = Modifier
+                            .combinedBounceClick(
+                                onClick = {
+                                    if (!playlist.playlist.isEditable && playlist.songCount == 0 && playlist.playlist.remoteSongCount != 0) {
+                                        deps.navController.navigate("online_playlist/${playlist.playlist.browseId}")
+                                    } else {
+                                        deps.navController.navigate("local_playlist/${playlist.id}")
+                                    }
+                                },
+                                onLongClick = {
+                                    deps.haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+                                    deps.menuState.show {
+                                        PlaylistMenu(
+                                            playlist = playlist,
+                                            coroutineScope = deps.scope,
+                                            onDismiss = deps.menuState::dismiss
+                                        )
+                                    }
+                                }
+                            )
+                    )
+                }
+            }
+        }
+    }
 }
 
 private fun LazyListScope.accountPlaylistsSection(
