@@ -228,16 +228,22 @@ fun PlayerV2(
         }
     }
 
-    // Gyroscopic 3D Parallax Tilt for Album Artwork
+    // Gyroscopic 3D Parallax Tilt for Album Artwork (Battery-Optimized with Lifecycle & Sheet State)
     val sensorManager = remember { context.getSystemService(android.content.Context.SENSOR_SERVICE) as? android.hardware.SensorManager }
     var rawPitch by remember { mutableFloatStateOf(0f) }
     var rawRoll by remember { mutableFloatStateOf(0f) }
+    val isPlayerExpanded = state.isExpanded
 
-    DisposableEffect(sensorManager, lifecycleOwner) {
-        if (sensorManager == null) return@DisposableEffect onDispose {}
+    DisposableEffect(sensorManager, lifecycleOwner, isPlayerExpanded) {
+        if (sensorManager == null || !isPlayerExpanded) {
+            rawPitch = 0f
+            rawRoll = 0f
+            return@DisposableEffect onDispose {}
+        }
         val sensor = sensorManager.getDefaultSensor(android.hardware.Sensor.TYPE_ROTATION_VECTOR)
             ?: sensorManager.getDefaultSensor(android.hardware.Sensor.TYPE_ACCELEROMETER)
 
+        var isRegistered = false
         val listener = object : android.hardware.SensorEventListener {
             override fun onSensorChanged(event: android.hardware.SensorEvent?) {
                 if (event == null) return
@@ -261,9 +267,39 @@ fun PlayerV2(
             override fun onAccuracyChanged(s: android.hardware.Sensor?, accuracy: Int) {}
         }
 
-        sensorManager.registerListener(listener, sensor, android.hardware.SensorManager.SENSOR_DELAY_UI)
+        fun register() {
+            if (!isRegistered && sensor != null) {
+                sensorManager.registerListener(listener, sensor, android.hardware.SensorManager.SENSOR_DELAY_UI)
+                isRegistered = true
+            }
+        }
+
+        fun unregister() {
+            if (isRegistered) {
+                sensorManager.unregisterListener(listener)
+                isRegistered = false
+                rawPitch = 0f
+                rawRoll = 0f
+            }
+        }
+
+        val observer = androidx.lifecycle.LifecycleEventObserver { _, event ->
+            when (event) {
+                androidx.lifecycle.Lifecycle.Event.ON_RESUME -> register()
+                androidx.lifecycle.Lifecycle.Event.ON_PAUSE,
+                androidx.lifecycle.Lifecycle.Event.ON_STOP -> unregister()
+                else -> Unit
+            }
+        }
+
+        lifecycleOwner.lifecycle.addObserver(observer)
+        if (lifecycleOwner.lifecycle.currentState.isAtLeast(androidx.lifecycle.Lifecycle.State.RESUMED)) {
+            register()
+        }
+
         onDispose {
-            sensorManager.unregisterListener(listener)
+            lifecycleOwner.lifecycle.removeObserver(observer)
+            unregister()
         }
     }
 
