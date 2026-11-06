@@ -507,7 +507,8 @@ fun ThemeControls(
 }
 
 data class ThemePresetItem(
-    val nameRes: Int,
+    val nameRes: Int? = null,
+    val name: String? = null,
     val darkMode: DarkMode,
     val pureBlack: Boolean,
     val themeColor: Color,
@@ -518,6 +519,56 @@ data class ThemePresetItem(
 )
 
 private val BuiltinThemePresets = listOf(
+    ThemePresetItem(
+        name = "AURASATH Neon",
+        darkMode = DarkMode.ON,
+        pureBlack = false,
+        themeColor = Color(0xFF8B5CF6),
+        backgroundColor = Color(0xFF080811),
+        textColor = Color(0xFFF1F5F9),
+        dynamicTheme = false,
+        previewGradient = listOf(Color(0xFF080811), Color(0xFF4C1D95), Color(0xFF06B6D4))
+    ),
+    ThemePresetItem(
+        name = "Royal Imperial Gold",
+        darkMode = DarkMode.ON,
+        pureBlack = true,
+        themeColor = Color(0xFFFFD700),
+        backgroundColor = Color(0xFF070707),
+        textColor = Color(0xFFFEF3C7),
+        dynamicTheme = false,
+        previewGradient = listOf(Color(0xFF070707), Color(0xFF78350F), Color(0xFFFFD700))
+    ),
+    ThemePresetItem(
+        name = "Ferrari Carbon Red",
+        darkMode = DarkMode.ON,
+        pureBlack = false,
+        themeColor = Color(0xFFFF1E38),
+        backgroundColor = Color(0xFF0A0A0A),
+        textColor = Color(0xFFFFFFFF),
+        dynamicTheme = false,
+        previewGradient = listOf(Color(0xFF0A0A0A), Color(0xFF7F1D1D), Color(0xFFFF1E38))
+    ),
+    ThemePresetItem(
+        name = "Cosmic Nebula",
+        darkMode = DarkMode.ON,
+        pureBlack = false,
+        themeColor = Color(0xFFE040FB),
+        backgroundColor = Color(0xFF0B071A),
+        textColor = Color(0xFFF3E8FF),
+        dynamicTheme = false,
+        previewGradient = listOf(Color(0xFF0B071A), Color(0xFF6B21A8), Color(0xFFE040FB))
+    ),
+    ThemePresetItem(
+        name = "Glacier Ice Diamond",
+        darkMode = DarkMode.ON,
+        pureBlack = false,
+        themeColor = Color(0xFF38BDF8),
+        backgroundColor = Color(0xFF030F1C),
+        textColor = Color(0xFFE0F2FE),
+        dynamicTheme = false,
+        previewGradient = listOf(Color(0xFF030F1C), Color(0xFF0369A1), Color(0xFF38BDF8))
+    ),
     ThemePresetItem(
         nameRes = R.string.theme_preset_oled,
         darkMode = DarkMode.ON,
@@ -701,7 +752,7 @@ private fun ThemePresetsSection(
                     }
                     Spacer(Modifier.height(6.dp))
                     Text(
-                        text = stringResource(preset.nameRes),
+                        text = preset.name ?: (preset.nameRes?.let { stringResource(it) } ?: ""),
                         style = MaterialTheme.typography.labelSmall,
                         textAlign = androidx.compose.ui.text.style.TextAlign.Center,
                         maxLines = 2,

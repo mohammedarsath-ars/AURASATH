@@ -1,4 +1,4 @@
-﻿/**
+/**
  * AURASATH Project (C) 2026
  * Licensed under GPL-3.0 | See git history for contributors
  */
@@ -10,6 +10,11 @@ import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -251,44 +256,50 @@ fun HomeBackgroundControls() {
         Modifier.padding(horizontal = 16.dp),
     ) {
         // Live preview: image with the same blur + dim the home screen applies.
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .aspectRatio(16f / 10f)
-                .padding(vertical = 12.dp)
-                .clip(RoundedCornerShape(20.dp))
-                .background(MaterialTheme.colorScheme.surfaceContainerHighest),
+        AnimatedVisibility(
+            visible = enabled,
+            enter = expandVertically() + fadeIn(),
+            exit = shrinkVertically() + fadeOut()
         ) {
-            if (path.isNotEmpty() && isVideo) {
-                HomeVideoBackground(path = path, blur = blur, dim = dim)
-            } else if (path.isNotEmpty()) {
-                // Mirrors HomeImageBackground's own steady state: a real live
-                // RenderEffect blur, same as what the home screen actually shows.
-                val previewRequest = remember(path) {
-                    ImageRequest.Builder(context)
-                        .data(File(path))
-                        .build()
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .aspectRatio(16f / 10f)
+                    .padding(vertical = 12.dp)
+                    .clip(RoundedCornerShape(20.dp))
+                    .background(MaterialTheme.colorScheme.surfaceContainerHighest),
+            ) {
+                if (path.isNotEmpty() && isVideo) {
+                    HomeVideoBackground(path = path, blur = blur, dim = dim)
+                } else if (path.isNotEmpty()) {
+                    // Mirrors HomeImageBackground's own steady state: a real live
+                    // RenderEffect blur, same as what the home screen actually shows.
+                    val previewRequest = remember(path) {
+                        ImageRequest.Builder(context)
+                            .data(File(path))
+                            .build()
+                    }
+                    AsyncImage(
+                        model = previewRequest,
+                        contentDescription = null,
+                        contentScale = ContentScale.Crop,
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .then(if (blur > 0f) Modifier.blur(blur.dp) else Modifier),
+                    )
+                    Box(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .background(Color.Black.copy(alpha = dim)),
+                    )
+                } else {
+                    Text(
+                        text = stringResource(R.string.home_background_image_none),
+                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        modifier = Modifier.align(Alignment.Center),
+                    )
                 }
-                AsyncImage(
-                    model = previewRequest,
-                    contentDescription = null,
-                    contentScale = ContentScale.Crop,
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .then(if (blur > 0f) Modifier.blur(blur.dp) else Modifier),
-                )
-                Box(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .background(Color.Black.copy(alpha = dim)),
-                )
-            } else {
-                Text(
-                    text = stringResource(R.string.home_background_image_none),
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    modifier = Modifier.align(Alignment.Center),
-                )
             }
         }
 
