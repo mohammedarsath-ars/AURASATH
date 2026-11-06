@@ -779,34 +779,44 @@ private fun ThemePresetsSection(
  */
 @Composable
 private fun AppBackgroundTextColorSection() {
+    val (selectedThemeColorInt, onSelectedThemeColorChange) = rememberPreference(
+        SelectedThemeColorKey,
+        DefaultThemeColor.toArgb()
+    )
+    val (_, onDynamicThemeChange) = rememberPreference(DynamicThemeKey, defaultValue = true)
     val (backgroundColorInt, onBackgroundColorChange) = rememberPreference(AppBackgroundColorKey, defaultValue = 0)
     val (textColorInt, onTextColorChange) = rememberPreference(AppTextColorKey, defaultValue = 0)
 
-    // "Unset" swatch shown here matches what every consuming call site's own
-    // fallback actually resolves to (surfaceContainerHigh / onSurface), so
-    // the picker never shows a color that doesn't match reality.
+    val accentColor = Color(selectedThemeColorInt)
     val backgroundColor = if (backgroundColorInt == 0) MaterialTheme.colorScheme.surfaceContainerHigh else Color(backgroundColorInt)
     val textColor = if (textColorInt == 0) MaterialTheme.colorScheme.onSurface else Color(textColorInt)
 
+    var showAccentPicker by remember { mutableStateOf(false) }
     var showBackgroundPicker by remember { mutableStateOf(false) }
     var showTextPicker by remember { mutableStateOf(false) }
 
     Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
         Text(
-            text = stringResource(R.string.app_background_text_color),
+            text = "Accent, Background & Text Color",
             style = MaterialTheme.typography.titleMedium,
             color = MaterialTheme.colorScheme.onSurface
         )
         Text(
-            text = stringResource(R.string.app_background_text_color_desc),
+            text = "Custom color controls for buttons, highlights, home background and text styling",
             style = MaterialTheme.typography.bodySmall,
             color = MaterialTheme.colorScheme.onSurfaceVariant
         )
 
         Row(
             modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(24.dp)
+            horizontalArrangement = Arrangement.spacedBy(16.dp)
         ) {
+            AppColorSwatchButton(
+                label = "Accent color",
+                color = accentColor,
+                onClick = { showAccentPicker = true },
+                modifier = Modifier.weight(1f),
+            )
             AppColorSwatchButton(
                 label = stringResource(R.string.background_color),
                 color = backgroundColor,
@@ -820,6 +830,19 @@ private fun AppBackgroundTextColorSection() {
                 modifier = Modifier.weight(1f),
             )
         }
+    }
+
+    if (showAccentPicker) {
+        ColorPickerDialog(
+            initialColor = accentColor,
+            title = "Accent Color",
+            onDismiss = { showAccentPicker = false },
+            onConfirm = {
+                onSelectedThemeColorChange(it.toArgb())
+                onDynamicThemeChange(false)
+                showAccentPicker = false
+            },
+        )
     }
 
     if (showBackgroundPicker) {
