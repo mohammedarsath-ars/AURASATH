@@ -77,26 +77,26 @@ fun AboutScreen(
             .verticalScroll(rememberScrollState())
             .padding(horizontal = 16.dp),
     ) {
-        // Header with Official AURASATH Logo
+        // Header with Official AURASATH Logo & Glow
         Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(top = 28.dp, bottom = 24.dp),
+                .padding(top = 28.dp, bottom = 20.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             // AURASATH Logo with glowing ambient backdrop and elevated container
             Box(
                 contentAlignment = Alignment.Center,
-                modifier = Modifier.padding(bottom = 18.dp)
+                modifier = Modifier.padding(bottom = 16.dp)
             ) {
                 // Ambient glow
                 Box(
                     modifier = Modifier
-                        .size(104.dp)
+                        .size(110.dp)
                         .background(
                             brush = Brush.radialGradient(
                                 colors = listOf(
-                                    MaterialTheme.colorScheme.primary.copy(alpha = 0.32f),
+                                    MaterialTheme.colorScheme.primary.copy(alpha = 0.35f),
                                     Color.Transparent
                                 )
                             ),
@@ -105,21 +105,21 @@ fun AboutScreen(
                 )
                 // Elevated Logo Container
                 Surface(
-                    shape = RoundedCornerShape(22.dp),
+                    shape = RoundedCornerShape(24.dp),
                     color = Color.Transparent,
                     border = BorderStroke(
                         1.5.dp,
                         MaterialTheme.colorScheme.primary.copy(alpha = 0.5f)
                     ),
-                    shadowElevation = 10.dp,
-                    modifier = Modifier.size(88.dp)
+                    shadowElevation = 12.dp,
+                    modifier = Modifier.size(92.dp)
                 ) {
                     Image(
                         painter = painterResource(R.drawable.aurasath_logo),
                         contentDescription = stringResource(R.string.wrapped_logo_content_description),
                         modifier = Modifier
                             .fillMaxSize()
-                            .clip(RoundedCornerShape(22.dp)),
+                            .clip(RoundedCornerShape(24.dp)),
                         contentScale = ContentScale.Crop
                     )
                 }
@@ -130,37 +130,50 @@ fun AboutScreen(
                 style = MaterialTheme.typography.displaySmall.copy(
                     fontFamily = rememberBrandFontFamily(),
                     fontWeight = FontWeight.Bold,
-                    fontSize = 38.sp,
+                    fontSize = 36.sp,
                     letterSpacing = (-0.5).sp
                 ),
                 color = MaterialTheme.colorScheme.onSurface
             )
 
+            Spacer(modifier = Modifier.height(4.dp))
+
+            Text(
+                text = "Next-Gen Open-Source Music Experience",
+                style = MaterialTheme.typography.bodyMedium.copy(
+                    fontWeight = FontWeight.Medium,
+                    fontSize = 13.sp
+                ),
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+
             Spacer(modifier = Modifier.height(14.dp))
 
+            // Version Badge with live indicator dot
             Row(
                 modifier = Modifier
                     .border(
-                        width = 1.5.dp,
-                        color = MaterialTheme.colorScheme.primary.copy(alpha = 0.5f),
+                        width = 1.dp,
+                        color = MaterialTheme.colorScheme.primary.copy(alpha = 0.35f),
                         shape = CircleShape
                     )
-                    .padding(horizontal = 16.dp, vertical = 8.dp),
+                    .background(
+                        color = MaterialTheme.colorScheme.primary.copy(alpha = 0.08f),
+                        shape = CircleShape
+                    )
+                    .padding(horizontal = 14.dp, vertical = 6.dp),
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                Image(
-                    painter = painterResource(R.drawable.aurasath_logo),
-                    contentDescription = null,
+                Box(
                     modifier = Modifier
-                        .size(18.dp)
-                        .clip(RoundedCornerShape(4.dp)),
-                    contentScale = ContentScale.Crop
+                        .size(8.dp)
+                        .background(Color(0xFF34C759), CircleShape)
                 )
 
                 Text(
                     text = "v${BuildConfig.VERSION_NAME} • ${stringResource(if (BuildConfig.IS_NIGHTLY) R.string.build_nightly else R.string.build_stable)}",
-                    style = MaterialTheme.typography.titleMedium,
+                    style = MaterialTheme.typography.labelMedium.copy(fontWeight = FontWeight.SemiBold),
                     color = MaterialTheme.colorScheme.primary
                 )
             }
@@ -177,12 +190,41 @@ fun AboutScreen(
                     tintIcon = false,
                     iconShape = cookieShape,
                     onClick = { uriHandler.safeOpenUri(context, "https://github.com/mohammedarsath-ars") }
+                ),
+                Material3SettingsItem(
+                    leadingContent = {
+                        Box(
+                            modifier = Modifier
+                                .size(40.dp)
+                                .clip(RoundedCornerShape(12.dp))
+                                .background(
+                                    Brush.linearGradient(
+                                        colors = listOf(
+                                            Color(0xFF833AB4),
+                                            Color(0xFFFD1D1D),
+                                            Color(0xFFFCB045)
+                                        )
+                                    )
+                                ),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Icon(
+                                painter = painterResource(R.drawable.instagram),
+                                contentDescription = null,
+                                tint = Color.White,
+                                modifier = Modifier.size(22.dp)
+                            )
+                        }
+                    },
+                    title = { Text("Instagram") },
+                    description = { Text("@freaky____arsu", color = MaterialTheme.colorScheme.primary) },
+                    onClick = { uriHandler.safeOpenUri(context, "https://www.instagram.com/freaky____arsu") }
                 )
             )
         )
         Spacer(modifier = Modifier.height(24.dp))
 
-        // Community Section
+        // Community & Project Section
         Material3SettingsGroup(
             title = stringResource(R.string.community_section),
             items = listOf(
@@ -191,12 +233,18 @@ fun AboutScreen(
                     title = { Text(stringResource(R.string.github_repository)) },
                     description = { Text(stringResource(R.string.view_source_code)) },
                     onClick = { uriHandler.safeOpenUri(context, "https://github.com/mohammedarsath-ars/AURASATH") }
+                ),
+                Material3SettingsItem(
+                    icon = painterResource(R.drawable.edit),
+                    title = { Text("Suggestions & Feedback") },
+                    description = { Text("Report bugs or request new features") },
+                    onClick = { navController.navigate("settings/suggestions") }
                 )
             )
         )
         Spacer(modifier = Modifier.height(24.dp))
 
-        // App Information Section
+        // App Information / License Section
         Material3SettingsGroup(
             title = stringResource(R.string.app_info_section),
             items = listOf(
@@ -208,7 +256,24 @@ fun AboutScreen(
                 ),
             )
         )
-        Spacer(modifier = Modifier.height(28.dp))
+        Spacer(modifier = Modifier.height(32.dp))
+
+        // Minimal Aesthetic Footer
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(bottom = 36.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Text(
+                text = "Crafted with ❤️ by Arsath Arsu",
+                style = MaterialTheme.typography.bodySmall.copy(
+                    fontWeight = FontWeight.Medium,
+                    fontSize = 13.sp
+                ),
+                color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.75f)
+            )
+        }
     }
 
     TopAppBar(
