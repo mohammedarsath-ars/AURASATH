@@ -46,14 +46,14 @@ jobs:
           LASTFM_SECRET: ${{ secrets.LASTFM_SECRET }}
 
       - name: Upload APK Artifact
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: AURASATH-v1.0.0-latest
           path: app/build/outputs/apk/universalGms/release/*.apk
 
       - name: Upload ProGuard/R8 Mapping
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: universal-gms-mapping
           path: app/build/outputs/mapping/universalGmsRelease/mapping.txt
@@ -61,7 +61,7 @@ jobs:
 
       - name: Upload Build Failure Logs
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: gradle-build-failure-log
           path: build.log
