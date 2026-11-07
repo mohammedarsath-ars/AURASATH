@@ -136,10 +136,18 @@ import androidx.lifecycle.LifecycleEventObserver
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.lifecycleScope
 import com.aurasath.music.constants.IsFirstRunKey
+import com.aurasath.music.constants.LastSeenChangelogVersionKey
 import com.aurasath.music.constants.DataSyncIdKey
 import com.aurasath.music.constants.InnerTubeCookieKey
 import com.aurasath.music.constants.SpotifySessionKey
 import com.aurasath.music.constants.VisitorDataKey
+import com.aurasath.music.ui.theme.rememberBrandFontFamily
+import com.aurasath.music.ui.theme.rememberGlobalAccentColors
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.ui.platform.LocalView
+import android.view.HapticFeedbackConstants
+import androidx.compose.material3.TextButton
 import com.aurasath.music.viewmodels.SpotifySession
 import com.music.innertube.YouTube
 import com.music.spotify.Spotify
@@ -206,9 +214,17 @@ class WelcomeActivity : ComponentActivity() {
                         modifier = Modifier.fillMaxSize(),
                         color = MaterialTheme.colorScheme.background
                     ) {
+                        var isFinishingOnboarding by remember { mutableStateOf(false) }
                         WelcomePagerScreen(onFinished = {
+                            if (isFinishingOnboarding) return@WelcomePagerScreen
+                            isFinishingOnboarding = true
                             lifecycleScope.launch {
-                                runCatching { dataStore.edit { it[IsFirstRunKey] = false } }
+                                runCatching {
+                                    dataStore.edit {
+                                        it[IsFirstRunKey] = false
+                                        it[LastSeenChangelogVersionKey] = BuildConfig.VERSION_NAME
+                                    }
+                                }
                                 if (forceShow) {
                                     finish()
                                 } else {
@@ -344,230 +360,78 @@ fun WelcomePagerScreen(onFinished: () -> Unit) {
     }
 
     val pages = listOf(
+        // Page 1: The Grand Hero Welcome
         OnboardingPageInfo(
             content = { _ ->
                 Column(
-                    modifier = Modifier.fillMaxSize(),
-                    horizontalAlignment = Alignment.Start
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .verticalScroll(rememberScrollState()),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center
                 ) {
-                    Spacer(modifier = Modifier.height(80.dp))
-
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.spacedBy(14.dp),
-                        modifier = Modifier.fillMaxWidth()
-                    ) {
-                        Surface(
-                            shape = RoundedCornerShape(18.dp),
-                            color = MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.8f),
-                            border = androidx.compose.foundation.BorderStroke(1.5.dp, MaterialTheme.colorScheme.primary.copy(alpha = 0.6f)),
-                            shadowElevation = 8.dp,
-                            modifier = Modifier.size(58.dp)
-                        ) {
-                            Box(contentAlignment = Alignment.Center, modifier = Modifier.padding(10.dp)) {
-                                androidx.compose.foundation.Image(
-                                    painter = painterResource(com.aurasath.music.R.drawable.aurasath_logo),
-                                    contentDescription = "AURASATH Logo",
-                                    modifier = Modifier.fillMaxSize(),
-                                    contentScale = androidx.compose.ui.layout.ContentScale.Fit
-                                )
-                            }
-                        }
-                        Column {
-                            Text(
-                                text = stringResource(com.aurasath.music.R.string.welcome_to),
-                                style = thinHeaderStyle,
-                                color = MaterialTheme.colorScheme.onBackground
-                            )
-                            Text(
-                                text = stringResource(com.aurasath.music.R.string.app_name).uppercase(),
-                                fontFamily = GoogleSansFlex,
-                                fontWeight = FontWeight.Bold,
-                                fontSize = 42.sp,
-                                color = MaterialTheme.colorScheme.primary,
-                                lineHeight = 46.sp
-                            )
-                        }
-                    }
-
-                    val flavorSuffix = if (BuildConfig.FLAVOR.contains("gms", ignoreCase = true)) "Gms Edition" else "Foss Edition"
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        modifier = Modifier.padding(start = 2.dp)
-                    ) {
-                        Text(
-                            text = flavorSuffix,
-                            fontFamily = GoogleSansFlex,
-                            style = MaterialTheme.typography.titleMedium,
-                            color = MaterialTheme.colorScheme.secondary
-                        )
-
-                        Spacer(modifier = Modifier.width(8.dp))
-
-                        Surface(
-                            shape = CircleShape,
-                            color = MaterialTheme.colorScheme.secondaryContainer.copy(alpha = 0.6f)
-                        ) {
-                            Text(
-                                text = "v${BuildConfig.VERSION_NAME}",
-                                modifier = Modifier.padding(horizontal = 8.dp, vertical = 2.dp),
-                                style = MaterialTheme.typography.labelSmall,
-                                fontWeight = FontWeight.Bold,
-                                color = MaterialTheme.colorScheme.onSecondaryContainer
-                            )
-                        }
-                    }
-
-                    Spacer(modifier = Modifier.weight(1f))
-
-                    Column(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalAlignment = Alignment.CenterHorizontally
-                    ) {
-                        AurasathSonicWaveformVisualizer(
-                            modifier = Modifier.size(280.dp)
-                        )
-
-                        Spacer(modifier = Modifier.height(32.dp))
-
-                        Text(
-                            text = stringResource(com.aurasath.music.R.string.welcome_preparing_subtitle),
-                            fontFamily = GoogleSansFlex,
-                            style = MaterialTheme.typography.bodyLarge,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
-                            textAlign = TextAlign.Center
-                        )
-                    }
-                    Spacer(modifier = Modifier.weight(1.2f))
-                }
-            }
-        ),
-        OnboardingPageInfo(
-            content = { _ ->
-                Column(
-                    modifier = Modifier.fillMaxSize(),
-                    horizontalAlignment = Alignment.Start
-                ) {
-                    Spacer(modifier = Modifier.height(80.dp))
-
-                    Text(
-                        text = stringResource(com.aurasath.music.R.string.perm_required),
-                        style = thinHeaderStyle,
-                        color = MaterialTheme.colorScheme.onBackground
-                    )
-                    Text(
-                        text = stringResource(com.aurasath.music.R.string.perm_permissions),
-                        fontFamily = GoogleSansFlex,
-                        fontWeight = FontWeight.Bold,
-                        fontSize = 48.sp,
-                        color = MaterialTheme.colorScheme.primary,
-                        lineHeight = 56.sp
-                    )
-
                     Spacer(modifier = Modifier.height(16.dp))
 
-                    Text(
-                        text = stringResource(com.aurasath.music.R.string.perm_intro_text),
-                        style = MaterialTheme.typography.bodyLarge.copy(
-                            fontFamily = GoogleSansFlex
-                        ),
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
+                    // Centerpiece Visual: Pulsing Neon Aurasath Emblem + Equalizer
+                    AurasathSonicWaveformVisualizer(
+                        modifier = Modifier.size(240.dp)
                     )
 
-                    Spacer(modifier = Modifier.height(32.dp))
+                    Spacer(modifier = Modifier.height(24.dp))
 
-                    Column(
+                    Text(
+                        text = "AURASATH",
+                        fontFamily = rememberBrandFontFamily(),
+                        fontWeight = FontWeight.ExtraBold,
+                        fontSize = 42.sp,
+                        letterSpacing = (-0.5).sp,
+                        color = MaterialTheme.colorScheme.primary,
+                        textAlign = TextAlign.Center
+                    )
+
+                    Spacer(modifier = Modifier.height(4.dp))
+
+                    Text(
+                        text = "Liquid Glass Music Engine",
+                        fontFamily = GoogleSansFlex,
+                        fontWeight = FontWeight.SemiBold,
+                        fontSize = 17.sp,
+                        color = MaterialTheme.colorScheme.onBackground,
+                        textAlign = TextAlign.Center
+                    )
+
+                    Spacer(modifier = Modifier.height(10.dp))
+
+                    Text(
+                        text = "Experience ad-free streaming, lossless audio, and synchronized lyrics crafted within a signature frosted glass aesthetic.",
+                        fontFamily = GoogleSansFlex,
+                        fontSize = 14.sp,
+                        lineHeight = 20.sp,
+                        textAlign = TextAlign.Center,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.85f),
+                        modifier = Modifier.padding(horizontal = 24.dp)
+                    )
+
+                    Spacer(modifier = Modifier.height(24.dp))
+
+                    // Sleek horizontal feature chips
+                    Row(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .verticalScroll(rememberScrollState())
+                            .padding(horizontal = 8.dp),
+                        horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.CenterHorizontally)
                     ) {
-                        PermissionCard(
-                            icon = rememberVectorPainter(Icons.Rounded.Notifications),
-                            iconColor = Color(0xFFffaee4),
-                            iconTint = Color(0xFF8d0053),
-                            title = stringResource(com.aurasath.music.R.string.perm_notif_title),
-                            description = stringResource(com.aurasath.music.R.string.perm_notif_desc),
-                            shape = if (BuildConfig.FLAVOR.contains("gms", ignoreCase = true)) topCardShape else RoundedCornerShape(20.dp),
-                            control = {
-                                Switch(
-                                    checked = hasNotificationPermission,
-                                    onCheckedChange = {
-                                        if (hasNotificationPermission) {
-                                            val intent =
-                                                Intent(Settings.ACTION_APP_NOTIFICATION_SETTINGS).apply {
-                                                    putExtra(
-                                                        Settings.EXTRA_APP_PACKAGE,
-                                                        context.packageName
-                                                    )
-                                                }
-                                            context.startActivity(intent)
-                                        } else {
-                                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                                                notificationLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
-                                            }
-                                        }
-                                    },
-                                    thumbContent = {
-                                        Icon(
-                                            imageVector = if (hasNotificationPermission) Icons.Rounded.Check else Icons.Rounded.Close,
-                                            contentDescription = null,
-                                            modifier = Modifier.size(16.dp)
-                                        )
-                                    }
-                                )
-                            },
-                            onClick = {
-                                if (hasNotificationPermission) {
-                                    val intent =
-                                        Intent(Settings.ACTION_APP_NOTIFICATION_SETTINGS).apply {
-                                            putExtra(
-                                                Settings.EXTRA_APP_PACKAGE,
-                                                context.packageName
-                                            )
-                                        }
-                                    context.startActivity(intent)
-                                } else {
-                                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-                                        notificationLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
-                                    }
-                                }
-                            }
-                        )
-
-                        if (BuildConfig.FLAVOR.contains("gms", ignoreCase = true)) {
-                            Spacer(modifier = Modifier.height(2.dp))
-
-                            PermissionCard(
-                                icon = rememberVectorPainter(Icons.Rounded.SystemUpdate),
-                                iconColor = Color(0xFFffb683),
-                                iconTint = Color(0xFF753403),
-                                title = stringResource(com.aurasath.music.R.string.perm_install_title),
-                                description = stringResource(com.aurasath.music.R.string.perm_install_desc),
-                                shape = bottomCardShape,
-                                control = {
-                                    Icon(
-                                        imageVector = if (canInstallPackages) Icons.Rounded.Check else Icons.Rounded.ChevronRight,
-                                        contentDescription = null,
-                                        tint = if (canInstallPackages) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurfaceVariant
-                                    )
-                                },
-                                onClick = {
-                                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                                        val intent =
-                                            Intent(Settings.ACTION_MANAGE_UNKNOWN_APP_SOURCES).apply {
-                                                data = Uri.parse("package:${context.packageName}")
-                                            }
-                                        installParamsLauncher.launch(intent)
-                                    }
-                                }
-                            )
-                        }
-
-                        Spacer(modifier = Modifier.height(100.dp))
+                        OnboardingHighlightBadge(icon = "⚡", label = "Ad-Free")
+                        OnboardingHighlightBadge(icon = "🎵", label = "Lossless")
+                        OnboardingHighlightBadge(icon = "📝", label = "Lyrics")
+                        OnboardingHighlightBadge(icon = "🧊", label = "Liquid Glass")
                     }
+
+                    Spacer(modifier = Modifier.height(28.dp))
                 }
             }
         ),
+
         OnboardingPageInfo(
             content = { _ ->
                 Column(
@@ -779,6 +643,7 @@ fun WelcomePagerScreen(onFinished: () -> Unit) {
                 }
             }
         ),
+
         OnboardingPageInfo(
             content = { _ ->
                 Column(
@@ -788,12 +653,12 @@ fun WelcomePagerScreen(onFinished: () -> Unit) {
                     Spacer(modifier = Modifier.height(80.dp))
 
                     Text(
-                        text = "Join our",
+                        text = "Audio &",
                         style = thinHeaderStyle,
                         color = MaterialTheme.colorScheme.onBackground
                     )
                     Text(
-                        text = "Community",
+                        text = "Permissions",
                         fontFamily = GoogleSansFlex,
                         fontWeight = FontWeight.Bold,
                         fontSize = 48.sp,
@@ -804,7 +669,7 @@ fun WelcomePagerScreen(onFinished: () -> Unit) {
                     Spacer(modifier = Modifier.height(16.dp))
 
                     Text(
-                        text = "AURASATH is open-source and depends on community support to grow. Your help makes a difference!",
+                        text = "Enable notifications for lock screen media controls, continuous playback, and background audio optimizations.",
                         style = MaterialTheme.typography.bodyLarge.copy(
                             fontFamily = GoogleSansFlex
                         ),
@@ -819,193 +684,78 @@ fun WelcomePagerScreen(onFinished: () -> Unit) {
                             .verticalScroll(rememberScrollState())
                     ) {
                         PermissionCard(
-                            icon = rememberVectorPainter(Icons.Rounded.Star),
-                            iconColor = Color(0xFFfff1a8),
-                            iconTint = Color(0xFF8d6e00),
-                            title = "Star on GitHub",
-                            description = "Help us reach more people by starring our repository.",
+                            icon = rememberVectorPainter(Icons.Rounded.Notifications),
+                            iconColor = if (hasNotificationPermission) Color(0xFF80da88) else Color(0xFFffaee4),
+                            iconTint = if (hasNotificationPermission) Color(0xFF00522c) else Color(0xFF8d0053),
+                            title = "Playback Notifications",
+                            description = if (hasNotificationPermission) "Notification permission granted! Media controls are active." else "Control playback and view lyrics directly from the notification shade and lock screen.",
                             shape = topCardShape,
                             control = {
-                                Icon(
-                                    imageVector = Icons.Rounded.ChevronRight,
-                                    contentDescription = null,
-                                    tint = MaterialTheme.colorScheme.onSurfaceVariant
+                                Switch(
+                                    checked = hasNotificationPermission,
+                                    onCheckedChange = {
+                                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                                            notificationLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+                                        } else {
+                                            val intent = Intent(Settings.ACTION_APP_NOTIFICATION_SETTINGS).apply {
+                                                putExtra(Settings.EXTRA_APP_PACKAGE, context.packageName)
+                                            }
+                                            context.startActivity(intent)
+                                        }
+                                    }
                                 )
                             },
                             onClick = {
-                                uriHandler.safeOpenUri(context, "https://github.com/mohammedarsath-ars/AURASATH")
+                                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+                                    notificationLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+                                } else {
+                                    val intent = Intent(Settings.ACTION_APP_NOTIFICATION_SETTINGS).apply {
+                                        putExtra(Settings.EXTRA_APP_PACKAGE, context.packageName)
+                                    }
+                                    context.startActivity(intent)
+                                }
                             }
                         )
 
                         Spacer(modifier = Modifier.height(2.dp))
 
                         PermissionCard(
-                            icon = painterResource(com.aurasath.music.R.drawable.discord),
-                            iconColor = Color(0xFF67d4ff),
-                            iconTint = Color(0xFF004e5d),
-                            title = "Join Discord",
-                            description = "Get the latest updates and chat with the community.",
+                            icon = rememberVectorPainter(Icons.Rounded.HighQuality),
+                            iconColor = Color(0xFF80da88),
+                            iconTint = Color(0xFF00522c),
+                            title = "Optimized Background Engine",
+                            description = "Lossless caching, gapless transitions, and ultra-low battery drain are pre-configured.",
                             shape = bottomCardShape,
                             control = {
-                                Icon(
-                                    imageVector = Icons.Rounded.ChevronRight,
-                                    contentDescription = null,
-                                    tint = MaterialTheme.colorScheme.onSurfaceVariant
-                                )
+                                Surface(
+                                    shape = CircleShape,
+                                    color = Color(0xFF80da88).copy(alpha = 0.2f),
+                                    modifier = Modifier.padding(end = 4.dp)
+                                ) {
+                                    Row(
+                                        modifier = Modifier.padding(horizontal = 10.dp, vertical = 4.dp),
+                                        verticalAlignment = Alignment.CenterVertically
+                                    ) {
+                                        Icon(
+                                            imageVector = Icons.Rounded.Check,
+                                            contentDescription = null,
+                                            tint = Color(0xFF00522c),
+                                            modifier = Modifier.size(16.dp)
+                                        )
+                                        Spacer(modifier = Modifier.width(4.dp))
+                                        Text(
+                                            text = "Active",
+                                            style = MaterialTheme.typography.labelSmall,
+                                            fontWeight = FontWeight.Bold,
+                                            color = Color(0xFF00522c)
+                                        )
+                                    }
+                                }
                             },
-                            onClick = {
-                                uriHandler.safeOpenUri(context, "https://discord.gg/spbuDTePSR")
-                            }
+                            onClick = {}
                         )
 
                         Spacer(modifier = Modifier.height(100.dp))
-                    }
-                }
-            }
-        ),
-        OnboardingPageInfo(
-            content = { onUpdateScroll ->
-                Column(
-                    modifier = Modifier.fillMaxSize(),
-                    horizontalAlignment = Alignment.Start
-                ) {
-                    Spacer(modifier = Modifier.height(80.dp))
-
-                    Column(modifier = Modifier.padding(bottom = 16.dp)) {
-                        Text(
-                            text = stringResource(com.aurasath.music.R.string.feat_discover),
-                            style = thinHeaderStyle,
-                            color = MaterialTheme.colorScheme.onBackground
-                        )
-                        Text(
-                            text = stringResource(com.aurasath.music.R.string.feat_features),
-                            fontFamily = GoogleSansFlex,
-                            fontWeight = FontWeight.Bold,
-                            fontSize = 48.sp,
-                            color = MaterialTheme.colorScheme.primary,
-                            lineHeight = 56.sp
-                        )
-
-                        Spacer(modifier = Modifier.height(16.dp))
-
-                        Text(
-                            text = stringResource(com.aurasath.music.R.string.feat_intro),
-                            style = MaterialTheme.typography.bodyLarge.copy(
-                                fontFamily = GoogleSansFlex
-                            ),
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
-                        )
-                    }
-
-                    Box(modifier = Modifier.weight(1f)) {
-                        val scrollState = rememberScrollState()
-
-                        val isAtBottom by remember {
-                            derivedStateOf {
-                                val layoutInfo = scrollState.maxValue
-                                layoutInfo == 0 || scrollState.value >= (layoutInfo - 20)
-                            }
-                        }
-
-                        LaunchedEffect(isAtBottom) {
-                            onUpdateScroll(isAtBottom)
-                        }
-
-                        Column(
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .verticalScroll(scrollState)
-                        ) {
-                            FeatureCard(
-                                icon = rememberVectorPainter(Icons.Rounded.Lyrics),
-                                iconColor = Color(0xFFffaee4),
-                                iconTint = Color(0xFF8d0053),
-                                title = stringResource(com.aurasath.music.R.string.feat_lyrics_title),
-                                description = stringResource(com.aurasath.music.R.string.feat_lyrics_desc),
-                                shape = topCardShape
-                            )
-
-                            Spacer(modifier = Modifier.height(2.dp))
-
-                            FeatureCard(
-                                icon = rememberVectorPainter(Icons.Rounded.CloudDownload),
-                                iconColor = Color(0xFF80da88),
-                                iconTint = Color(0xFF00522c),
-                                shape = middleCardShape,
-                                title = stringResource(com.aurasath.music.R.string.feat_download_title),
-                                description = stringResource(com.aurasath.music.R.string.feat_download_desc)
-                            )
-
-                            Spacer(modifier = Modifier.height(2.dp))
-
-                            FeatureCard(
-                                icon = rememberVectorPainter(Icons.Rounded.HighQuality),
-                                iconColor = Color(0xFFffb683),
-                                iconTint = Color(0xFF753403),
-                                title = stringResource(com.aurasath.music.R.string.feat_quality_title),
-                                description = stringResource(com.aurasath.music.R.string.feat_quality_desc),
-                                shape = middleCardShape
-                            )
-
-                            Spacer(modifier = Modifier.height(2.dp))
-
-                            FeatureCard(
-                                icon = rememberVectorPainter(Icons.Rounded.BlurOn),
-                                iconColor = Color(0xFFcabeff),
-                                iconTint = Color(0xFF1c0062),
-                                title = stringResource(com.aurasath.music.R.string.feat_glass_title),
-                                description = stringResource(com.aurasath.music.R.string.feat_glass_desc),
-                                shape = middleCardShape
-                            )
-
-                            Spacer(modifier = Modifier.height(2.dp))
-
-                            FeatureCard(
-                                icon = rememberVectorPainter(Icons.Rounded.Forum),
-                                iconColor = Color(0xFF67d4ff),
-                                iconTint = Color(0xFF004e5d),
-                                title = stringResource(com.aurasath.music.R.string.feat_discord_title),
-                                description = stringResource(com.aurasath.music.R.string.feat_discord_desc),
-                                shape = middleCardShape
-                            )
-
-                            if (BuildConfig.FLAVOR.contains("gms", ignoreCase = true)) {
-                                Spacer(modifier = Modifier.height(2.dp))
-
-                                FeatureCard(
-                                    icon = rememberVectorPainter(Icons.Rounded.SystemUpdate),
-                                    iconColor = Color(0xFF67d4ff),
-                                    iconTint = Color(0xFF004e5d),
-                                    title = stringResource(com.aurasath.music.R.string.feat_update_title),
-                                    description = stringResource(com.aurasath.music.R.string.feat_update_desc),
-                                    shape = middleCardShape
-                                )
-                            }
-
-                            Spacer(modifier = Modifier.height(2.dp))
-
-                            FeatureCard(
-                                icon = rememberVectorPainter(Icons.Rounded.Gavel),
-                                iconColor = Color(0xFFb6c6ed),
-                                iconTint = Color(0xFF001b3f),
-                                title = stringResource(com.aurasath.music.R.string.feat_license_title),
-                                description = stringResource(com.aurasath.music.R.string.feat_license_desc),
-                                shape = middleCardShape
-                            )
-
-                            Spacer(modifier = Modifier.height(2.dp))
-
-                            FeatureCard(
-                                icon = rememberVectorPainter(Icons.Rounded.Terminal),
-                                iconColor = Color(0xFFcabeff),
-                                iconTint = Color(0xFF1c0062),
-                                title = stringResource(com.aurasath.music.R.string.feat_github_title),
-                                description = stringResource(com.aurasath.music.R.string.feat_github_desc),
-                                shape = bottomCardShape
-                            )
-
-                            Spacer(modifier = Modifier.height(100.dp))
-                        }
                     }
                 }
             }
@@ -1015,6 +765,16 @@ fun WelcomePagerScreen(onFinished: () -> Unit) {
     val pagerState = rememberPagerState(pageCount = { pages.size })
     val isFirstPage = pagerState.currentPage == 0
     val isLastPage = pagerState.currentPage == pages.size - 1
+    val view = LocalView.current
+
+    val (accentColor) = rememberGlobalAccentColors()
+    val ambientGradient = Brush.verticalGradient(
+        colors = listOf(
+            accentColor.copy(alpha = 0.08f),
+            Color.Transparent,
+            MaterialTheme.colorScheme.tertiary.copy(alpha = 0.06f)
+        )
+    )
 
     BackHandler(enabled = !isFirstPage) {
         scope.launch {
@@ -1026,18 +786,46 @@ fun WelcomePagerScreen(onFinished: () -> Unit) {
     }
 
     Box(
-        modifier = Modifier.fillMaxSize(),
+        modifier = Modifier
+            .fillMaxSize()
+            .background(ambientGradient),
         contentAlignment = Alignment.TopCenter
     ) {
         Column(
             modifier = Modifier
                 .widthIn(max = 700.dp)
                 .fillMaxSize()
-                .padding(24.dp)
+                .padding(horizontal = 24.dp, vertical = 16.dp)
         ) {
+            // Top Bar with Skip Button
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(48.dp),
+                horizontalArrangement = Arrangement.End,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                if (!isLastPage) {
+                    TextButton(
+                        onClick = {
+                            view.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP)
+                            onFinished()
+                        }
+                    ) {
+                        Text(
+                            text = "Skip",
+                            fontFamily = GoogleSansFlex,
+                            fontWeight = FontWeight.SemiBold,
+                            fontSize = 15.sp,
+                            color = MaterialTheme.colorScheme.primary
+                        )
+                    }
+                }
+            }
+
             HorizontalPager(
                 state = pagerState,
-                userScrollEnabled = false,
+                userScrollEnabled = true,
                 modifier = Modifier
                     .weight(1f)
                     .fillMaxWidth()
@@ -1054,11 +842,7 @@ fun WelcomePagerScreen(onFinished: () -> Unit) {
                             scaleY = 1f - absOffset * 0.05f
                         }
                 ) {
-                    pages[index].content { scrolledToEnd ->
-                        if (index == pages.size - 1) {
-                            isLastPageScrolledToEnd = true
-                        }
-                    }
+                    pages[index].content { _ -> }
                 }
             }
 
@@ -1126,6 +910,7 @@ fun WelcomePagerScreen(onFinished: () -> Unit) {
                     WelcomeExpressiveButton(
                         text = stringResource(com.aurasath.music.R.string.back_button_desc),
                         onClick = {
+                            view.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP)
                             if (!isFirstPage) {
                                 scope.launch {
                                     pagerState.animateScrollToPage(
@@ -1149,20 +934,14 @@ fun WelcomePagerScreen(onFinished: () -> Unit) {
                         .weight(1f)
                         .fillMaxHeight()
                 ) {
-                    val isNextEnabled = !isLastPage || isLastPageScrolledToEnd
-
-                    val alphaNext by animateFloatAsState(
-                        targetValue = if (isNextEnabled) 1f else 0.5f,
-                        label = "nextAlpha"
-                    )
-
                     WelcomeExpressiveButton(
-                        text = if (isLastPage) stringResource(com.aurasath.music.R.string.get_started) else stringResource(
+                        text = if (isLastPage) "Start Listening 🚀" else stringResource(
                             com.aurasath.music.R.string.next
                         ),
                         onClick = {
+                            view.performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP)
                             if (isLastPage) {
-                                if (isLastPageScrolledToEnd) onFinished()
+                                onFinished()
                             } else {
                                 scope.launch {
                                     pagerState.animateScrollToPage(
@@ -1172,8 +951,8 @@ fun WelcomePagerScreen(onFinished: () -> Unit) {
                                 }
                             }
                         },
-                        containerColor = MaterialTheme.colorScheme.primary.copy(alpha = alphaNext),
-                        contentColor = MaterialTheme.colorScheme.onPrimary.copy(alpha = alphaNext),
+                        containerColor = MaterialTheme.colorScheme.primary,
+                        contentColor = MaterialTheme.colorScheme.onPrimary,
                         modifier = Modifier.fillMaxSize()
                     )
                 }
@@ -1234,10 +1013,10 @@ fun WelcomePagerScreen(onFinished: () -> Unit) {
 fun AurasathSonicWaveformVisualizer(modifier: Modifier = Modifier) {
     val infiniteTransition = rememberInfiniteTransition(label = "aurasathSonic")
     val pulseScale by infiniteTransition.animateFloat(
-        initialValue = 0.94f,
-        targetValue = 1.06f,
+        initialValue = 0.96f,
+        targetValue = 1.04f,
         animationSpec = infiniteRepeatable(
-            animation = tween(1400, easing = FastOutSlowInEasing),
+            animation = tween(1800, easing = FastOutSlowInEasing),
             repeatMode = RepeatMode.Reverse
         ),
         label = "pulseScale"
@@ -1246,18 +1025,16 @@ fun AurasathSonicWaveformVisualizer(modifier: Modifier = Modifier) {
         initialValue = 0f,
         targetValue = 360f,
         animationSpec = infiniteRepeatable(
-            animation = tween(28000, easing = LinearEasing),
+            animation = tween(32000, easing = LinearEasing),
             repeatMode = RepeatMode.Restart
         ),
         label = "ringRotation"
     )
-
-    // Single phase animation drives all waveform bars cleanly without composable loop calls
     val wavePhase by infiniteTransition.animateFloat(
         initialValue = 0f,
         targetValue = 6.2831855f,
         animationSpec = infiniteRepeatable(
-            animation = tween(1600, easing = LinearEasing),
+            animation = tween(1500, easing = LinearEasing),
             repeatMode = RepeatMode.Restart
         ),
         label = "wavePhase"
@@ -1267,84 +1044,108 @@ fun AurasathSonicWaveformVisualizer(modifier: Modifier = Modifier) {
     val secondaryColor = MaterialTheme.colorScheme.secondary
     val tertiaryColor = MaterialTheme.colorScheme.tertiary
 
-    Box(
+    Column(
         modifier = modifier,
-        contentAlignment = Alignment.Center
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
     ) {
-        // Sonic Wave Rings - robust stroke without hardware-incompatible dash effects
-        androidx.compose.foundation.Canvas(
-            modifier = Modifier
-                .fillMaxSize()
-                .graphicsLayer {
-                    scaleX = pulseScale
-                    scaleY = pulseScale
-                    rotationZ = ringRotation
-                }
+        Box(
+            modifier = Modifier.size(170.dp),
+            contentAlignment = Alignment.Center
         ) {
-            val maxRadius = size.minDimension / 2f
-
-            drawCircle(
-                color = primaryColor.copy(alpha = 0.18f),
-                radius = maxRadius * 0.95f,
-                style = androidx.compose.ui.graphics.drawscope.Stroke(width = 2.dp.toPx())
-            )
-
-            drawCircle(
-                color = secondaryColor.copy(alpha = 0.28f),
-                radius = maxRadius * 0.78f,
-                style = androidx.compose.ui.graphics.drawscope.Stroke(width = 2.5f.dp.toPx())
-            )
-
-            drawCircle(
-                color = tertiaryColor.copy(alpha = 0.35f),
-                radius = maxRadius * 0.60f,
-                style = androidx.compose.ui.graphics.drawscope.Stroke(width = 3.dp.toPx())
-            )
-        }
-
-        // Animated soundwave bars driven safely from wavePhase
-        Row(
-            horizontalArrangement = Arrangement.spacedBy(5.dp),
-            verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier.size(140.dp, 80.dp)
-        ) {
-            val barCount = 9
-            for (i in 0 until barCount) {
-                val factor = kotlin.math.sin(wavePhase + i * 0.7f).coerceIn(-1f, 1f)
-                val normalized = (factor + 1f) / 2f
-                val barHeight = (18 + normalized * 48).dp
-                val barColor = if (i % 2 == 0) primaryColor else secondaryColor
-                Box(
-                    modifier = Modifier
-                        .width(7.dp)
-                        .height(barHeight)
-                        .clip(RoundedCornerShape(4.dp))
-                        .background(barColor)
-                )
-            }
-        }
-
-        // Center circular AURASATH emblem
-        Surface(
-            shape = CircleShape,
-            color = MaterialTheme.colorScheme.surface,
-            border = androidx.compose.foundation.BorderStroke(2.5.dp, primaryColor.copy(alpha = 0.9f)),
-            shadowElevation = 14.dp,
-            modifier = Modifier.size(80.dp)
-        ) {
-            Box(
-                contentAlignment = Alignment.Center,
+            // Concentric ambient sonic rings
+            androidx.compose.foundation.Canvas(
                 modifier = Modifier
                     .fillMaxSize()
-                    .padding(14.dp)
+                    .graphicsLayer {
+                        scaleX = pulseScale
+                        scaleY = pulseScale
+                        rotationZ = ringRotation
+                    }
+            ) {
+                val maxRadius = size.minDimension / 2f
+                drawCircle(
+                    color = primaryColor.copy(alpha = 0.15f),
+                    radius = maxRadius * 0.95f,
+                    style = androidx.compose.ui.graphics.drawscope.Stroke(width = 1.5.dp.toPx())
+                )
+                drawCircle(
+                    color = secondaryColor.copy(alpha = 0.22f),
+                    radius = maxRadius * 0.76f,
+                    style = androidx.compose.ui.graphics.drawscope.Stroke(width = 2.dp.toPx())
+                )
+                drawCircle(
+                    color = tertiaryColor.copy(alpha = 0.30f),
+                    radius = maxRadius * 0.58f,
+                    style = androidx.compose.ui.graphics.drawscope.Stroke(width = 2.5.dp.toPx())
+                )
+            }
+
+            // Center AURASATH squircle emblem matching splash & about screens
+            Surface(
+                shape = RoundedCornerShape(24.dp),
+                color = Color(0xFF0F1015),
+                border = BorderStroke(2.dp, primaryColor.copy(alpha = 0.85f)),
+                shadowElevation = 18.dp,
+                modifier = Modifier.size(92.dp)
             ) {
                 androidx.compose.foundation.Image(
                     painter = painterResource(com.aurasath.music.R.drawable.aurasath_logo),
                     contentDescription = "AURASATH Logo",
-                    modifier = Modifier.fillMaxSize(),
-                    contentScale = androidx.compose.ui.layout.ContentScale.Fit
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .clip(RoundedCornerShape(24.dp)),
+                    contentScale = androidx.compose.ui.layout.ContentScale.Crop
                 )
             }
+        }
+
+        Spacer(modifier = Modifier.height(14.dp))
+
+        // Dancing equalizer bars - 11 smooth animated bars
+        Row(
+            horizontalArrangement = Arrangement.spacedBy(4.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier.height(36.dp)
+        ) {
+            val barCount = 11
+            for (i in 0 until barCount) {
+                val factor = kotlin.math.sin(wavePhase + i * 0.6f).coerceIn(-1f, 1f)
+                val normalized = (factor + 1f) / 2f
+                val barHeight = (10 + normalized * 26).dp
+                val barColor = if (i % 2 == 0) primaryColor else secondaryColor
+                Box(
+                    modifier = Modifier
+                        .width(4.5.dp)
+                        .height(barHeight)
+                        .clip(RoundedCornerShape(3.dp))
+                        .background(barColor)
+                )
+            }
+        }
+    }
+}
+
+@Composable
+fun OnboardingHighlightBadge(icon: String, label: String) {
+    Surface(
+        shape = CircleShape,
+        color = MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.6f),
+        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline.copy(alpha = 0.15f))
+    ) {
+        Row(
+            modifier = Modifier.padding(horizontal = 12.dp, vertical = 6.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(5.dp)
+        ) {
+            Text(text = icon, fontSize = 13.sp)
+            Text(
+                text = label,
+                fontFamily = GoogleSansFlex,
+                fontWeight = FontWeight.Medium,
+                fontSize = 12.sp,
+                color = MaterialTheme.colorScheme.onSurface
+            )
         }
     }
 }

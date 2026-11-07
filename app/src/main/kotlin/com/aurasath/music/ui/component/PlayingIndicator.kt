@@ -52,12 +52,16 @@ fun PlayingIndicator(
         }
 
     LaunchedEffect(Unit) {
-        delay(300)
-        animatables.forEach { animatable ->
+        animatables.forEachIndexed { index, animatable ->
             launch {
+                delay(index * 75L)
                 while (true) {
-                    animatable.animateTo(Random.nextFloat() * 0.9f + 0.1f)
-                    delay(50)
+                    val target = Random.nextFloat() * 0.8f + 0.2f
+                    val duration = Random.nextInt(160, 260)
+                    animatable.animateTo(
+                        targetValue = target,
+                        animationSpec = tween(durationMillis = duration)
+                    )
                 }
             }
         }

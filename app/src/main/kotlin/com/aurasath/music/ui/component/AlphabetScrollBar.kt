@@ -1,4 +1,4 @@
-﻿/**
+/**
  * AURASATH Project (C) 2026
  * Licensed under GPL-3.0 | See git history for contributors
  */
@@ -71,7 +71,7 @@ const val AlphabetScrollBarMinItems = 20
 private val RailWidth = 28.dp
 
 /** Rail slot that jumps to index 0 rather than to a section. Drawn above "0". */
-private const val ScrollTopSection = "â†‘"
+private const val ScrollTopSection = "\u2191"
 
 /**
  * Fast-scrub rail pinned to the trailing edge of a long list: drag a finger down it and
@@ -264,7 +264,7 @@ fun AlphabetScrollBar(
 private const val ProportionalRailStops = 27
 
 /** Every stop draws the same tick; the rail is a position, not a label. */
-private const val ProportionalRailTick = "Â·"
+private const val ProportionalRailTick = "\u2022"
 
 /**
  * The one call site every long list uses.
@@ -286,42 +286,24 @@ fun ListScrollRail(
     modifier: Modifier = Modifier,
 ) {
     if (itemCount < AlphabetScrollBarMinItems) return
+    // Only display alphabet rail when an alphabetical section map is present.
+    // For custom or unindexed orders, do not draw synthetic tick clutter over song items.
+    if (sectionIndexMap == null) return
 
-    if (sectionIndexMap != null) {
-        // A descending sort runs Z->A down the list, so the rail has to run Z->A down the
-        // screen too or the thumb travels opposite to the content. Detected from the map
-        // rather than passed in, so no call site can get the two out of step.
-        val sections = remember(sectionIndexMap) {
-            if (sectionIndexIsDescending(sectionIndexMap)) {
-                AlphabetSections.asReversed()
-            } else {
-                AlphabetSections
-            }
+    val sections = remember(sectionIndexMap) {
+        if (sectionIndexIsDescending(sectionIndexMap)) {
+            AlphabetSections.asReversed()
+        } else {
+            AlphabetSections
         }
-        AlphabetScrollBar(
-            sectionIndexMap = sectionIndexMap,
-            itemCount = itemCount,
-            isAtTarget = isAtTarget,
-            scrollToItem = scrollToItem,
-            modifier = modifier,
-            sections = sections,
-        )
-        return
-    }
-
-    val stops = remember { List(ProportionalRailStops) { it.toString() } }
-    val proportionalIndex = remember(itemCount) {
-        buildProportionalSectionIndex(itemCount, ProportionalRailStops)
     }
     AlphabetScrollBar(
-        sectionIndexMap = proportionalIndex,
+        sectionIndexMap = sectionIndexMap,
         itemCount = itemCount,
         isAtTarget = isAtTarget,
         scrollToItem = scrollToItem,
         modifier = modifier,
-        sections = stops,
-        labelOf = { section -> if (section == ScrollTopSection) section else ProportionalRailTick },
-        showIndicator = false,
+        sections = sections,
     )
 }
 

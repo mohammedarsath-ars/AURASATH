@@ -531,11 +531,17 @@ fun BottomSheetPlayer(
             null
         }
     }
-    val isCasting by castHandler?.isCasting?.collectAsStateWithLifecycle() ?: remember { mutableStateOf(false) }
-    val castPosition by castHandler?.castPosition?.collectAsStateWithLifecycle() ?: remember { mutableLongStateOf(0L) }
-    val castDuration by castHandler?.castDuration?.collectAsStateWithLifecycle() ?: remember { mutableLongStateOf(0L) }
-    val castIsPlaying by castHandler?.castIsPlaying?.collectAsStateWithLifecycle() ?: remember { mutableStateOf(false) }
-    val castVolume by castHandler?.castVolume?.collectAsStateWithLifecycle() ?: remember { mutableFloatStateOf(1f) }
+    val defaultIsCastingState = remember { mutableStateOf(false) }
+    val defaultCastPositionState = remember { mutableLongStateOf(0L) }
+    val defaultCastDurationState = remember { mutableLongStateOf(0L) }
+    val defaultCastIsPlayingState = remember { mutableStateOf(false) }
+    val defaultCastVolumeState = remember { mutableFloatStateOf(1f) }
+
+    val isCasting by castHandler?.isCasting?.collectAsStateWithLifecycle() ?: defaultIsCastingState
+    val castPosition by castHandler?.castPosition?.collectAsStateWithLifecycle() ?: defaultCastPositionState
+    val castDuration by castHandler?.castDuration?.collectAsStateWithLifecycle() ?: defaultCastDurationState
+    val castIsPlaying by castHandler?.castIsPlaying?.collectAsStateWithLifecycle() ?: defaultCastIsPlayingState
+    val castVolume by castHandler?.castVolume?.collectAsStateWithLifecycle() ?: defaultCastVolumeState
     
     // Use Cast state when casting, otherwise local player
     val effectiveIsPlaying = if (isCasting) castIsPlaying else isPlaying
@@ -1161,7 +1167,7 @@ fun BottomSheetPlayer(
     // both consistently instead of stickers repositioning while the background
     // layout stays pinned to the device's real, physical orientation.
     val isLandscapeLayout = forcedOrientation?.let { it == DiyOrientation.LANDSCAPE }
-        ?: (LocalConfiguration.current.orientation == android.content.res.Configuration.ORIENTATION_LANDSCAPE)
+        ?: (LocalConfiguration.current.orientation == android.content.res.Configuration.ORIENTATION_LANDSCAPE || LocalConfiguration.current.screenWidthDp >= 600)
     val diyOrientation = if (isLandscapeLayout) DiyOrientation.LANDSCAPE else DiyOrientation.PORTRAIT
 
     // Publishes this sheet's progress to the shared container morph. Read only in the
@@ -1555,13 +1561,17 @@ fun BottomSheetPlayer(
                                                     // This candidate's video doesn't actually play (dead
                                                     // link, unsupported format, ...) — try the next one
                                                     // in priority order instead of just going blank.
-                                                    println("CanvasFallback: onError fired at index=$canvasCandidateIndex of ${canvasCandidates.size} candidates")
+                                                    if (com.aurasath.music.BuildConfig.DEBUG) {
+                                                        android.util.Log.d("CanvasFallback", "onError fired at index=$canvasCandidateIndex of ${canvasCandidates.size} candidates")
+                                                    }
                                                     if (canvasCandidateIndex < canvasCandidates.lastIndex) {
                                                         canvasCandidateIndex++
                                                     } else {
                                                         canvasCandidateIndex = canvasCandidates.size
                                                     }
-                                                    println("CanvasFallback: advanced to index=$canvasCandidateIndex, next url=${canvasCandidates.getOrNull(canvasCandidateIndex)?.preferredAnimationUrl}")
+                                                    if (com.aurasath.music.BuildConfig.DEBUG) {
+                                                        android.util.Log.d("CanvasFallback", "advanced to index=$canvasCandidateIndex, next url=${canvasCandidates.getOrNull(canvasCandidateIndex)?.preferredAnimationUrl}")
+                                                    }
                                                 },
                                                 onReady = {
                                                     canvasArtwork?.let {
@@ -3694,8 +3704,9 @@ private fun BackgroundVideoView(
                 currentOnReady()
             }
             override fun onPlayerError(error: androidx.media3.common.PlaybackException) {
-                println("BackgroundVideoView: E: failed to play '$videoUrl': ${error.errorCodeName} ${error.message}")
-                error.printStackTrace()
+                if (com.aurasath.music.BuildConfig.DEBUG) {
+                    android.util.Log.e("BackgroundVideoView", "failed to play '$videoUrl': ${error.errorCodeName} ${error.message}")
+                }
                 currentOnError()
             }
         }
@@ -3704,7 +3715,9 @@ private fun BackgroundVideoView(
     }
 
     LaunchedEffect(videoUrl, mediaId) {
-        println("BackgroundVideoView: D: loading '$videoUrl'")
+        if (com.aurasath.music.BuildConfig.DEBUG) {
+            android.util.Log.d("BackgroundVideoView", "loading '$videoUrl'")
+        }
         isVideoReady = false
         val mediaItem = MediaItem.Builder()
             .setUri(videoUrl)

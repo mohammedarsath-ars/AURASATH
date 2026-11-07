@@ -71,6 +71,8 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.luminance
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalHapticFeedback
+import androidx.compose.ui.hapticfeedback.HapticFeedbackType
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
@@ -1875,6 +1877,7 @@ fun SwipeToSongBox(
     content: @Composable BoxScope.() -> Unit
 ) {
     val ctx = LocalContext.current
+    val haptic = LocalHapticFeedback.current
     val player = LocalPlayerConnection.current
     val scope = rememberCoroutineScope()
     val offset = remember { mutableFloatStateOf(0f) }
@@ -1893,12 +1896,14 @@ fun SwipeToSongBox(
                 onDragStopped = {
                     when {
                         offset.floatValue >= threshold -> {
+                            haptic.performHapticFeedback(HapticFeedbackType.LongPress)
                             player?.playNext(listOf(mediaItem))
                             Toast.makeText(ctx, R.string.play_next, Toast.LENGTH_SHORT).show()
                             reset(offset, scope)
                         }
 
                         offset.floatValue <= -threshold -> {
+                            haptic.performHapticFeedback(HapticFeedbackType.LongPress)
                             player?.addToQueue(listOf(mediaItem))
                             Toast.makeText(ctx, R.string.add_to_queue, Toast.LENGTH_SHORT).show()
                             reset(offset, scope)

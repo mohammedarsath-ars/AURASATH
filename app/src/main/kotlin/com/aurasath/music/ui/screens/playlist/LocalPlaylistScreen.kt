@@ -793,23 +793,27 @@ fun LocalPlaylistScreen(
                     val swipeRemoveEnabled = LocalItemPrefs.current.swipeToRemoveSong
                     val dismissBoxState =
                         rememberSwipeToDismissBoxState(
-                            positionalThreshold = { totalDistance -> totalDistance }
+                            positionalThreshold = { totalDistance -> totalDistance * 0.35f },
+                            confirmValueChange = { value ->
+                                when (value) {
+                                    SwipeToDismissBoxValue.StartToEnd -> {
+                                        playerConnection.playNext(song.song.toMediaItem())
+                                        haptic.performHapticFeedback(HapticFeedbackType.LongPress)
+                                        android.widget.Toast.makeText(context, R.string.play_next, android.widget.Toast.LENGTH_SHORT).show()
+                                        false
+                                    }
+                                    SwipeToDismissBoxValue.EndToStart -> {
+                                        if (swipeRemoveEnabled && editable) {
+                                            deleteFromPlaylist()
+                                            true
+                                        } else {
+                                            false
+                                        }
+                                    }
+                                    else -> false
+                                }
+                            }
                         )
-                    var processedDismiss by remember { mutableStateOf(false) }
-                    LaunchedEffect(dismissBoxState.currentValue) {
-                        val dv = dismissBoxState.currentValue
-                        if (swipeRemoveEnabled && !processedDismiss && (
-                                dv == SwipeToDismissBoxValue.StartToEnd ||
-                                dv == SwipeToDismissBoxValue.EndToStart
-                            )
-                        ) {
-                            processedDismiss = true
-                            deleteFromPlaylist()
-                        }
-                        if (dv == SwipeToDismissBoxValue.Settled) {
-                            processedDismiss = false
-                        }
-                    }
 
                     val onCheckedChange: (Boolean) -> Unit = {
                         if (it) {
@@ -830,6 +834,7 @@ fun LocalPlaylistScreen(
                                 count = if (isSearching) filteredSongs.size else mutableSongs.size
                             ),
                             flat = true,
+                            isSwipeable = false,
                             trailingContent = {
                                 if (inSelectMode) {
                                     Checkbox(
@@ -905,14 +910,83 @@ fun LocalPlaylistScreen(
                         )
                     }
 
-                    if (locked || inSelectMode || !swipeRemoveEnabled) {
+                    if (locked || inSelectMode) {
                         Box(modifier = Modifier.animateItem()) {
                             content()
                         }
                     } else {
                         SwipeToDismissBox(
                             state = dismissBoxState,
-                            backgroundContent = {},
+                            enableDismissFromStartToEnd = true,
+                            enableDismissFromEndToStart = editable && swipeRemoveEnabled,
+                            backgroundContent = {
+                                val direction = dismissBoxState.dismissDirection
+                                val color by animateColorAsState(
+                                    when (dismissBoxState.targetValue) {
+                                        SwipeToDismissBoxValue.StartToEnd -> MaterialTheme.colorScheme.primaryContainer
+                                        SwipeToDismissBoxValue.EndToStart -> MaterialTheme.colorScheme.errorContainer
+                                        else -> Color.Transparent
+                                    },
+                                    label = "swipeBg"
+                                )
+                                val alignment = when (direction) {
+                                    SwipeToDismissBoxValue.StartToEnd -> Alignment.CenterStart
+                                    SwipeToDismissBoxValue.EndToStart -> Alignment.CenterEnd
+                                    else -> Alignment.CenterStart
+                                }
+                                val icon = when (direction) {
+                                    SwipeToDismissBoxValue.StartToEnd -> painterResource(R.drawable.playlist_play)
+                                    SwipeToDismissBoxValue.EndToStart -> painterResource(R.drawable.delete)
+                                    else -> null
+                                }
+                                val iconTint = when (direction) {
+                                    SwipeToDismissBoxValue.StartToEnd -> MaterialTheme.colorScheme.onPrimaryContainer
+                                    SwipeToDismissBoxValue.EndToStart -> MaterialTheme.colorScheme.onErrorContainer
+                                    else -> Color.Transparent
+                                }
+
+                                Box(
+                                    modifier = Modifier
+                                        .fillMaxSize()
+                                        .clip(listItemShape(index = index, count = if (isSearching) filteredSongs.size else mutableSongs.size))
+                                        .background(color)
+                                        .padding(horizontal = 20.dp),
+                                    contentAlignment = alignment
+                                ) {
+                                    if (icon != null) {
+                                        Row(
+                                            verticalAlignment = Alignment.CenterVertically,
+                                            horizontalArrangement = Arrangement.spacedBy(8.dp)
+                                        ) {
+                                            if (direction == SwipeToDismissBoxValue.StartToEnd) {
+                                                Icon(
+                                                    painter = icon,
+                                                    contentDescription = null,
+                                                    tint = iconTint,
+                                                    modifier = Modifier.size(24.dp)
+                                                )
+                                                Text(
+                                                    text = stringResource(R.string.play_next),
+                                                    color = iconTint,
+                                                    style = MaterialTheme.typography.labelLarge
+                                                )
+                                            } else if (direction == SwipeToDismissBoxValue.EndToStart) {
+                                                Text(
+                                                    text = stringResource(R.string.delete),
+                                                    color = iconTint,
+                                                    style = MaterialTheme.typography.labelLarge
+                                                )
+                                                Icon(
+                                                    painter = icon,
+                                                    contentDescription = null,
+                                                    tint = iconTint,
+                                                    modifier = Modifier.size(24.dp)
+                                                )
+                                            }
+                                        }
+                                    }
+                                }
+                            },
                             modifier = Modifier.animateItem()
                         ) {
                             content()

@@ -678,7 +678,7 @@ class MusicService :
         val controllerFuture = MediaController.Builder(this, sessionToken).buildAsync()
         controllerFuture.addListener({ controllerFuture.get() }, MoreExecutors.directExecutor())
 
-        connectivityManager = getSystemService()!!
+        getSystemService<ConnectivityManager>()?.let { connectivityManager = it }
         connectivityObserver = NetworkConnectivityObserver(this)
 
         val screenStateFilter = IntentFilter().apply {
@@ -1756,13 +1756,26 @@ class MusicService :
             if (initialStatus.items.isEmpty()) return@launch
             // Track original queue size for shuffle playlist first feature
             originalQueueSize = initialStatus.items.size
-            val validIndex = initialStatus.mediaItemIndex.coerceIn(0, (initialStatus.items.size - 1).coerceAtLeast(0))
+            val targetMediaId = queue.preloadItem?.id
+            val initialValidIndex = initialStatus.mediaItemIndex.coerceIn(0, (initialStatus.items.size - 1).coerceAtLeast(0))
+            val validIndex = if (targetMediaId != null) {
+                val matched = initialStatus.items.indexOfFirst { it.mediaId == targetMediaId }
+                if (matched != -1) matched else initialValidIndex
+            } else {
+                initialValidIndex
+            }
             if (queue.preloadItem != null) {
+                val isSameSong = player.currentMediaItem?.mediaId != null &&
+                    player.currentMediaItem?.mediaId == initialStatus.items.getOrNull(validIndex)?.mediaId
                 player.setMediaItems(
                     initialStatus.items,
                     validIndex,
-                    if (player.currentMediaItemIndex == 0 && validIndex == 0) player.currentPosition else initialStatus.position
+                    if (isSameSong) player.currentPosition else initialStatus.position
                 )
+                if (player.playbackState == STATE_IDLE) {
+                    player.prepare()
+                }
+                player.playWhenReady = playWhenReady
             } else {
                 player.setMediaItems(
                     initialStatus.items,
@@ -1776,7 +1789,7 @@ class MusicService :
             // Rebuild shuffle order if shuffle is enabled
             if (player.shuffleModeEnabled) {
                 val shufflePlaylistFirst = dataStore.get(ShufflePlaylistFirstKey, false)
-                applyShuffleOrder(player.currentMediaItemIndex, player.mediaItemCount, shufflePlaylistFirst)
+                applyShuffleOrder(validIndex, player.mediaItemCount, shufflePlaylistFirst)
             }
             prefetchUpcomingTracks()
         }
@@ -1980,6 +1993,18 @@ class MusicService :
             return
         }
 
+        // If player playback has finished, append and start playback immediately
+        if (player.playbackState == Player.STATE_ENDED) {
+            val insertIndex = player.mediaItemCount
+            player.addMediaItems(insertIndex, items)
+            player.seekToDefaultPosition(insertIndex)
+            player.prepare()
+            if (castConnectionHandler?.isCasting?.value != true) {
+                player.play()
+            }
+            return
+        }
+
         // Remove duplicates if enabled
         if (dataStore.get(PreventDuplicateTracksInQueueKey, false)) {
             val itemIds = items.map { it.mediaId }.toSet()
@@ -1998,7 +2023,7 @@ class MusicService :
             }
         }
 
-        val insertIndex = player.currentMediaItemIndex + 1
+        val insertIndex = (player.currentMediaItemIndex + 1).coerceIn(0, player.mediaItemCount)
         val shuffleEnabled = player.shuffleModeEnabled
 
         // Insert items immediately after the current item in the window/index space
@@ -2015,44 +2040,75 @@ class MusicService :
                 // Newly inserted indices are a contiguous range [insertIndex, insertIndex + items.size)
                 val newIndices = (insertIndex until (insertIndex + items.size)).toSet()
 
-                // Collect existing shuffle traversal order excluding current index
+                // Collect existing shuffle traversal order excluding current index, guarding against cycles
                 val orderAfter = mutableListOf<Int>()
+                val visitedForward = mutableSetOf(currentIndex)
                 var idx = currentIndex
-                while (true) {
+                while (orderAfter.size < size) {
                     idx = timeline.getNextWindowIndex(idx, Player.REPEAT_MODE_OFF, /*shuffleModeEnabled=*/true)
-                    if (idx == C.INDEX_UNSET) break
-                    if (idx != currentIndex) orderAfter.add(idx)
+                    if (idx == C.INDEX_UNSET || idx in visitedForward) break
+                    visitedForward.add(idx)
+                    orderAfter.add(idx)
                 }
 
                 val prevList = mutableListOf<Int>()
+                val visitedBackward = mutableSetOf(currentIndex)
                 var pIdx = currentIndex
-                while (true) {
+                while (prevList.size < size) {
                     pIdx = timeline.getPreviousWindowIndex(pIdx, Player.REPEAT_MODE_OFF, /*shuffleModeEnabled=*/true)
-                    if (pIdx == C.INDEX_UNSET) break
-                    if (pIdx != currentIndex) prevList.add(pIdx)
+                    if (pIdx == C.INDEX_UNSET || pIdx in visitedBackward) break
+                    visitedBackward.add(pIdx)
+                    prevList.add(pIdx)
                 }
                 prevList.reverse() // preserve original forward order
 
                 val existingOrder = (prevList + orderAfter).filter { it != currentIndex && it !in newIndices }
 
-                // Build new shuffle order: current -> newly inserted (in insertion order) -> rest
+                // Build new shuffle order: preserve history (prevList) -> current -> newly inserted (play next) -> remaining
                 val nextBlock = (insertIndex until (insertIndex + items.size)).toList()
                 val finalOrder = IntArray(size)
                 // Tracks which window indices have already been placed, so the
                 // safety-net fill below is an O(1) lookup per slot instead of an
-                // O(n) IntArray.contains scan â€” O(n^2) on a large queue otherwise.
+                // O(n) scan.
                 val placed = BooleanArray(size)
                 var pos = 0
-                finalOrder[pos++] = currentIndex
-                placed[currentIndex] = true
-                nextBlock.forEach { if (it in 0 until size) { finalOrder[pos++] = it; placed[it] = true } }
-                existingOrder.forEach { if (pos < size) { finalOrder[pos++] = it; placed[it] = true } }
 
-                // Fill any missing indices (safety) to ensure a full permutation
+                // 1. History played before current item
+                prevList.filter { it !in newIndices && it in 0 until size }.forEach {
+                    if (pos < size && !placed[it]) {
+                        finalOrder[pos++] = it
+                        placed[it] = true
+                    }
+                }
+
+                // 2. Currently playing item
+                if (currentIndex in 0 until size && !placed[currentIndex] && pos < size) {
+                    finalOrder[pos++] = currentIndex
+                    placed[currentIndex] = true
+                }
+
+                // 3. Newly inserted items (Play Next!)
+                nextBlock.forEach {
+                    if (it in 0 until size && !placed[it] && pos < size) {
+                        finalOrder[pos++] = it
+                        placed[it] = true
+                    }
+                }
+
+                // 4. Remaining items in previous traversal order
+                existingOrder.forEach {
+                    if (it in 0 until size && !placed[it] && pos < size) {
+                        finalOrder[pos++] = it
+                        placed[it] = true
+                    }
+                }
+
+                // 5. Fill any missing indices (safety) to ensure a full permutation
                 if (pos < size) {
                     for (i in 0 until size) {
                         if (!placed[i]) {
                             finalOrder[pos++] = i
+                            placed[i] = true
                             if (pos == size) break
                         }
                     }
@@ -4349,8 +4405,8 @@ class MusicService :
             outgoingDurationMs = player.duration.takeIf { it != C.TIME_UNSET } ?: 0L,
         )
 
-        secondaryPlayer = createExoPlayer()
-        val secPlayer = secondaryPlayer!!
+        val secPlayer = createExoPlayer()
+        secondaryPlayer = secPlayer
         secPlayer.addListener(secondaryPlayerListener)
 
         djMixPlan?.let { plan ->
@@ -4430,8 +4486,8 @@ class MusicService :
         val savedRepeatMode = player.repeatMode
         val savedShuffleEnabled = player.shuffleModeEnabled
 
-        secondaryPlayer = createExoPlayer()
-        val secPlayer = secondaryPlayer!!
+        val secPlayer = createExoPlayer()
+        secondaryPlayer = secPlayer
         secPlayer.addListener(secondaryPlayerListener)
 
         val itemCount = player.mediaItemCount

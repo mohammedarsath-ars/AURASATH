@@ -3,6 +3,31 @@
   "image": "",
   "changelog": [
     {
+      "title": "Smart Sleep Fade & Audio Polish",
+      "items": [
+        "Smart Sleep Fade: Sleep timer and 'pause at end of track' now gently fade volume over the final 8-10 seconds to 0 before pausing, restoring volume seamlessly for next session.",
+        "Silky 120fps tab transitions: replaced heavy sliding layout shifts across Home, Library, and Settings with ultra-fluid hardware-accelerated crossfades.",
+        "Swipe-to-Play-Next: swipe right on any playlist or library song to immediately queue it next with haptic confirmation.",
+        "FastScroller Polish: resolved corrupted characters and removed 27-dot synthetic rail clutter on custom order playlists.",
+        "Foldable & Tablet Optimization: intelligent split-view player and navigation rail activation for screens wider than 600dp.",
+        "YouTube Playlist Stability: stripped duplicate 'VL' prefixes preventing 400/404 API errors and added robust fallback endpoints."
+      ]
+    },
+    {
+      "title": "Tamil Music Priority & Regional Feed",
+      "items": [
+        "Home screen Featured card, Quick picks, and Daily Discover now fully prioritize Tamil trending songs and adapt directly to your imported Spotify Tamil playlists.",
+        "Automatic Hindi & Bollywood shelf filter: removes non-Tamil regional spam when Tamil content preference is active, and introduces a dedicated 'Tamil Hits & Trending' shelf."
+      ]
+    },
+    {
+      "title": "Track Selection & Queue Fallback Fix",
+      "items": [
+        "Resolved playlist and home screen fallback bug where tapping a specific song (e.g. 4th track) defaulted to playing the 1st song of the automix.",
+        "Audio stream resolver now guarantees exact track ID matching across JioSaavn, Tidal, and YouTube playback."
+      ]
+    },
+    {
       "title": "Initial Official Launch (v1.0.0)",
       "items": [
         "Welcome to the debut release of AURASATH — the premier open-source music player with Liquid Glass aesthetic.",

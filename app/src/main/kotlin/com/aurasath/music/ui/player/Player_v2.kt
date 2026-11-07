@@ -59,6 +59,8 @@ import androidx.media3.common.C
 import com.aurasath.music.LocalPlayerConnection
 import com.aurasath.music.constants.PlayerBackgroundStyle
 import com.aurasath.music.constants.PlayerBackgroundStyleKey
+import com.aurasath.music.constants.PlayerButtonsStyle
+import com.aurasath.music.constants.PlayerButtonsStyleKey
 import com.aurasath.music.constants.ShowPlayerThumbnailShadowKey
 import com.aurasath.music.constants.PlayerThumbnailShadowElevationKey
 import com.aurasath.music.constants.EnableGoogleCastKey
@@ -105,6 +107,11 @@ import com.aurasath.music.ui.player.customize.DiyDesignCanvas
 import kotlinx.coroutines.launch
 import com.aurasath.music.constants.AmbientEdgeGlowEnabledKey
 import com.aurasath.music.constants.AmbientEdgeGlowIntensityKey
+import com.aurasath.music.constants.SliderStyle
+import com.aurasath.music.constants.SliderStyleKey
+import com.aurasath.music.ui.component.ScrollingWaveformSeekBar
+import com.aurasath.music.ui.component.WavySlider
+import com.aurasath.music.ui.component.rememberPlaybackFraction
 import com.aurasath.music.ui.component.AmbientEdgeGlow
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.material.icons.filled.KeyboardArrowDown
@@ -336,6 +343,8 @@ fun PlayerV2(
     val enableGoogleCast by rememberPreference(EnableGoogleCastKey, defaultValue = true)
     val (appTextColorInt) = rememberPreference(AppTextColorKey, defaultValue = 0)
     val (showUpNext) = rememberPreference(ShowUpNextKey, defaultValue = false)
+    val sliderStyle by rememberEnumPreference(SliderStyleKey, defaultValue = SliderStyle.DEFAULT)
+    val playerButtonsStyle by rememberEnumPreference(PlayerButtonsStyleKey, defaultValue = PlayerButtonsStyle.DEFAULT)
     val diyLayout = rememberDiyLayout()
 
     val ambientEdgeGlowEnabled by rememberPreference(AmbientEdgeGlowEnabledKey, defaultValue = true)
@@ -453,6 +462,12 @@ fun PlayerV2(
         },
         label = "adaptiveSecondary"
     )
+
+    val playbackButtonTint = when (playerButtonsStyle) {
+        PlayerButtonsStyle.DEFAULT -> Color.White
+        PlayerButtonsStyle.PRIMARY -> adaptivePrimary
+        PlayerButtonsStyle.TERTIARY -> adaptiveSecondary
+    }
     val adaptiveSurface by animateColorAsState(
         targetValue = when (playerBackground) {
             PlayerBackgroundStyle.DEFAULT -> MaterialTheme.colorScheme.surfaceVariant
@@ -1156,57 +1171,156 @@ fun PlayerV2(
                             .padding(horizontal = 24.dp)
                     ) {
 
-                        // Apple Music Timeline Slider
+                        // Adaptive Timeline Seek Bar (Waveform / Wavy / Slim / Default)
                     val currentPos = sliderPosition ?: position
-                    
-                    val trackInteractionSource = remember { MutableInteractionSource() }
-                    val isTrackDragged by trackInteractionSource.collectIsDraggedAsState()
-                    val isTrackPressed by trackInteractionSource.collectIsPressedAsState()
-                    val isTrackActive = isTrackDragged || isTrackPressed
-                    
-                    val trackHeight by animateDpAsState(
-                        targetValue = if (isTrackActive) 12.dp else 6.dp,
-                        animationSpec = spring(dampingRatio = Spring.DampingRatioMediumBouncy, stiffness = Spring.StiffnessLow),
-                        label = "trackScale"
-                    )
-                    
-                    Slider(
-                        value = currentPos.toFloat(),
-                        valueRange = 0f..(if (duration == androidx.media3.common.C.TIME_UNSET) 0f else duration.toFloat()),
-                        onValueChange = { value ->
-                            if (!isListenTogetherGuest) {
-                                val oldPos = sliderPosition ?: position
-                                val newPos = value.toLong()
-                                if (kotlin.math.abs(newPos - oldPos) >= 3000L) {
-                                    HapticFeedbackHelper.tick(context)
-                                }
-                                sliderPosition = newPos
-                            }
-                        },
-                        onValueChangeFinished = {
-                            if (!isListenTogetherGuest) {
-                                sliderPosition?.let { pos ->
-                                    HapticFeedbackHelper.click(context)
-                                    playerConnection.player.seekTo(pos)
-                                    position = pos
-                                    sliderPosition = null
-                                }
-                            }
-                        },
-                        enabled = !isListenTogetherGuest,
-                        interactionSource = trackInteractionSource,
-                        thumb = { Spacer(modifier = Modifier.size(0.dp)) },
-                        track = { sliderState ->
-                            PlayerSliderTrack(
-                                sliderState = sliderState,
-                                trackHeight = trackHeight,
+
+                    when (sliderStyle) {
+                        SliderStyle.WAVEFORM -> {
+                            val waveFraction = rememberPlaybackFraction(playerConnection.player, isPlaying)
+                            ScrollingWaveformSeekBar(
+                                progress = {
+                                    val dragged = sliderPosition
+                                    if (dragged != null && duration > 0L && duration != androidx.media3.common.C.TIME_UNSET) {
+                                        dragged.toFloat() / duration
+                                    } else {
+                                        waveFraction.value
+                                    }
+                                },
+                                onSeek = { f ->
+                                    if (!isListenTogetherGuest && duration > 0L && duration != androidx.media3.common.C.TIME_UNSET) {
+                                        val target = (f * duration).toLong()
+                                        HapticFeedbackHelper.click(context)
+                                        playerConnection.player.seekTo(target)
+                                        position = target
+                                    }
+                                },
+                                playedColor = adaptivePrimary,
+                                trackColor = adaptiveSecondary.copy(alpha = 0.35f),
+                                seed = mediaMetadata?.id?.hashCode() ?: 0,
+                                totalBars = 160,
+                                visibleBars = 44,
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .height(36.dp)
+                            )
+                        }
+
+                        SliderStyle.WAVY -> {
+                            WavySlider(
+                                value = currentPos.toFloat(),
+                                valueRange = 0f..(if (duration == androidx.media3.common.C.TIME_UNSET) 0f else duration.toFloat()),
+                                enabled = !isListenTogetherGuest,
+                                onValueChange = { value ->
+                                    if (!isListenTogetherGuest) {
+                                        val oldPos = sliderPosition ?: position
+                                        val newPos = value.toLong()
+                                        if (kotlin.math.abs(newPos - oldPos) >= 3000L) {
+                                            HapticFeedbackHelper.tick(context)
+                                        }
+                                        sliderPosition = newPos
+                                    }
+                                },
+                                onValueChangeFinished = {
+                                    if (!isListenTogetherGuest) {
+                                        sliderPosition?.let { pos ->
+                                            HapticFeedbackHelper.click(context)
+                                            playerConnection.player.seekTo(pos)
+                                            position = pos
+                                            sliderPosition = null
+                                        }
+                                    }
+                                },
                                 colors = PlayerSliderColors.getSliderColors(
                                     activeColor = adaptivePrimary.copy(alpha = 0.8f)
-                                )
+                                ),
+                                modifier = Modifier.fillMaxWidth(),
+                                isPlaying = isPlaying
                             )
-                        },
-                        modifier = Modifier.fillMaxWidth()
-                    )
+                        }
+
+                        SliderStyle.DEFAULT -> {
+                            Slider(
+                                value = currentPos.toFloat(),
+                                valueRange = 0f..(if (duration == androidx.media3.common.C.TIME_UNSET) 0f else duration.toFloat()),
+                                onValueChange = { value ->
+                                    if (!isListenTogetherGuest) {
+                                        val oldPos = sliderPosition ?: position
+                                        val newPos = value.toLong()
+                                        if (kotlin.math.abs(newPos - oldPos) >= 3000L) {
+                                            HapticFeedbackHelper.tick(context)
+                                        }
+                                        sliderPosition = newPos
+                                    }
+                                },
+                                onValueChangeFinished = {
+                                    if (!isListenTogetherGuest) {
+                                        sliderPosition?.let { pos ->
+                                            HapticFeedbackHelper.click(context)
+                                            playerConnection.player.seekTo(pos)
+                                            position = pos
+                                            sliderPosition = null
+                                        }
+                                    }
+                                },
+                                enabled = !isListenTogetherGuest,
+                                colors = PlayerSliderColors.getSliderColors(
+                                    activeColor = adaptivePrimary.copy(alpha = 0.8f)
+                                ),
+                                modifier = Modifier.fillMaxWidth()
+                            )
+                        }
+
+                        SliderStyle.SLIM -> {
+                            val trackInteractionSource = remember { MutableInteractionSource() }
+                            val isTrackDragged by trackInteractionSource.collectIsDraggedAsState()
+                            val isTrackPressed by trackInteractionSource.collectIsPressedAsState()
+                            val isTrackActive = isTrackDragged || isTrackPressed
+
+                            val trackHeight by animateDpAsState(
+                                targetValue = if (isTrackActive) 12.dp else 6.dp,
+                                animationSpec = spring(dampingRatio = Spring.DampingRatioMediumBouncy, stiffness = Spring.StiffnessLow),
+                                label = "trackScale"
+                            )
+
+                            Slider(
+                                value = currentPos.toFloat(),
+                                valueRange = 0f..(if (duration == androidx.media3.common.C.TIME_UNSET) 0f else duration.toFloat()),
+                                onValueChange = { value ->
+                                    if (!isListenTogetherGuest) {
+                                        val oldPos = sliderPosition ?: position
+                                        val newPos = value.toLong()
+                                        if (kotlin.math.abs(newPos - oldPos) >= 3000L) {
+                                            HapticFeedbackHelper.tick(context)
+                                        }
+                                        sliderPosition = newPos
+                                    }
+                                },
+                                onValueChangeFinished = {
+                                    if (!isListenTogetherGuest) {
+                                        sliderPosition?.let { pos ->
+                                            HapticFeedbackHelper.click(context)
+                                            playerConnection.player.seekTo(pos)
+                                            position = pos
+                                            sliderPosition = null
+                                        }
+                                    }
+                                },
+                                enabled = !isListenTogetherGuest,
+                                interactionSource = trackInteractionSource,
+                                thumb = { Spacer(modifier = Modifier.size(0.dp)) },
+                                track = { sliderState ->
+                                    PlayerSliderTrack(
+                                        sliderState = sliderState,
+                                        trackHeight = trackHeight,
+                                        colors = PlayerSliderColors.getSliderColors(
+                                            activeColor = adaptivePrimary.copy(alpha = 0.8f)
+                                        )
+                                    )
+                                },
+                                modifier = Modifier.fillMaxWidth()
+                            )
+                        }
+                    }
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
@@ -1245,7 +1359,7 @@ fun PlayerV2(
                             PlayerGlyph(
                                 slot = PlayerIconSlot.V2_PREVIOUS,
                                 fallback = R.drawable.apple_skip_previous,
-                                tint = adaptivePrimary,
+                                tint = playbackButtonTint,
                                 modifier = Modifier.size(38.dp),
                                 contentDescription = "Previous",
                             )
@@ -1266,13 +1380,13 @@ fun PlayerV2(
                                     imageVector = if (isMuted) Icons.Default.VolumeOff else Icons.Default.VolumeUp,
                                     contentDescription = if (isMuted) "Unmute" else "Mute",
                                     modifier = Modifier.size(44.dp),
-                                    tint = adaptivePrimary
+                                    tint = playbackButtonTint
                                 )
                             } else {
                                 PlayerGlyph(
                                     slot = if (isPlaying) PlayerIconSlot.V2_PAUSE else PlayerIconSlot.V2_PLAY,
                                     fallback = if (isPlaying) R.drawable.pause_applemusic else R.drawable.play_applemusic,
-                                    tint = adaptivePrimary,
+                                    tint = playbackButtonTint,
                                     modifier = Modifier.size(54.dp),
                                     contentDescription = if (isPlaying) "Pause" else "Play",
                                 )
@@ -1289,7 +1403,7 @@ fun PlayerV2(
                             PlayerGlyph(
                                 slot = PlayerIconSlot.V2_NEXT,
                                 fallback = R.drawable.apple_skip_next,
-                                tint = adaptivePrimary,
+                                tint = playbackButtonTint,
                                 modifier = Modifier.size(38.dp),
                                 contentDescription = "Next",
                             )

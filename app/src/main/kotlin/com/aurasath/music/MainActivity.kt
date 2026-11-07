@@ -144,6 +144,7 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.net.toUri
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
+import androidx.core.animation.doOnEnd
 import androidx.core.util.Consumer
 import androidx.core.view.WindowCompat
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
@@ -567,7 +568,19 @@ class MainActivity : ComponentActivity() {
     @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
     @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
-        runCatching { installSplashScreen() }
+        val splashScreen = runCatching { installSplashScreen() }.getOrNull()
+        splashScreen?.setOnExitAnimationListener { splashScreenView ->
+            val fadeOut = android.animation.ObjectAnimator.ofFloat(
+                splashScreenView.view,
+                android.view.View.ALPHA,
+                1f,
+                0f
+            )
+            fadeOut.duration = 240L
+            fadeOut.interpolator = android.view.animation.AccelerateDecelerateInterpolator()
+            fadeOut.doOnEnd { splashScreenView.remove() }
+            fadeOut.start()
+        }
         super.onCreate(savedInstanceState)
 
         // Clean up any obsolete cached credentials from the retired remote config endpoint.
@@ -1473,8 +1486,9 @@ class MainActivity : ComponentActivity() {
                 val ringtoneUiState by ringtoneViewModel.uiState.collectAsStateWithLifecycle()
 
                 LaunchedEffect(Unit) {
-                    if (pendingIntent != null) {
-                        handleDeepLinkIntent(pendingIntent!!, navController)
+                    val currentPendingIntent = pendingIntent
+                    if (currentPendingIntent != null) {
+                        handleDeepLinkIntent(currentPendingIntent, navController)
                         pendingIntent = null
                     } else {
                         handleDeepLinkIntent(intent, navController)
@@ -1812,55 +1826,7 @@ class MainActivity : ComponentActivity() {
                                                  )
                                              }
                                          },
-                                        actions = {
-                                            // History/Stats/Together moved to Settings (see
-                                            // SettingsScreen.kt's ACTIVITY section + the
-                                            // existing ACCOUNT entry) â€” the top bar now
-                                            // shows only the wordmark and this settings/
-                                            // profile pill, per the simplified-chrome pass.
-                                             IconButton(onClick = {
-                                                  if (enableSettingsPopup) {
-                                                      showSettingDialoge = true
-                                                  } else {
-                                                      navController.navigate(Screens.Settings.route) {
-                                                          popUpTo(navController.graph.startDestinationId) {
-                                                              saveState = true
-                                                          }
-                                                          launchSingleTop = true
-                                                          restoreState = true
-                                                      }
-                                                  }
-                                              }) {
-                                                BadgedBox(badge = {}) {
-                                                    if (accountImageUrl != null) {
-                                                        AsyncImage(
-                                                            model = accountImageUrl,
-                                                            contentDescription = stringResource(R.string.account),
-                                                            modifier = Modifier
-                                                                .size(34.dp)
-                                                                .clip(CircleShape)
-                                                        )
-                                                    } else {
-                                                        val composition by rememberLottieComposition(
-                                                            LottieCompositionSpec.RawRes(R.raw.setting)
-                                                        )
-                                                        val progress by animateLottieCompositionAsState(
-                                                            composition = composition,
-                                                            isPlaying = true,
-                                                            iterations = 1,
-                                                            speed = 1.5f
-                                                        )
-
-                                                        LottieAnimation(
-                                                            composition = composition,
-                                                            progress = { progress },
-                                                            modifier = Modifier.size(50.dp),
-                                                            contentScale = ContentScale.Fit
-                                                        )
-                                                    }
-                                                }
-                                            }
-                                        },
+                                        actions = {},
                                         scrollBehavior = topAppBarScrollBehavior,
                                         colors = TopAppBarDefaults.topAppBarColors(
                                             // Floating: transparent bar over the content/hero background.
@@ -2244,14 +2210,20 @@ class MainActivity : ComponentActivity() {
                                     // non-morph push (settings sub-pages most visibly) look
                                     // broken. Pop happened to be correct by accident.
                                     enterTransition = {
-                                        slideInHorizontally(Motion.push()) { it }
+                                        val fromRoute = initialState.destination.route
+                                        val toRoute = targetState.destination.route
+                                        if (fromRoute in TabRootRoutes && toRoute in TabRootRoutes) {
+                                            fadeIn(tween(160, easing = FastOutSlowInEasing))
+                                        } else {
+                                            slideInHorizontally(Motion.push()) { it }
+                                        }
                                     },
                                     exitTransition = {
-                                        // A destination that grows out of one of this
-                                        // screen's tiles must not slide it away underneath:
-                                        // the tile is the thing the next screen is coming
-                                        // out of, so this one holds still and dims.
-                                        if (isMorphRoute(targetState.destination.route)) {
+                                        val fromRoute = initialState.destination.route
+                                        val toRoute = targetState.destination.route
+                                        if (fromRoute in TabRootRoutes && toRoute in TabRootRoutes) {
+                                            fadeOut(tween(120, easing = FastOutSlowInEasing))
+                                        } else if (isMorphRoute(targetState.destination.route)) {
                                             fadeOut(tween(200), targetAlpha = 0.7f)
                                         } else {
                                             slideOutHorizontally(Motion.push()) {
@@ -2272,10 +2244,22 @@ class MainActivity : ComponentActivity() {
                                     // Push keeps its slide/morph above -- only pop needed to
                                     // change, since only pop is ever gesture-driven.
                                     popEnterTransition = {
-                                        fadeIn(tween(220))
+                                        val fromRoute = initialState.destination.route
+                                        val toRoute = targetState.destination.route
+                                        if (fromRoute in TabRootRoutes && toRoute in TabRootRoutes) {
+                                            fadeIn(tween(160, easing = FastOutSlowInEasing))
+                                        } else {
+                                            fadeIn(tween(220))
+                                        }
                                     },
                                     popExitTransition = {
-                                        fadeOut(tween(220))
+                                        val fromRoute = initialState.destination.route
+                                        val toRoute = targetState.destination.route
+                                        if (fromRoute in TabRootRoutes && toRoute in TabRootRoutes) {
+                                            fadeOut(tween(120, easing = FastOutSlowInEasing))
+                                        } else {
+                                            fadeOut(tween(220))
+                                        }
                                     },
                                     modifier = Modifier.fillMaxSize(),
                                 ) {
@@ -2819,155 +2803,83 @@ class MainActivity : ComponentActivity() {
 
         LaunchedEffect(Unit) {
             emblemEntered = true
-            delay(1750L)
+            delay(950L)
             isVisible = false
-            delay(450L)
+            delay(380L)
             safeDismiss()
         }
 
         val alphaAnim by animateFloatAsState(
             targetValue = if (isVisible) 1f else 0f,
-            animationSpec = tween(durationMillis = 420, easing = FastOutSlowInEasing),
+            animationSpec = tween(durationMillis = 380, easing = FastOutSlowInEasing),
             label = "splashAlpha",
             finishedListener = { if (!isVisible) safeDismiss() }
         )
 
         val scaleAnim by animateFloatAsState(
-            targetValue = if (isVisible) 1f else 1.10f,
-            animationSpec = tween(durationMillis = 420, easing = FastOutSlowInEasing),
+            targetValue = if (isVisible) 1f else 1.04f,
+            animationSpec = tween(durationMillis = 380, easing = FastOutSlowInEasing),
             label = "splashScale"
         )
 
         val emblemScale by animateFloatAsState(
-            targetValue = if (emblemEntered) 1f else 0.58f,
+            targetValue = if (emblemEntered) 1f else 0.72f,
             animationSpec = spring(
-                dampingRatio = 0.65f,
-                stiffness = Spring.StiffnessLow
+                dampingRatio = 0.72f,
+                stiffness = Spring.StiffnessMediumLow
             ),
             label = "emblemScale"
         )
         val emblemAlpha by animateFloatAsState(
             targetValue = if (emblemEntered) 1f else 0f,
-            animationSpec = tween(durationMillis = 380, easing = FastOutSlowInEasing),
+            animationSpec = tween(durationMillis = 320, easing = FastOutSlowInEasing),
             label = "emblemAlpha"
         )
 
+        // Pulsing orbital aura around the emblem
         val infiniteTransition = rememberInfiniteTransition(label = "pulseRing")
-        val pulseScale1 by infiniteTransition.animateFloat(
-            initialValue = 0.95f,
-            targetValue = 1.45f,
+        val pulseRingScale by infiniteTransition.animateFloat(
+            initialValue = 0.94f,
+            targetValue = 1.06f,
             animationSpec = infiniteRepeatable(
-                animation = tween(1200, easing = LinearEasing),
-                repeatMode = RepeatMode.Restart
-            ),
-            label = "pulse1"
-        )
-        val pulseAlpha1 by infiniteTransition.animateFloat(
-            initialValue = 0.65f,
-            targetValue = 0f,
-            animationSpec = infiniteRepeatable(
-                animation = tween(1200, easing = LinearEasing),
-                repeatMode = RepeatMode.Restart
-            ),
-            label = "pulseAlpha1"
-        )
-
-        val pulseScale2 by infiniteTransition.animateFloat(
-            initialValue = 0.95f,
-            targetValue = 1.78f,
-            animationSpec = infiniteRepeatable(
-                animation = tween(1600, easing = LinearEasing),
-                repeatMode = RepeatMode.Restart
-            ),
-            label = "pulse2"
-        )
-        val pulseAlpha2 by infiniteTransition.animateFloat(
-            initialValue = 0.45f,
-            targetValue = 0f,
-            animationSpec = infiniteRepeatable(
-                animation = tween(1600, easing = LinearEasing),
-                repeatMode = RepeatMode.Restart
-            ),
-            label = "pulseAlpha2"
-        )
-
-        val pulseScale3 by infiniteTransition.animateFloat(
-            initialValue = 0.95f,
-            targetValue = 2.10f,
-            animationSpec = infiniteRepeatable(
-                animation = tween(2000, easing = LinearEasing),
-                repeatMode = RepeatMode.Restart
-            ),
-            label = "pulse3"
-        )
-        val pulseAlpha3 by infiniteTransition.animateFloat(
-            initialValue = 0.30f,
-            targetValue = 0f,
-            animationSpec = infiniteRepeatable(
-                animation = tween(2000, easing = LinearEasing),
-                repeatMode = RepeatMode.Restart
-            ),
-            label = "pulseAlpha3"
-        )
-
-        // Musical equalizer soundwave animations
-        val eqTransition = rememberInfiniteTransition(label = "eqWave")
-        val bar1Height by eqTransition.animateFloat(
-            initialValue = 5f,
-            targetValue = 18f,
-            animationSpec = infiniteRepeatable(
-                animation = tween(420, easing = FastOutSlowInEasing),
+                animation = tween(1600, easing = FastOutSlowInEasing),
                 repeatMode = RepeatMode.Reverse
             ),
-            label = "bar1"
+            label = "pulseRingScale"
         )
-        val bar2Height by eqTransition.animateFloat(
-            initialValue = 7f,
-            targetValue = 24f,
+        val ringRotation by infiniteTransition.animateFloat(
+            initialValue = 0f,
+            targetValue = 360f,
             animationSpec = infiniteRepeatable(
-                animation = tween(360, delayMillis = 80, easing = FastOutSlowInEasing),
-                repeatMode = RepeatMode.Reverse
+                animation = tween(26000, easing = LinearEasing),
+                repeatMode = RepeatMode.Restart
             ),
-            label = "bar2"
+            label = "ringRotation"
         )
-        val bar3Height by eqTransition.animateFloat(
-            initialValue = 9f,
-            targetValue = 28f,
+        val wavePhase by infiniteTransition.animateFloat(
+            initialValue = 0f,
+            targetValue = 6.2831855f,
             animationSpec = infiniteRepeatable(
-                animation = tween(480, delayMillis = 40, easing = FastOutSlowInEasing),
-                repeatMode = RepeatMode.Reverse
+                animation = tween(1500, easing = LinearEasing),
+                repeatMode = RepeatMode.Restart
             ),
-            label = "bar3"
-        )
-        val bar4Height by eqTransition.animateFloat(
-            initialValue = 6f,
-            targetValue = 22f,
-            animationSpec = infiniteRepeatable(
-                animation = tween(390, delayMillis = 120, easing = FastOutSlowInEasing),
-                repeatMode = RepeatMode.Reverse
-            ),
-            label = "bar4"
-        )
-        val bar5Height by eqTransition.animateFloat(
-            initialValue = 4f,
-            targetValue = 16f,
-            animationSpec = infiniteRepeatable(
-                animation = tween(440, delayMillis = 160, easing = FastOutSlowInEasing),
-                repeatMode = RepeatMode.Reverse
-            ),
-            label = "bar5"
+            label = "wavePhase"
         )
 
         val primaryColor = MaterialTheme.colorScheme.primary
+        val secondaryColor = MaterialTheme.colorScheme.secondary
+        val tertiaryColor = MaterialTheme.colorScheme.tertiary
+
         val bgBrush = remember(primaryColor) {
             Brush.radialGradient(
                 colors = listOf(
-                    primaryColor.copy(alpha = 0.22f),
-                    primaryColor.copy(alpha = 0.06f),
-                    Color(0xFF090A0E),
-                    Color(0xFF030305),
+                    primaryColor.copy(alpha = 0.35f),
+                    primaryColor.copy(alpha = 0.12f),
+                    Color(0xFF070709),
+                    Color.Black,
                 ),
-                radius = 900f
+                // Use Float.MAX_VALUE so gradient always fills full screen regardless of device size
+                radius = Float.MAX_VALUE
             )
         }
 
@@ -2988,39 +2900,6 @@ class MainActivity : ComponentActivity() {
                 },
             contentAlignment = Alignment.Center
         ) {
-            // Expanding Sonic Ripples (Triple Harmonic Rings)
-            Box(
-                modifier = Modifier
-                    .size(170.dp)
-                    .graphicsLayer {
-                        scaleX = pulseScale3
-                        scaleY = pulseScale3
-                        alpha = pulseAlpha3 * emblemAlpha
-                    }
-                    .border(1.dp, primaryColor.copy(alpha = 0.3f), RoundedCornerShape(48.dp))
-            )
-            Box(
-                modifier = Modifier
-                    .size(145.dp)
-                    .graphicsLayer {
-                        scaleX = pulseScale2
-                        scaleY = pulseScale2
-                        alpha = pulseAlpha2 * emblemAlpha
-                    }
-                    .border(1.5.dp, primaryColor.copy(alpha = 0.5f), RoundedCornerShape(42.dp))
-            )
-            Box(
-                modifier = Modifier
-                    .size(125.dp)
-                    .graphicsLayer {
-                        scaleX = pulseScale1
-                        scaleY = pulseScale1
-                        alpha = pulseAlpha1 * emblemAlpha
-                    }
-                    .border(2.dp, primaryColor.copy(alpha = 0.75f), RoundedCornerShape(36.dp))
-            )
-
-            // Center AURASATH Emblem & Musical Preloader Deck
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Center,
@@ -3030,30 +2909,74 @@ class MainActivity : ComponentActivity() {
                     alpha = emblemAlpha
                 }
             ) {
-                Surface(
-                    shape = RoundedCornerShape(26.dp),
-                    color = Color.Black.copy(alpha = 0.4f),
-                    border = androidx.compose.foundation.BorderStroke(1.5.dp, primaryColor.copy(alpha = 0.7f)),
-                    shadowElevation = 16.dp,
-                    modifier = Modifier.size(96.dp)
+                // Harmonic Sonic Aura Centerpiece - rings radiate directly from behind the emblem!
+                Box(
+                    modifier = Modifier.size(180.dp),
+                    contentAlignment = Alignment.Center
                 ) {
-                    Image(
-                        painter = painterResource(com.aurasath.music.R.drawable.aurasath_logo),
-                        contentDescription = "AURASATH Logo",
+                    androidx.compose.foundation.Canvas(
                         modifier = Modifier
                             .fillMaxSize()
-                            .clip(RoundedCornerShape(26.dp)),
-                        contentScale = androidx.compose.ui.layout.ContentScale.Crop
-                    )
+                            .graphicsLayer {
+                                scaleX = pulseRingScale
+                                scaleY = pulseRingScale
+                                rotationZ = ringRotation
+                            }
+                    ) {
+                        val maxRadius = size.minDimension / 2f
+                        // Outer ring — most visible, brighter alpha
+                        drawCircle(
+                            color = primaryColor.copy(alpha = 0.55f),
+                            radius = maxRadius * 0.97f,
+                            style = androidx.compose.ui.graphics.drawscope.Stroke(width = 1.8.dp.toPx())
+                        )
+                        // Mid ring — secondary accent
+                        drawCircle(
+                            color = secondaryColor.copy(alpha = 0.65f),
+                            radius = maxRadius * 0.80f,
+                            style = androidx.compose.ui.graphics.drawscope.Stroke(width = 2.2.dp.toPx())
+                        )
+                        // Inner glow ring — tertiary, most solid
+                        drawCircle(
+                            color = tertiaryColor.copy(alpha = 0.72f),
+                            radius = maxRadius * 0.63f,
+                            style = androidx.compose.ui.graphics.drawscope.Stroke(width = 2.5.dp.toPx())
+                        )
+                        // Soft filled glow behind icon
+                        drawCircle(
+                            color = primaryColor.copy(alpha = 0.08f),
+                            radius = maxRadius * 0.55f
+                        )
+                    }
+
+                    // Floating Glass Emblem
+                    Surface(
+                        shape = RoundedCornerShape(26.dp),
+                        color = Color(0xFF0F1015),
+                        border = androidx.compose.foundation.BorderStroke(2.dp, primaryColor.copy(alpha = 0.90f)),
+                        shadowElevation = 24.dp,
+                        modifier = Modifier.size(100.dp)
+                    ) {
+                        Image(
+                            painter = painterResource(com.aurasath.music.R.drawable.aurasath_logo),
+                            contentDescription = "AURASATH Logo",
+                            modifier = Modifier
+                                .fillMaxSize()
+                                .clip(RoundedCornerShape(26.dp)),
+                            contentScale = androidx.compose.ui.layout.ContentScale.Crop
+                        )
+                    }
                 }
 
-                Spacer(Modifier.height(24.dp))
+                Spacer(Modifier.height(18.dp))
 
+                // Brand Wordmark
                 Text(
                     text = "AURASATH",
-                    style = MaterialTheme.typography.headlineMedium,
+                    fontFamily = rememberBrandFontFamily(),
                     fontWeight = FontWeight.ExtraBold,
-                    letterSpacing = 5.sp,
+                    fontSize = 34.sp,
+                    letterSpacing = 4.sp,
                     color = primaryColor
                 )
 
@@ -3061,59 +2984,38 @@ class MainActivity : ComponentActivity() {
 
                 Text(
                     text = "YOUR SOUND • YOUR UNIVERSE",
+                    fontFamily = com.aurasath.music.ui.theme.GoogleSansFontFamily,
                     style = MaterialTheme.typography.labelSmall,
-                    letterSpacing = 2.5.sp,
+                    letterSpacing = 3.sp,
                     color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.65f)
                 )
 
                 Spacer(Modifier.height(20.dp))
 
-                // Rhythmic Equalizer Soundwave Preloader
+                // Dancing 9-bar rhythmic soundwave equalizer
                 Row(
-                    horizontalArrangement = Arrangement.spacedBy(4.dp),
+                    horizontalArrangement = Arrangement.spacedBy(5.dp),
                     verticalAlignment = Alignment.CenterVertically,
-                    modifier = Modifier.height(30.dp)
+                    modifier = Modifier.height(44.dp)
                 ) {
-                    Box(
-                        modifier = Modifier
-                            .width(3.5.dp)
-                            .height(bar1Height.dp)
-                            .clip(RoundedCornerShape(2.dp))
-                            .background(primaryColor.copy(alpha = 0.7f))
-                    )
-                    Box(
-                        modifier = Modifier
-                            .width(3.5.dp)
-                            .height(bar2Height.dp)
-                            .clip(RoundedCornerShape(2.dp))
-                            .background(primaryColor)
-                    )
-                    Box(
-                        modifier = Modifier
-                            .width(3.5.dp)
-                            .height(bar3Height.dp)
-                            .clip(RoundedCornerShape(2.dp))
-                            .background(primaryColor)
-                    )
-                    Box(
-                        modifier = Modifier
-                            .width(3.5.dp)
-                            .height(bar4Height.dp)
-                            .clip(RoundedCornerShape(2.dp))
-                            .background(primaryColor)
-                    )
-                    Box(
-                        modifier = Modifier
-                            .width(3.5.dp)
-                            .height(bar5Height.dp)
-                            .clip(RoundedCornerShape(2.dp))
-                            .background(primaryColor.copy(alpha = 0.7f))
-                    )
+                    val barCount = 9
+                    for (i in 0 until barCount) {
+                        val factor = kotlin.math.sin(wavePhase + i * 0.65f).coerceIn(-1f, 1f)
+                        val normalized = (factor + 1f) / 2f
+                        val barHeight = (8 + normalized * 36).dp
+                        val barColor = if (i % 2 == 0) primaryColor else secondaryColor
+                        Box(
+                            modifier = Modifier
+                                .width(4.dp)
+                                .height(barHeight)
+                                .clip(RoundedCornerShape(3.dp))
+                                .background(barColor.copy(alpha = 0.90f))
+                        )
+                    }
                 }
             }
         }
     }
-
 
     @SuppressLint("ObsoleteSdkInt")
     private fun setSystemBarAppearance(isDark: Boolean) {

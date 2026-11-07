@@ -57,7 +57,9 @@ fun WhatsNewPromptHost(
     val currentVersion = BuildConfig.VERSION_NAME
 
     var visible by remember(lastSeenVersion, currentVersion) {
-        mutableStateOf(lastSeenVersion != currentVersion)
+        // Do not prompt on brand new installs (user just went through onboarding);
+        // only show when upgrading from a previously installed version.
+        mutableStateOf(lastSeenVersion.isNotBlank() && lastSeenVersion != currentVersion)
     }
 
     if (!visible) return
@@ -89,12 +91,12 @@ fun WhatsNewPromptHost(
         title = {
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                 Text(
-                    text = "Welcome to AURASATH",
+                    text = "What's New in AURASATH",
                     style = MaterialTheme.typography.headlineSmall,
                     fontWeight = FontWeight.Bold
                 )
                 Text(
-                    text = "What's New in Version $currentVersion",
+                    text = "Version $currentVersion Release Notes",
                     style = MaterialTheme.typography.bodySmall,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
@@ -108,39 +110,39 @@ fun WhatsNewPromptHost(
                 verticalArrangement = Arrangement.spacedBy(14.dp)
             ) {
                 ChangelogHighlightItem(
+                    emoji = "🌙",
+                    title = "Smart Sleep Fade",
+                    description = "Sleep timer gently fades volume down to silence over the final 10 seconds before pausing playback."
+                )
+
+                ChangelogHighlightItem(
                     emoji = "⚡",
-                    title = "Instant Playback & Fast Lyrics",
-                    description = "0ms song switching with background stream prefetching and ultra-fast parallel lyrics fetching. (Suggested by Daniel)"
+                    title = "120fps Silky Tab Crossfades",
+                    description = "Ultra-smooth, zero-stutter hardware-accelerated transitions between Home, Library, and Settings."
                 )
 
                 ChangelogHighlightItem(
-                    emoji = "👥",
-                    title = "AURASATH Sync (Listen Together)",
-                    description = "Real-time synchronized playback with friends, instant room share links, QR codes, and live in-room chat."
-                )
-
-                ChangelogHighlightItem(
-                    emoji = "🎨",
-                    title = "Revamped Liquid Glass Home",
-                    description = "Dynamic time-of-day greeting, frosted glass cards, fluid animations, and high-density recommendation shelves."
+                    emoji = "👆",
+                    title = "Swipe-to-Play-Next",
+                    description = "Swipe right on any song in playlists or library to instantly queue it next with haptic confirmation."
                 )
 
                 ChangelogHighlightItem(
                     emoji = "🎵",
-                    title = "Spotify Recommendation Engine",
-                    description = "Smart algorithmic discovery feeds delivering real-time trending tracks, curated mixes, and verified regional playlists."
+                    title = "Spotify & YouTube Music Sync",
+                    description = "Dual account connection, Spotify Liked Songs importer, and dual Wrapped playback synchronization."
                 )
 
                 ChangelogHighlightItem(
-                    emoji = "🎛️",
-                    title = "Audio Presets & Custom Themes",
-                    description = "Tailored equalizer presets (SoundCloud style, Bass Boost) and OLED / Liquid Glass theme color presets."
+                    emoji = "🧊",
+                    title = "Liquid Glass & Foldable Split-View",
+                    description = "Refined frosted glass styling with automatic dual-pane player layout on foldables and tablets."
                 )
 
                 ChangelogHighlightItem(
                     emoji = "📡",
-                    title = "Google Cast & Library Covers",
-                    description = "One-tap Chromecast audio streaming directly from the player and dynamic cover art across library playlists."
+                    title = "Google Cast & Lossless Audio",
+                    description = "One-tap Chromecast streaming, gapless playback, and high-fidelity YouTube Music streaming."
                 )
             }
         },

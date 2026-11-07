@@ -360,7 +360,8 @@ object YouTube {
     }
 
     suspend fun albumSongs(playlistId: String, album: AlbumItem? = null): Result<List<SongItem>> = runCatching {
-        var response = innerTube.browse(WEB_REMIX, "VL$playlistId").body<BrowseResponse>()
+        val cleanId = playlistId.removePrefix("VL")
+        var response = innerTube.browse(WEB_REMIX, "VL$cleanId").body<BrowseResponse>()
         val songs = response.contents?.twoColumnBrowseResultsRenderer
             ?.secondaryContents?.sectionListRenderer
             ?.contents?.firstOrNull()
@@ -546,9 +547,10 @@ object YouTube {
     }
 
     suspend fun playlist(playlistId: String): Result<PlaylistPage> = runCatching {
+        val cleanId = playlistId.removePrefix("VL")
         val response = innerTube.browse(
             client = WEB_REMIX,
-            browseId = "VL$playlistId",
+            browseId = "VL$cleanId",
             setLogin = true
         ).body<BrowseResponse>()
         val base = response.contents?.twoColumnBrowseResultsRenderer?.tabs?.firstOrNull()?.tabRenderer?.content?.sectionListRenderer?.contents?.firstOrNull()
@@ -1143,10 +1145,11 @@ object YouTube {
     }
 
     suspend fun likePlaylist(playlistId: String, like: Boolean) = runCatching {
+        val cleanId = playlistId.removePrefix("VL")
         if (like)
-            innerTube.likePlaylist(WEB_REMIX, playlistId)
+            innerTube.likePlaylist(WEB_REMIX, cleanId)
         else
-            innerTube.unlikePlaylist(WEB_REMIX, playlistId)
+            innerTube.unlikePlaylist(WEB_REMIX, cleanId)
     }
 
     suspend fun subscribeChannel(channelId: String, subscribe: Boolean) = runCatching {
@@ -1164,19 +1167,19 @@ object YouTube {
     }
 
     suspend fun addToPlaylist(playlistId: String, videoId: String) = runCatching {
-        innerTube.addToPlaylist(WEB_REMIX, playlistId, videoId)
+        innerTube.addToPlaylist(WEB_REMIX, playlistId.removePrefix("VL"), videoId)
     }
 
     suspend fun addPlaylistToPlaylist(playlistId: String, addPlaylistId: String) = runCatching {
-        innerTube.addPlaylistToPlaylist(WEB_REMIX, playlistId, addPlaylistId)
+        innerTube.addPlaylistToPlaylist(WEB_REMIX, playlistId.removePrefix("VL"), addPlaylistId.removePrefix("VL"))
     }
 
     suspend fun removeFromPlaylist(playlistId: String, videoId: String, setVideoId: String) = runCatching {
-        innerTube.removeFromPlaylist(WEB_REMIX, playlistId, videoId, setVideoId)
+        innerTube.removeFromPlaylist(WEB_REMIX, playlistId.removePrefix("VL"), videoId, setVideoId)
     }
 
     suspend fun moveSongPlaylist(playlistId: String, setVideoId: String, successorSetVideoId: String?) = runCatching {
-        innerTube.moveSongPlaylist(WEB_REMIX, playlistId, setVideoId, successorSetVideoId)
+        innerTube.moveSongPlaylist(WEB_REMIX, playlistId.removePrefix("VL"), setVideoId, successorSetVideoId)
     }
 
     suspend fun createPlaylist(title: String) =

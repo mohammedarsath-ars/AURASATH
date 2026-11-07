@@ -512,7 +512,7 @@ fun CommunityPlaylistCard(
                                 }
                             } else {
                                 database.transaction {
-                                    val currentPlaylist = dbPlaylist!!.playlist
+                                    val currentPlaylist = dbPlaylist?.playlist ?: return@transaction
                                     update(currentPlaylist.toggleLike())
                                 }
                             }
@@ -1453,52 +1453,6 @@ fun HomeScreen(
                                 maxLines = 1,
                                 overflow = TextOverflow.Ellipsis,
                             )
-                        }
-
-                        // Profile / Account Quick Glass Button
-                        Box(
-                            modifier = Modifier
-                                .size(42.dp)
-                                .clip(CircleShape)
-                                .background(Color.White.copy(alpha = 0.1f))
-                                .border(
-                                    width = 1.dp,
-                                    brush = Brush.verticalGradient(
-                                        listOf(
-                                            globalAccent.copy(alpha = 0.6f),
-                                            Color.White.copy(alpha = 0.2f)
-                                        )
-                                    ),
-                                    shape = CircleShape
-                                )
-                                .combinedBounceClick(
-                                    onClick = {
-                                        navController.navigate("account")
-                                    }
-                                ),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            if (url != null) {
-                                AsyncImage(
-                                    model = ImageRequest.Builder(LocalContext.current)
-                                        .data(url)
-                                        .diskCachePolicy(CachePolicy.ENABLED)
-                                        .crossfade(true)
-                                        .build(),
-                                    contentDescription = null,
-                                    contentScale = ContentScale.Crop,
-                                    modifier = Modifier
-                                        .fillMaxSize()
-                                        .clip(CircleShape)
-                                )
-                            } else {
-                                Icon(
-                                    painter = painterResource(R.drawable.person),
-                                    contentDescription = null,
-                                    tint = LocalContentColor.current.copy(alpha = 0.85f),
-                                    modifier = Modifier.size(20.dp)
-                                )
-                            }
                         }
                     }
                 }
@@ -3006,7 +2960,16 @@ private fun LazyListScope.similarRecommendationsSection(
                 },
                 onClick = {
                     when (recommendation.title) {
-                        is Song -> deps.navController.navigate("album/${recommendation.title.album!!.id}")
+                        is Song -> {
+                            val albumId = recommendation.title.album?.id
+                            if (albumId != null) {
+                                deps.navController.navigate("album/$albumId")
+                            } else {
+                                recommendation.title.artists.firstOrNull()?.id?.let { artistId ->
+                                    deps.navController.navigate("artist/$artistId")
+                                }
+                            }
+                        }
                         is Album -> deps.navController.navigate("album/${recommendation.title.id}")
                         is Artist -> deps.navController.navigate("artist/${recommendation.title.id}")
                         is Playlist -> {}

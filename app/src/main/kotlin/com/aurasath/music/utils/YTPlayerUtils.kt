@@ -286,7 +286,8 @@ object YTPlayerUtils {
                     val (currentSong, meta) = coroutineScope {
                         val nextDeferred = async {
                             val nextResult = YouTube.next(WatchEndpoint(videoId = videoId)).getOrNull()
-                            nextResult?.items?.getOrNull(nextResult.currentIndex ?: 0)
+                            nextResult?.items?.find { it.id == videoId }
+                                ?: nextResult?.items?.getOrNull(nextResult.currentIndex ?: 0)
                                 ?: nextResult?.items?.firstOrNull()
                         }
                         val metaDeferred = async { playerResponseForMetadata(videoId, playlistId).getOrNull() }
@@ -534,7 +535,8 @@ object YTPlayerUtils {
                     val (currentSong, meta) = coroutineScope {
                         val nextDeferred = async {
                             val nextResult = YouTube.next(WatchEndpoint(videoId = videoId)).getOrNull()
-                            nextResult?.items?.getOrNull(nextResult.currentIndex ?: 0)
+                            nextResult?.items?.find { it.id == videoId }
+                                ?: nextResult?.items?.getOrNull(nextResult.currentIndex ?: 0)
                                 ?: nextResult?.items?.firstOrNull()
                         }
                         val metaDeferred = async { playerResponseForMetadata(videoId, playlistId).getOrNull() }
@@ -664,7 +666,8 @@ object YTPlayerUtils {
                     val (currentSong, meta) = coroutineScope {
                         val nextDeferred = async {
                             val nextResult = YouTube.next(WatchEndpoint(videoId = videoId)).getOrNull()
-                            nextResult?.items?.getOrNull(nextResult.currentIndex ?: 0)
+                            nextResult?.items?.find { it.id == videoId }
+                                ?: nextResult?.items?.getOrNull(nextResult.currentIndex ?: 0)
                                 ?: nextResult?.items?.firstOrNull()
                         }
                         val metaDeferred = async {
@@ -900,8 +903,6 @@ object YTPlayerUtils {
         Timber.tag(logTag).d("Fetching player response for videoId: $videoId, playlistId: $playlistId")
         PlaybackLogManager.log(PlaybackLogLevel.INFO, "Resolving playback data", "Video: $videoId")
         
-        // Debug: Log ALL playback attempts
-        println("[PLAYBACK_DEBUG] playerResponseForPlayback called: videoId=$videoId, playlistId=$playlistId")
         // Check if this is an uploaded/privately owned track
         val isUploadedTrack = playlistId == "MLPT" || playlistId?.contains("MLPT") == true
 
@@ -987,11 +988,7 @@ object YTPlayerUtils {
 
         // Debug uploaded track response
         if (isUploadedTrack || playlistId?.contains("MLPT") == true) {
-            println("[PLAYBACK_DEBUG] Main player response status: ${mainPlayerResponse.playabilityStatus.status}")
-            println("[PLAYBACK_DEBUG] Playability reason: ${mainPlayerResponse.playabilityStatus.reason}")
-            println("[PLAYBACK_DEBUG] Video details: title=${mainPlayerResponse.videoDetails?.title}, videoId=${mainPlayerResponse.videoDetails?.videoId}")
-            println("[PLAYBACK_DEBUG] Streaming data null? ${mainPlayerResponse.streamingData == null}")
-            println("[PLAYBACK_DEBUG] Adaptive formats count: ${mainPlayerResponse.streamingData?.adaptiveFormats?.size ?: 0}")
+            Timber.tag(logTag).d("Main player response status: ${mainPlayerResponse.playabilityStatus.status}, reason: ${mainPlayerResponse.playabilityStatus.reason}")
         }
 
         var usedAgeRestrictedClient: YouTubeClient? = null
@@ -1262,7 +1259,7 @@ object YTPlayerUtils {
         if (streamPlayerResponse == null) {
             Timber.tag(logTag).e("Bad stream player response - all clients failed")
             if (isUploadedTrack) {
-                println("[PLAYBACK_DEBUG] FAILURE: All clients failed for uploaded track videoId=$videoId")
+                Timber.tag(logTag).w("All clients failed for uploaded track videoId=$videoId")
             }
             throw Exception("Bad stream player response")
         }
@@ -1271,7 +1268,7 @@ object YTPlayerUtils {
             val errorReason = streamPlayerResponse.playabilityStatus.reason
             Timber.tag(logTag).e("Playability status not OK: $errorReason")
             if (isUploadedTrack) {
-                println("[PLAYBACK_DEBUG] FAILURE: Playability not OK for uploaded track - status=${streamPlayerResponse.playabilityStatus.status}, reason=$errorReason")
+                Timber.tag(logTag).w("Playability not OK for uploaded track - status=${streamPlayerResponse.playabilityStatus.status}, reason=$errorReason")
             }
             throw PlaybackException(
                 errorReason,
@@ -1304,7 +1301,7 @@ object YTPlayerUtils {
 
         Timber.tag(logTag).d("Successfully obtained playback data with format: ${format.mimeType}, bitrate: ${format.bitrate}")
         if (isUploadedTrack) {
-            println("[PLAYBACK_DEBUG] SUCCESS: Got playback data for uploaded track - format=${format.mimeType}, streamUrl=${streamUrl?.take(100)}...")
+            Timber.tag(logTag).d("Got playback data for uploaded track - format=${format.mimeType}")
         }
         PlaybackData(
             audioConfig,
@@ -1315,12 +1312,8 @@ object YTPlayerUtils {
             expiresInSeconds,
         )
     }.onFailure { e ->
-        Timber.tag(logTag).e(e, "Playback resolution failed")
+        Timber.tag(logTag).e(e, "Playback resolution failed for videoId=$videoId")
         PlaybackLogManager.log(PlaybackLogLevel.ERROR, "Playback failed", "${e::class.simpleName}: ${e.message}")
-        
-        // Restore original println for Logcat
-        println("[PLAYBACK_DEBUG] EXCEPTION during playback for videoId=$videoId: ${e::class.simpleName}: ${e.message}")
-        e.printStackTrace()
     }
     /**
      * Simple player response intended to use for metadata only.

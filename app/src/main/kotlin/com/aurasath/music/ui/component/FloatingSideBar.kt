@@ -84,8 +84,10 @@ val SideBarCollapsedWidth: Dp = 72.dp
 /**
  * Container width at or above which the app lays itself out for tab view on its
  * own. Below it the side bar only appears if the Appearance toggle forces it.
+ * Uses 600dp (Android Medium/Foldable WindowSizeClass standard) so unfolded
+ * foldables, small tablets, and landscape phones automatically get the split view.
  */
-val TabletWidthThreshold: Dp = 840.dp
+val TabletWidthThreshold: Dp = 600.dp
 
 /** Panel inset from the screen edge, and the gap it leaves to the content. */
 val SideBarMargin: Dp = 12.dp

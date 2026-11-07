@@ -28,6 +28,8 @@ import com.music.innertube.models.filterYoutubeShorts
 import com.music.innertube.pages.ExplorePage
 import com.music.innertube.pages.HomePage
 import com.music.innertube.utils.completed
+import com.aurasath.music.constants.ContentCountryKey
+import com.aurasath.music.constants.ContentLanguageKey
 import com.aurasath.music.constants.DataSaverEnabledKey
 import com.aurasath.music.constants.HideExplicitKey
 import com.aurasath.music.constants.HideVideoSongsKey
@@ -323,11 +325,19 @@ class HomeViewModel @Inject constructor(
     private suspend fun getDailyDiscover() {
         val hideVideoSongs = context.dataStore.get(HideVideoSongsKey, false) || context.dataStore.get(DataSaverEnabledKey, false)
         val recEngine = context.dataStore.get(RecommendationEngineKey, RecommendationEngine.SPOTIFY.name)
+        val contentLang = context.dataStore.get(ContentLanguageKey, "ta")
+        val country = context.dataStore.get(ContentCountryKey, "IN")
+        val isTamilPriority = contentLang == "ta" || country == "IN"
+
         val likedSongs: List<Song> = database.likedSongsByCreateDateAsc().first()
         val recentSongs: List<Song> = database.events().first().mapNotNull { it.song }
         val mostPlayed: List<Song> = database.mostPlayedSongs(0L).first()
         val allLocal: List<Song> = database.songsByCreateDateAsc().first()
-        val candidateSeeds: List<Song> = (likedSongs + recentSongs + mostPlayed + allLocal).distinctBy { it.id }
+        val playlistEntities = database.playlistsByNameAsc().first()
+        val playlistSongs = playlistEntities.flatMap { p ->
+            runCatching { database.playlistSongs(p.id).first().map { it.song } }.getOrDefault(emptyList())
+        }
+        val candidateSeeds: List<Song> = (likedSongs + recentSongs + mostPlayed + allLocal + playlistSongs).distinctBy { it.id }
 
         val seeds: List<Song> = if (candidateSeeds.isNotEmpty()) {
             candidateSeeds.shuffled().take(3)
@@ -401,16 +411,40 @@ class HomeViewModel @Inject constructor(
                     }.forEach { it.join() }
                 }
             } else {
-                // If user is brand new with no local songs at all, fetch top trending songs
+                // If user is brand new with no local songs at all, fetch top trending Tamil songs
                 val defaultSeed = Song(
-                    song = com.aurasath.music.db.entities.SongEntity(id = "new", title = "Top Hits", duration = 0),
-                    artists = listOf(com.aurasath.music.db.entities.ArtistEntity(id = "artist", name = "Featured"))
+                    song = com.aurasath.music.db.entities.SongEntity(
+                        id = "new",
+                        title = if (isTamilPriority) "Tamil Trending" else "Top Hits",
+                        duration = 0
+                    ),
+                    artists = listOf(com.aurasath.music.db.entities.ArtistEntity(id = "artist", name = if (isTamilPriority) "Tamil Hits" else "Featured"))
                 )
-                val hits = YouTube.search("top songs", YouTube.SearchFilter.FILTER_SONG).getOrNull()
+                val query = if (isTamilPriority) "tamil trending hits songs" else "top songs"
+                val hits = YouTube.search(query, YouTube.SearchFilter.FILTER_SONG).getOrNull()
                 hits?.items?.filterIsInstance<SongItem>()?.shuffled()?.take(25)?.forEach { songItem ->
                     if (!hideVideoSongs || !songItem.isVideoSong) {
                         items.add(DailyDiscoverItem(defaultSeed, songItem, null))
                     }
+                }
+            }
+        }
+
+        // Additional safeguard: If items is still empty, populate from Tamil trending hits
+        if (items.isEmpty()) {
+            val defaultSeed = Song(
+                song = com.aurasath.music.db.entities.SongEntity(
+                    id = "new",
+                    title = if (isTamilPriority) "Tamil Trending" else "Top Hits",
+                    duration = 0
+                ),
+                artists = listOf(com.aurasath.music.db.entities.ArtistEntity(id = "artist", name = if (isTamilPriority) "Tamil Hits" else "Featured"))
+            )
+            val query = if (isTamilPriority) "tamil trending hits songs" else "top songs"
+            val hits = YouTube.search(query, YouTube.SearchFilter.FILTER_SONG).getOrNull()
+            hits?.items?.filterIsInstance<SongItem>()?.shuffled()?.take(25)?.forEach { songItem ->
+                if (!hideVideoSongs || !songItem.isVideoSong) {
+                    items.add(DailyDiscoverItem(defaultSeed, songItem, null))
                 }
             }
         }
@@ -420,14 +454,24 @@ class HomeViewModel @Inject constructor(
 
     private suspend fun getQuickPicks() {
         val hideVideoSongs = context.dataStore.get(HideVideoSongsKey, false) || context.dataStore.get(DataSaverEnabledKey, false)
+        val contentLang = context.dataStore.get(ContentLanguageKey, "ta")
+        val country = context.dataStore.get(ContentCountryKey, "IN")
+        val isTamilPriority = contentLang == "ta" || country == "IN"
+
         when (quickPicksEnum.first()) {
             QuickPicks.QUICK_PICKS -> {
                 val relatedSongs = database.quickPicks().first().filterVideoSongs(hideVideoSongs)
                 val forgotten = database.forgottenFavorites().first().filterVideoSongs(hideVideoSongs).take(8)
                 val recEngine = context.dataStore.get(RecommendationEngineKey, RecommendationEngine.SPOTIFY.name)
 
+                val playlistEntities = database.playlistsByNameAsc().first()
+                val playlistSongs = playlistEntities.flatMap { p ->
+                    runCatching { database.playlistSongs(p.id).first().map { it.song } }.getOrDefault(emptyList())
+                }
+
                 val recentSong: Song? = database.events().first().firstOrNull()?.song 
                     ?: database.likedSongsByCreateDateAsc().first().firstOrNull()
+                    ?: playlistSongs.firstOrNull()
                     ?: database.songsByCreateDateAsc().first().firstOrNull()
                 val ytSimilarSongs = mutableListOf<Song>()
 
@@ -488,12 +532,29 @@ class HomeViewModel @Inject constructor(
                     }
                 }
 
-                val combined = (relatedSongs + forgotten + ytSimilarSongs)
+                val combined = (relatedSongs + forgotten + ytSimilarSongs + playlistSongs)
                     .distinctBy { it.id }
                     .shuffled()
                     .take(35)
 
-                quickPicks.value = combined.ifEmpty { relatedSongs.shuffled().take(35) }
+                if (combined.isEmpty()) {
+                    val fallbackQuery = if (isTamilPriority) "tamil trending songs" else "trending songs"
+                    val searchResult = YouTube.search(fallbackQuery, YouTube.SearchFilter.FILTER_SONG).getOrNull()
+                    val trendingSongs = searchResult?.items?.filterIsInstance<SongItem>()?.take(30)?.map { ytItem ->
+                        Song(
+                            song = com.aurasath.music.db.entities.SongEntity(
+                                id = ytItem.id,
+                                title = ytItem.title,
+                                duration = ytItem.duration ?: 0,
+                                thumbnailUrl = ytItem.thumbnail
+                            ),
+                            artists = ytItem.artists.map { com.aurasath.music.db.entities.ArtistEntity(id = it.id.orEmpty(), name = it.name) }
+                        )
+                    }.orEmpty()
+                    quickPicks.value = trendingSongs
+                } else {
+                    quickPicks.value = combined
+                }
             }
             QuickPicks.LAST_LISTEN -> {
                 val song = database.events().first().firstOrNull()?.song
@@ -771,16 +832,48 @@ class HomeViewModel @Inject constructor(
             launch(Dispatchers.IO) { getCommunityPlaylists() }
             launch(Dispatchers.IO) { loadSimilarRecommendations() }
             launch(Dispatchers.IO) {
+                val contentLang = context.dataStore.get(ContentLanguageKey, "ta")
+                val country = context.dataStore.get(ContentCountryKey, "IN")
+                val isTamilPriority = contentLang == "ta" || country == "IN"
+                val hindiKeywords = listOf("bollywood", "hindi", "marathi", "bhojpuri", "punjabi")
+
                 YouTube.home().onSuccess { page ->
-                    homePage.value = page.copy(
-                        sections = page.sections.mapNotNull { section ->
-                            val filteredItems = section.items
-                                .filterExplicit(hideExplicit)
-                                .filterVideoSongs(hideVideoSongs)
-                                .filterYoutubeShorts(hideYoutubeShorts)
-                            if (filteredItems.isEmpty()) null else section.copy(items = filteredItems)
+                    val cleanSections = page.sections.mapNotNull { section ->
+                        var filteredItems = section.items
+                            .filterExplicit(hideExplicit)
+                            .filterVideoSongs(hideVideoSongs)
+                            .filterYoutubeShorts(hideYoutubeShorts)
+                        if (isTamilPriority) {
+                            filteredItems = filteredItems.filterNot { item ->
+                                val title = item.title.lowercase()
+                                hindiKeywords.any { kw -> title.contains(kw) }
+                            }
                         }
-                    )
+                        if (filteredItems.isEmpty()) null else section.copy(items = filteredItems)
+                    }.toMutableList()
+
+                    if (isTamilPriority) {
+                        try {
+                            val tamilSearch = YouTube.search("tamil hits", YouTube.SearchFilter.FILTER_SONG).getOrNull()
+                            val tamilSongs = tamilSearch?.items?.filterIsInstance<SongItem>()?.take(16)
+                            if (!tamilSongs.isNullOrEmpty()) {
+                                cleanSections.add(
+                                    0,
+                                    HomePage.Section(
+                                        title = "Tamil Hits & Trending",
+                                        label = "Trending in Tamil",
+                                        thumbnail = null,
+                                        endpoint = null,
+                                        items = tamilSongs,
+                                    )
+                                )
+                            }
+                        } catch (_: Exception) {
+                            // Non-fatal fallback
+                        }
+                    }
+
+                    homePage.value = page.copy(sections = cleanSections)
                 }.onFailure { reportException(it) }
             }
             launch(Dispatchers.IO) {

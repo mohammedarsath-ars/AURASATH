@@ -55,6 +55,7 @@ import coil3.compose.AsyncImage
 import com.music.innertube.YouTube
 import com.music.innertube.models.PlaylistItem
 import com.music.innertube.models.SongItem
+import com.music.innertube.models.WatchEndpoint
 import com.music.innertube.utils.completed
 import com.aurasath.music.LocalDatabase
 import com.aurasath.music.LocalDownloadUtil
@@ -337,44 +338,42 @@ fun YouTubePlaylistMenu(
             NewActionGrid(
                 actions = buildList {
                     if (!isGuest) {
-                        playlist.playEndpoint?.let { playEndpoint ->
-                            add(
-                                NewAction(
-                                    icon = {
-                                        Icon(
-                                            painter = painterResource(R.drawable.play),
-                                            contentDescription = null,
-                                            modifier = Modifier.size(28.dp),
-                                            tint = MaterialTheme.colorScheme.onSurfaceVariant
-                                        )
-                                    },
-                                    text = stringResource(R.string.play),
-                                    onClick = {
-                                        playerConnection.playQueue(YouTubeQueue(playEndpoint))
-                                        onDismiss()
-                                    }
-                                )
+                        val effectivePlayEndpoint = playlist.playEndpoint ?: WatchEndpoint(playlistId = playlist.id)
+                        add(
+                            NewAction(
+                                icon = {
+                                    Icon(
+                                        painter = painterResource(R.drawable.play),
+                                        contentDescription = null,
+                                        modifier = Modifier.size(28.dp),
+                                        tint = MaterialTheme.colorScheme.onSurfaceVariant
+                                    )
+                                },
+                                text = stringResource(R.string.play),
+                                onClick = {
+                                    playerConnection.playQueue(YouTubeQueue(effectivePlayEndpoint))
+                                    onDismiss()
+                                }
                             )
-                        }
-                        playlist.shuffleEndpoint?.let { shuffleEndpoint ->
-                            add(
-                                NewAction(
-                                    icon = {
-                                        Icon(
-                                            painter = painterResource(R.drawable.shuffle),
-                                            contentDescription = null,
-                                            modifier = Modifier.size(28.dp),
-                                            tint = MaterialTheme.colorScheme.onSurfaceVariant
-                                        )
-                                    },
-                                    text = stringResource(R.string.shuffle),
-                                    onClick = {
-                                        playerConnection.playQueue(YouTubeQueue(shuffleEndpoint))
-                                        onDismiss()
-                                    }
-                                )
+                        )
+                        val effectiveShuffleEndpoint = playlist.shuffleEndpoint ?: WatchEndpoint(playlistId = playlist.id, params = "wAEB")
+                        add(
+                            NewAction(
+                                icon = {
+                                    Icon(
+                                        painter = painterResource(R.drawable.shuffle),
+                                        contentDescription = null,
+                                        modifier = Modifier.size(28.dp),
+                                        tint = MaterialTheme.colorScheme.onSurfaceVariant
+                                    )
+                                },
+                                text = stringResource(R.string.shuffle),
+                                onClick = {
+                                    playerConnection.playQueue(YouTubeQueue(effectiveShuffleEndpoint))
+                                    onDismiss()
+                                }
                             )
-                        }
+                        )
                         playlist.radioEndpoint?.let { radioEndpoint ->
                             add(
                                 NewAction(

@@ -58,10 +58,25 @@ class YouTubeQueue(
                         }
                     }
 
+                    val targetId = endpoint.videoId ?: preloadItem?.id
+                    val targetIndex = if (targetId != null) items.indexOfFirst { it.mediaId == targetId } else -1
+
+                    val nextCurrentIndex = nextResult.currentIndex
+                    val resolvedIndex = when {
+                        targetIndex != -1 -> targetIndex
+                        preloadItem != null -> {
+                            // Target song missing from YouTube automix response — prepend preloadItem at head
+                            items.add(0, preloadItem.toMediaItem())
+                            0
+                        }
+                        nextCurrentIndex != null -> nextCurrentIndex.coerceIn(0, (items.size - 1).coerceAtLeast(0))
+                        else -> 0
+                    }
+
                     return@withContext Queue.Status(
                         title = nextResult.title,
                         items = items,
-                        mediaItemIndex = nextResult.currentIndex ?: 0,
+                        mediaItemIndex = resolvedIndex,
                     )
                 } catch (e: Exception) {
                     lastException = e
