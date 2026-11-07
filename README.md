@@ -105,7 +105,7 @@
 
 ## 🚀 Download & Installation
 
-1. Download the latest **`app-arm64-foss-debug.apk`** from [Releases](https://github.com/mohammedarsath-ars/AURASATH/releases/latest).
+1. Download the latest **`AURASATH-v6.1.1.apk`** from [Releases](https://github.com/mohammedarsath-ars/AURASATH/releases/latest).
 2. Open the downloaded file on your Android device and tap **Install**.
 3. Enjoy pure, uninterrupted music with Liquid Glass 2.0!
 
