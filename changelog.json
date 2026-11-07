@@ -1,0 +1,79 @@
+{
+  "description": "AURASATH 1.0.0 — Initial Official Release. Liquid Glass UI, full YouTube Music streaming, synced lyrics, Spotify account login & dual Wrapped playback sync, universal playlist & album importer, smart shuffle, and Discord Rich Presence.",
+  "image": "",
+  "changelog": [
+    {
+      "title": "Smart Sleep Fade & Audio Polish",
+      "items": [
+        "Smart Sleep Fade: Sleep timer and 'pause at end of track' now gently fade volume over the final 8-10 seconds to 0 before pausing, restoring volume seamlessly for next session.",
+        "Silky 120fps tab transitions: replaced heavy sliding layout shifts across Home, Library, and Settings with ultra-fluid hardware-accelerated crossfades.",
+        "Swipe-to-Play-Next: swipe right on any playlist or library song to immediately queue it next with haptic confirmation.",
+        "FastScroller Polish: resolved corrupted characters and removed 27-dot synthetic rail clutter on custom order playlists.",
+        "Foldable & Tablet Optimization: intelligent split-view player and navigation rail activation for screens wider than 600dp.",
+        "YouTube Playlist Stability: stripped duplicate 'VL' prefixes preventing 400/404 API errors and added robust fallback endpoints."
+      ]
+    },
+    {
+      "title": "Tamil Music Priority & Regional Feed",
+      "items": [
+        "Home screen Featured card, Quick picks, and Daily Discover now fully prioritize Tamil trending songs and adapt directly to your imported Spotify Tamil playlists.",
+        "Automatic Hindi & Bollywood shelf filter: removes non-Tamil regional spam when Tamil content preference is active, and introduces a dedicated 'Tamil Hits & Trending' shelf."
+      ]
+    },
+    {
+      "title": "Track Selection & Queue Fallback Fix",
+      "items": [
+        "Resolved playlist and home screen fallback bug where tapping a specific song (e.g. 4th track) defaulted to playing the 1st song of the automix.",
+        "Audio stream resolver now guarantees exact track ID matching across JioSaavn, Tidal, and YouTube playback."
+      ]
+    },
+    {
+      "title": "Initial Official Launch (v1.0.0)",
+      "items": [
+        "Welcome to the debut release of AURASATH — the premier open-source music player with Liquid Glass aesthetic.",
+        "Ad-free background streaming and offline caching powered by YouTube Music and ExoPlayer Media3.",
+        "Official Discord Rich Presence integration displaying live playback, album art, and artist details."
+      ]
+    },
+    {
+      "title": "Universal Playlist & Album Importer",
+      "items": [
+        "Import playlists and albums from Spotify, Apple Music, and Amazon Music simply by pasting their public share links.",
+        "High-accuracy track matching with automatic HTML entity unescaping, cover art retrieval, and instant progress dialogs.",
+        "Batch database insertion and in-memory search query caching for blazing-fast imports without freezing playback or UI."
+      ]
+    },
+    {
+      "title": "Spotify Account & Dual Wrapped Sync",
+      "items": [
+        "Connect your Spotify account directly in Settings > Account alongside YouTube Music with one-tap login/logout.",
+        "Dual Wrapped Playback Sync: songs played in AURASATH now automatically sync with both your YouTube Music Recap and Spotify Wrapped / Recently Played.",
+        "Completely fixed Spotify Liked Songs import with robust OAuth token refreshing and multi-tier GraphQL fallback."
+      ]
+    },
+    {
+      "title": "Smart Shuffle & Infinite Genre Automix",
+      "items": [
+        "Fixed shuffle loop issue where single tracks repeated indefinitely: turning on shuffle now dynamically spins up an automix of similar genre and style tracks.",
+        "Fixed single-track queues by linking YouTube Automix radio (RDAMVM) and related genre tracks automatically across Search, Home, and Suggestions.",
+        "Seamless Autoplay: when reaching the end of a queue with Repeat Off, AURASATH automatically loads more tracks of the same genre so your music never abruptly stops."
+      ]
+    },
+    {
+      "title": "Visual Engine & Cover Art Overhaul",
+      "items": [
+        "Crystal-clear high-resolution album art: eliminated blurry/pixelated thumbnails across YouTube Music and Spotify feeds by dynamically serving up to 800x800 and 640x640 covers.",
+        "Smooth hero art tinting: removed pitch-black screen flashes when navigating into albums and artist pages.",
+        "Solid Apple Music-inspired elevated dock for keyboard search bar, eliminating distorted background shaders."
+      ]
+    },
+    {
+      "title": "Audio Playback & Stability",
+      "items": [
+        "Instant crossfade activation: changes to crossfade toggles and duration immediately apply to the actively playing song without requiring track restarts.",
+        "Fixed device-specific font variation crashes on Vivo, Honor, Motorola, Samsung, and Realme devices.",
+        "Optimized gapless transition detection."
+      ]
+    }
+  ]
+}
