@@ -137,5 +137,5 @@
 
 <div align="center">
   <p>⭐ <b>Star this repository if you enjoy AURASATH!</b></p>
-  <sub>Licensed under GPL-3.0 • Built on open-source foundations (vivi-music, Kyant0/backdrop, SimpMusic)</sub>
+  <sub>Licensed under GPL-3.0 • Built on open-source foundations (BeatWave, vivi-music, Kyant0/backdrop, SimpMusic)</sub>
 </div>
