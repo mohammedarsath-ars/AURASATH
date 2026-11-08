@@ -54,173 +54,49 @@ object SupabaseService {
         }
     }
 
-    private const val ADMIN_PASSWORD = "Aurasath_0805"
-
     private suspend fun callAdminApi(
         action: String,
         passwordOverride: String? = null,
         payload: JsonObject = buildJsonObject {}
     ): Result<String> = withContext(Dispatchers.IO) {
         val password = passwordOverride ?: adminSessionPassword
-        if (password.isNullOrBlank() || password != ADMIN_PASSWORD) {
+        if (password.isNullOrBlank()) {
             handleAuthFailure()
             return@withContext Result.failure(AdminAuthException("Incorrect password"))
         }
 
         try {
-            when (action) {
-                "verify" -> {
-                    Result.success("""{"success":true}""")
-                }
-                "fetch_bug_reports" -> {
-                    val request = Request.Builder()
-                        .url("${SupabaseConfig.URL}/rest/v1/bug_reports?order=created_at.desc")
-                        .get()
-                        .header("apikey", SupabaseConfig.SECRET_KEY)
-                        .header("Authorization", "Bearer ${SupabaseConfig.SECRET_KEY}")
-                        .build()
-                    adminClient.newCall(request).execute().use { response ->
-                        if (response.isSuccessful) {
-                            Result.success(response.body?.string() ?: "[]")
-                        } else {
-                            Result.failure(Exception("HTTP error: ${response.code} ${response.message}"))
-                        }
+            val requestBody = buildJsonObject {
+                put("action", action)
+                put("password", password)
+                put("payload", payload)
+            }
+            val request = Request.Builder()
+                .url("${SupabaseConfig.URL}/functions/v1/admin-api")
+                .post(requestBody.toString().toRequestBody(mediaType))
+                .header("apikey", SupabaseConfig.ANON_KEY)
+                .header("Authorization", "Bearer ${SupabaseConfig.ANON_KEY}")
+                .header("Content-Type", "application/json")
+                .build()
+
+            adminClient.newCall(request).execute().use { response ->
+                val responseBody = response.body?.string().orEmpty()
+                if (response.isSuccessful) {
+                    Result.success(responseBody.ifBlank { """{"success":true}""" })
+                } else {
+                    if (response.code == 401 || response.code == 429) {
+                        handleAuthFailure()
                     }
-                }
-                "fetch_suggestions" -> {
-                    val request = Request.Builder()
-                        .url("${SupabaseConfig.URL}/rest/v1/suggestions?order=created_at.desc")
-                        .get()
-                        .header("apikey", SupabaseConfig.SECRET_KEY)
-                        .header("Authorization", "Bearer ${SupabaseConfig.SECRET_KEY}")
-                        .build()
-                    adminClient.newCall(request).execute().use { response ->
-                        if (response.isSuccessful) {
-                            Result.success(response.body?.string() ?: "[]")
-                        } else {
-                            Result.failure(Exception("HTTP error: ${response.code} ${response.message}"))
-                        }
+                    val message = when (response.code) {
+                        401 -> "Incorrect password"
+                        429 -> "Too many failed attempts. Try again later."
+                        else -> "Admin API error: HTTP ${response.code} ${response.message}"
                     }
+                    Result.failure(
+                        if (response.code == 401) AdminAuthException(message)
+                        else Exception(message)
+                    )
                 }
-                "update_bug_report_status" -> {
-                    val id = payload["id"]?.toString() ?: ""
-                    val status = payload["status"]?.toString()?.trim('"') ?: "pending"
-                    val body = """{"status":"$status"}"""
-                    val request = Request.Builder()
-                        .url("${SupabaseConfig.URL}/rest/v1/bug_reports?id=eq.$id")
-                        .patch(body.toRequestBody(mediaType))
-                        .header("apikey", SupabaseConfig.SECRET_KEY)
-                        .header("Authorization", "Bearer ${SupabaseConfig.SECRET_KEY}")
-                        .header("Content-Type", "application/json")
-                        .build()
-                    adminClient.newCall(request).execute().use { response ->
-                        if (response.isSuccessful) Result.success("""{"success":true}""")
-                        else Result.failure(Exception("HTTP error: ${response.code}"))
-                    }
-                }
-                "update_suggestion_status" -> {
-                    val id = payload["id"]?.toString() ?: ""
-                    val status = payload["status"]?.toString()?.trim('"') ?: "pending"
-                    val body = """{"status":"$status"}"""
-                    val request = Request.Builder()
-                        .url("${SupabaseConfig.URL}/rest/v1/suggestions?id=eq.$id")
-                        .patch(body.toRequestBody(mediaType))
-                        .header("apikey", SupabaseConfig.SECRET_KEY)
-                        .header("Authorization", "Bearer ${SupabaseConfig.SECRET_KEY}")
-                        .header("Content-Type", "application/json")
-                        .build()
-                    adminClient.newCall(request).execute().use { response ->
-                        if (response.isSuccessful) Result.success("""{"success":true}""")
-                        else Result.failure(Exception("HTTP error: ${response.code}"))
-                    }
-                }
-                "update_bug_report_comment" -> {
-                    val id = payload["id"]?.toString() ?: ""
-                    val comment = payload["admin_comment"]?.toString()?.trim('"')
-                    val body = if (comment != null) buildJsonObject { put("admin_comment", comment) }.toString() else """{"admin_comment":null}"""
-                    val request = Request.Builder()
-                        .url("${SupabaseConfig.URL}/rest/v1/bug_reports?id=eq.$id")
-                        .patch(body.toRequestBody(mediaType))
-                        .header("apikey", SupabaseConfig.SECRET_KEY)
-                        .header("Authorization", "Bearer ${SupabaseConfig.SECRET_KEY}")
-                        .header("Content-Type", "application/json")
-                        .build()
-                    adminClient.newCall(request).execute().use { response ->
-                        if (response.isSuccessful) Result.success("""{"success":true}""")
-                        else Result.failure(Exception("HTTP error: ${response.code}"))
-                    }
-                }
-                "update_suggestion_comment" -> {
-                    val id = payload["id"]?.toString() ?: ""
-                    val comment = payload["admin_comment"]?.toString()?.trim('"')
-                    val body = if (comment != null) buildJsonObject { put("admin_comment", comment) }.toString() else """{"admin_comment":null}"""
-                    val request = Request.Builder()
-                        .url("${SupabaseConfig.URL}/rest/v1/suggestions?id=eq.$id")
-                        .patch(body.toRequestBody(mediaType))
-                        .header("apikey", SupabaseConfig.SECRET_KEY)
-                        .header("Authorization", "Bearer ${SupabaseConfig.SECRET_KEY}")
-                        .header("Content-Type", "application/json")
-                        .build()
-                    adminClient.newCall(request).execute().use { response ->
-                        if (response.isSuccessful) Result.success("""{"success":true}""")
-                        else Result.failure(Exception("HTTP error: ${response.code}"))
-                    }
-                }
-                "delete_bug_report" -> {
-                    val id = payload["id"]?.toString() ?: ""
-                    val request = Request.Builder()
-                        .url("${SupabaseConfig.URL}/rest/v1/bug_reports?id=eq.$id")
-                        .delete()
-                        .header("apikey", SupabaseConfig.SECRET_KEY)
-                        .header("Authorization", "Bearer ${SupabaseConfig.SECRET_KEY}")
-                        .build()
-                    adminClient.newCall(request).execute().use { response ->
-                        if (response.isSuccessful) Result.success("""{"success":true}""")
-                        else Result.failure(Exception("HTTP error: ${response.code}"))
-                    }
-                }
-                "delete_suggestion" -> {
-                    val id = payload["id"]?.toString() ?: ""
-                    val request = Request.Builder()
-                        .url("${SupabaseConfig.URL}/rest/v1/suggestions?id=eq.$id")
-                        .delete()
-                        .header("apikey", SupabaseConfig.SECRET_KEY)
-                        .header("Authorization", "Bearer ${SupabaseConfig.SECRET_KEY}")
-                        .build()
-                    adminClient.newCall(request).execute().use { response ->
-                        if (response.isSuccessful) Result.success("""{"success":true}""")
-                        else Result.failure(Exception("HTTP error: ${response.code}"))
-                    }
-                }
-                "publish_update" -> {
-                    val request = Request.Builder()
-                        .url("${SupabaseConfig.URL}/rest/v1/app_updates")
-                        .post(payload.toString().toRequestBody(mediaType))
-                        .header("apikey", SupabaseConfig.SECRET_KEY)
-                        .header("Authorization", "Bearer ${SupabaseConfig.SECRET_KEY}")
-                        .header("Content-Type", "application/json")
-                        .header("Prefer", "return=representation")
-                        .build()
-                    adminClient.newCall(request).execute().use { response ->
-                        if (response.isSuccessful) Result.success(response.body?.string() ?: """{"success":true}""")
-                        else Result.failure(Exception("HTTP error: ${response.code}"))
-                    }
-                }
-                "publish_news" -> {
-                    val request = Request.Builder()
-                        .url("${SupabaseConfig.URL}/rest/v1/news_updates")
-                        .post(payload.toString().toRequestBody(mediaType))
-                        .header("apikey", SupabaseConfig.SECRET_KEY)
-                        .header("Authorization", "Bearer ${SupabaseConfig.SECRET_KEY}")
-                        .header("Content-Type", "application/json")
-                        .header("Prefer", "return=representation")
-                        .build()
-                    adminClient.newCall(request).execute().use { response ->
-                        if (response.isSuccessful) Result.success(response.body?.string() ?: """{"success":true}""")
-                        else Result.failure(Exception("HTTP error: ${response.code}"))
-                    }
-                }
-                else -> Result.failure(Exception("Unknown action: $action"))
             }
         } catch (e: Exception) {
             Result.failure(e)

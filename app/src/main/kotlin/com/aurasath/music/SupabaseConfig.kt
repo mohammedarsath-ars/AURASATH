@@ -6,9 +6,6 @@ object SupabaseConfig {
     var URL: String = BuildConfig.SUPABASE_URL
     var ANON_KEY: String = BuildConfig.SUPABASE_PUBLISHABLE_KEY
     var JWKS_URL: String = BuildConfig.SUPABASE_JWKS_URL
-    var SECRET_KEY: String = runCatching {
-        String(android.util.Base64.decode("c2Jfc2VjcmV0XzVWZFVKQkVLX0ptdWpFSzgxZmprTGdfX01FX0VZUmk=", android.util.Base64.DEFAULT), Charsets.UTF_8).trim()
-    }.getOrDefault("")
 
     fun init(url: String, anon: String, jwks: String) {
         URL = url
