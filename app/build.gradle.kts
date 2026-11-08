@@ -165,13 +165,9 @@ android {
             isShrinkResources = true
             isCrunchPngs = false
             isDebuggable = false
-            if (file("keystore/release.keystore").exists()) {
-                signingConfig = signingConfigs.getByName("release")
-            } else if (file("persistent-debug.keystore").exists()) {
-                signingConfig = signingConfigs.getByName("persistentDebug")
-            } else {
-                signingConfig = signingConfigs.getByName("debug")
-            }
+            // Stable releases must never silently fall back to a public debug key.
+            // Missing release credentials should fail the release build.
+            signingConfig = signingConfigs.getByName("release")
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
