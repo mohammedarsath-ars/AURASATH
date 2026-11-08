@@ -161,6 +161,7 @@ serve(async (req: Request) => {
           description: payload.description,
           update_type: payload.update_type,
           apk_url: payload.apk_url ?? null,
+          sha256: payload.sha256 ?? null,
         };
 
         const res = await fetch(`${SUPABASE_URL}/rest/v1/app_updates`, {
