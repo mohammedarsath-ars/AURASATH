@@ -23,7 +23,7 @@ val versionProps = Properties().apply {
 val appVersionMajor = versionProps.getProperty("VERSION_MAJOR").toInt()
 val appVersionMinor = versionProps.getProperty("VERSION_MINOR").toInt()
 val appVersionPatch = versionProps.getProperty("VERSION_PATCH").toInt()
-val appVersionCode = versionProps.getProperty("VERSION_CODE", "1").toInt()
+val appVersionCode = appVersionMajor * 10_000 + appVersionMinor * 100 + appVersionPatch
 val appVersionName = "$appVersionMajor.$appVersionMinor.$appVersionPatch"
 
 plugins {
