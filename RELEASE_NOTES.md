@@ -43,6 +43,8 @@ Welcome to **AURASATH v6.1.1** — the premier open-source, Liquid Glass music p
 ---
 
 ### 📲 Download & Installation
-1. Download **`app-arm64-foss-debug.apk`** from the Assets section below.
-2. Open the APK on your Android device and tap **Install**.
-3. **Compatibility**: Android 8.0 (Oreo) up to Android 15+.
+- **`AURASATH-v6.1.1-Universal.apk`** (Recommended) — Works on all Android devices, tablets, and emulators.
+- **`AURASATH-v6.1.1-arm64.apk`** — Lightweight native build optimized for modern 64-bit smartphones.
+
+Open the downloaded APK on your Android device and tap **Install**.
+**Compatibility**: Android 8.0 (Oreo) up to Android 15+.
