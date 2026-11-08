@@ -96,12 +96,11 @@ class YouTubeQueue(
         return withContext(IO) {
             var lastException: Throwable? = null
             
-            for (attempt in 0..maxRetries) {
+            for (attempt in 0 until maxRetries) {
                 try {
                     val nextResult = YouTube.next(endpoint, continuation).getOrThrow()
                     endpoint = nextResult.endpoint
                     continuation = nextResult.continuation
-                    retryCount = 0
                     return@withContext nextResult.items.map { it.toMediaItem() }
                 } catch (e: Exception) {
                     lastException = e
