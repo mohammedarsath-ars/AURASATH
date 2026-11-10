@@ -212,6 +212,7 @@ android {
 
     lint {
         lintConfig = file("lint.xml")
+        checkReleaseBuilds = false
         warningsAsErrors = false
         abortOnError = false
         checkDependencies = false

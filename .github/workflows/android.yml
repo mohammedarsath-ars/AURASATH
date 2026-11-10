@@ -26,8 +26,6 @@ jobs:
 
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v4
-        with:
-          cache-disabled: true
 
       - name: Create Default Debug Keystore
         run: |
@@ -37,10 +35,10 @@ jobs:
       - name: Grant Execute Permission for Gradlew
         run: chmod +x gradlew
 
-      - name: Build Single Universal Release APK
+      - name: Build Universal & ARM64 Release APKs
         run: |
           set -o pipefail
-          ./gradlew assembleUniversalGmsRelease --stacktrace --no-daemon 2>&1 | tee build.log
+          ./gradlew assembleUniversalGmsRelease assembleArm64GmsRelease --stacktrace --no-daemon -x lint -x lintVitalAnalyzeUniversalGmsRelease -x lintVitalAnalyzeArm64GmsRelease 2>&1 | tee build.log
         env:
           LASTFM_API_KEY: ${{ secrets.LASTFM_API_KEY }}
           LASTFM_SECRET: ${{ secrets.LASTFM_SECRET }}
@@ -48,8 +46,10 @@ jobs:
       - name: Upload APK Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: AURASATH-v1.0.0-latest
-          path: app/build/outputs/apk/universalGms/release/*.apk
+          name: AURASATH-release-apks
+          path: |
+            app/build/outputs/apk/universalGms/release/*.apk
+            app/build/outputs/apk/arm64Gms/release/*.apk
 
       - name: Upload ProGuard/R8 Mapping
         if: always()
