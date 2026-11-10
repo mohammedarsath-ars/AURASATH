@@ -17,7 +17,7 @@
   <!-- Badges -->
   <p>
     <a href="https://github.com/mohammedarsath-ars/AURASATH/releases/latest">
-      <img src="https://img.shields.io/badge/Release-v6.1.1%20Flagship-7928CA?style=for-the-badge&logo=android&logoColor=white" alt="Release">
+      <img src="https://img.shields.io/badge/Release-v1.0.0%20Flagship-7928CA?style=for-the-badge&logo=android&logoColor=white" alt="Release">
     </a>
     <a href="https://github.com/mohammedarsath-ars/AURASATH/releases">
       <img src="https://img.shields.io/github/downloads/mohammedarsath-ars/AURASATH/total?style=for-the-badge&color=0070F3" alt="Downloads">
@@ -106,8 +106,8 @@
 ## 🚀 Download & Installation
 
 1. Go to [Latest Releases](https://github.com/mohammedarsath-ars/AURASATH/releases/latest) and pick the APK for your device:
-   - ⚡ **`AURASATH-v6.1.1-arm64.apk`** — Recommended for 99% of modern Android devices (Fastest performance & battery efficiency).
-   - 🌐 **`AURASATH-v6.1.1-Universal.apk`** — Universal build compatible with all Android devices, older architectures & tablets.
+   - ⚡ **`AURASATH-v1.0.0-arm64.apk`** — Recommended for 99% of modern Android devices (Fastest performance & battery efficiency).
+   - 🌐 **`AURASATH-v1.0.0-Universal.apk`** — Universal build compatible with all Android devices, older architectures & tablets.
 2. Open the downloaded `.apk` file and tap **Install**.
 3. Enjoy pure, uninterrupted music with Liquid Glass 2.0!
 

@@ -1,5 +1,5 @@
 {
-  "description": "AURASATH 6.1.1 — Flagship Release. Liquid Glass UI, full YouTube Music streaming, synced lyrics, Spotify account login & dual Wrapped playback sync, universal playlist & album importer, smart shuffle, and Discord Rich Presence.",
+  "description": "AURASATH 1.0.0 — Official Debut Flagship Release. Liquid Glass UI, full YouTube Music streaming, synced lyrics, Spotify account login & dual Wrapped playback sync, universal playlist & album importer, smart shuffle, and Discord Rich Presence.",
   "image": "",
   "changelog": [
     {
@@ -28,7 +28,7 @@
       ]
     },
     {
-      "title": "Flagship Launch (v6.1.1)",
+      "title": "Official Flagship Debut (v1.0.0)",
       "items": [
         "Welcome to the flagship release of AURASATH — the premier open-source music player with Liquid Glass aesthetic.",
         "Ad-free background streaming and offline caching powered by YouTube Music and ExoPlayer Media3.",

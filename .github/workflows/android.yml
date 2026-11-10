@@ -57,12 +57,12 @@ jobs:
           mkdir -p release-dist
           UNIVERSAL_APK=$(find app/build/outputs/apk/universalGms/release/ -name "*.apk" | head -n 1)
           if [ -f "$UNIVERSAL_APK" ]; then
-            cp "$UNIVERSAL_APK" "release-dist/AURASATH-v6.1.1-Universal.apk"
+            cp "$UNIVERSAL_APK" "release-dist/AURASATH-v1.0.0-Universal.apk"
             echo "Copied Universal APK"
           fi
           ARM64_APK=$(find app/build/outputs/apk/arm64Gms/release/ -name "*.apk" | head -n 1)
           if [ -f "$ARM64_APK" ]; then
-            cp "$ARM64_APK" "release-dist/AURASATH-v6.1.1-arm64.apk"
+            cp "$ARM64_APK" "release-dist/AURASATH-v1.0.0-arm64.apk"
             echo "Copied ARM64 APK"
           fi
           if [ -f changelog.json ]; then
@@ -73,8 +73,8 @@ jobs:
         if: github.ref == 'refs/heads/main'
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: v6.1.1
-          name: "AURASATH v6.1.1 Flagship Release"
+          tag_name: v1.0.0
+          name: "AURASATH v1.0.0 Flagship Release"
           body_path: RELEASE_NOTES.md
           draft: false
           prerelease: false

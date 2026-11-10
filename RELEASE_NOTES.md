@@ -1,10 +1,10 @@
-# ✦ AURASATH v6.1.1 Flagship Release ✦
+# ✦ AURASATH v1.0.0 Flagship Release ✦
 
-Welcome to **AURASATH v6.1.1** — the premier open-source, Liquid Glass music player for Android with YouTube Music streaming, 3D Gyroscope parallax, live waveform seekbars, synced lyrics, and Spotify account sync.
+Welcome to **AURASATH v1.0.0** — the premier open-source, Liquid Glass music player for Android with YouTube Music streaming, 3D Gyroscope parallax, live waveform seekbars, synced lyrics, and Spotify account sync.
 
 ---
 
-### 🌟 What's New in Flagship v6.1.1
+### 🌟 What's New in Flagship v1.0.0
 
 - 🌊 **Synchronized Live Waveform Seek Bar**:
   - Live scrolling waveform visualizer synchronized in real-time with track playback dynamics.
@@ -43,8 +43,8 @@ Welcome to **AURASATH v6.1.1** — the premier open-source, Liquid Glass music p
 ---
 
 ### 📲 Download & Installation
-- **`AURASATH-v6.1.1-Universal.apk`** (Recommended) — Works on all Android devices, tablets, and emulators.
-- **`AURASATH-v6.1.1-arm64.apk`** — Lightweight native build optimized for modern 64-bit smartphones.
+- **`AURASATH-v1.0.0-Universal.apk`** (Recommended) — Works on all Android devices, tablets, and emulators.
+- **`AURASATH-v1.0.0-arm64.apk`** — Lightweight native build optimized for modern 64-bit smartphones.
 
 Open the downloaded APK on your Android device and tap **Install**.
 **Compatibility**: Android 8.0 (Oreo) up to Android 15+.
