@@ -52,6 +52,36 @@ jobs:
             app/build/outputs/apk/universalGms/release/*.apk
             app/build/outputs/apk/arm64Gms/release/*.apk
 
+      - name: Prepare Release Distribution Assets
+        run: |
+          mkdir -p release-dist
+          UNIVERSAL_APK=$(find app/build/outputs/apk/universalGms/release/ -name "*.apk" | head -n 1)
+          if [ -f "$UNIVERSAL_APK" ]; then
+            cp "$UNIVERSAL_APK" "release-dist/AURASATH-v6.1.1-Universal.apk"
+            echo "Copied Universal APK"
+          fi
+          ARM64_APK=$(find app/build/outputs/apk/arm64Gms/release/ -name "*.apk" | head -n 1)
+          if [ -f "$ARM64_APK" ]; then
+            cp "$ARM64_APK" "release-dist/AURASATH-v6.1.1-arm64.apk"
+            echo "Copied ARM64 APK"
+          fi
+          if [ -f changelog.json ]; then
+            cp changelog.json release-dist/changelog.json
+          fi
+
+      - name: Publish Official GitHub Release
+        if: github.ref == 'refs/heads/main'
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: v6.1.1
+          name: "AURASATH v6.1.1 Flagship Release"
+          body_path: RELEASE_NOTES.md
+          draft: false
+          prerelease: false
+          files: release-dist/*
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
       - name: Upload ProGuard/R8 Mapping
         if: always()
         uses: actions/upload-artifact@v4
