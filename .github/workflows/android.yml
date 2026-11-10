@@ -40,6 +40,7 @@ jobs:
           set -o pipefail
           ./gradlew assembleUniversalGmsRelease assembleArm64GmsRelease --stacktrace --no-daemon -x lint 2>&1 | tee build.log
         env:
+          GRADLE_OPTS: "-Dorg.gradle.jvmargs='-Xmx5120m -XX:+UseG1GC -XX:MaxMetaspaceSize=1024m' -Dorg.gradle.parallel=true"
           LASTFM_API_KEY: ${{ secrets.LASTFM_API_KEY }}
           LASTFM_SECRET: ${{ secrets.LASTFM_SECRET }}
 

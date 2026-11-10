@@ -1,13 +1,6 @@
 name: Nightly GMS Release Build
 
 on:
-  push:
-    branches: [ 'main' ]
-    paths-ignore:
-      - 'README.md'
-      - 'fastlane/**'
-      - 'assets/**'
-      - '.github/**/*.md'
   schedule:
     - cron: '0 0 * * *' # Every night at 00:00 UTC
   workflow_dispatch: # Allows manual triggering
@@ -45,6 +38,7 @@ jobs:
 
       - name: Build Universal GMS Release APK
         env:
+          GRADLE_OPTS: "-Dorg.gradle.jvmargs='-Xmx5120m -XX:+UseG1GC -XX:MaxMetaspaceSize=1024m' -Dorg.gradle.parallel=true"
           LASTFM_API_KEY: ${{ secrets.LASTFM_API_KEY }}
           LASTFM_SECRET: ${{ secrets.LASTFM_SECRET }}
         run: |
