@@ -71,7 +71,6 @@ jobs:
           UNIVERSAL_APK=$(find app/build/outputs/apk/universalGms/release/ -name "*.apk" | head -n 1)
           if [ -f "$UNIVERSAL_APK" ]; then
             cp "$UNIVERSAL_APK" "release-dist/AURASATH-${RAW_TAG}-Universal.apk"
-            cp "$UNIVERSAL_APK" "release-dist/AURASATH-${RAW_TAG}.apk"
             echo "Copied Universal APK"
           fi
 
