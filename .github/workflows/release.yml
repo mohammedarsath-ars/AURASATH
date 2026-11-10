@@ -50,7 +50,7 @@ jobs:
           LASTFM_API_KEY: ${{ secrets.LASTFM_API_KEY }}
           LASTFM_SECRET: ${{ secrets.LASTFM_SECRET }}
         run: |
-          ./gradlew assembleUniversalGmsRelease assembleArm64GmsRelease --no-configuration-cache --console=plain --warning-mode summary --stacktrace -x lint -x lintVitalAnalyzeUniversalGmsRelease -x lintVitalAnalyzeArm64GmsRelease
+          ./gradlew assembleUniversalGmsRelease assembleArm64GmsRelease --no-configuration-cache --console=plain --warning-mode summary --stacktrace -x lint
 
       - name: Prepare Release Distribution Assets
         id: prep

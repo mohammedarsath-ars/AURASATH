@@ -38,7 +38,7 @@ jobs:
       - name: Build Universal & ARM64 Release APKs
         run: |
           set -o pipefail
-          ./gradlew assembleUniversalGmsRelease assembleArm64GmsRelease --stacktrace --no-daemon -x lint -x lintVitalAnalyzeUniversalGmsRelease -x lintVitalAnalyzeArm64GmsRelease 2>&1 | tee build.log
+          ./gradlew assembleUniversalGmsRelease assembleArm64GmsRelease --stacktrace --no-daemon -x lint 2>&1 | tee build.log
         env:
           LASTFM_API_KEY: ${{ secrets.LASTFM_API_KEY }}
           LASTFM_SECRET: ${{ secrets.LASTFM_SECRET }}

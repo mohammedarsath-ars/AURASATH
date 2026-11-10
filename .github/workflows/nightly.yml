@@ -48,7 +48,7 @@ jobs:
           LASTFM_API_KEY: ${{ secrets.LASTFM_API_KEY }}
           LASTFM_SECRET: ${{ secrets.LASTFM_SECRET }}
         run: |
-          ./gradlew assembleUniversalGmsRelease -Pnightly=true -PnightlyRun=${{ github.run_number }} --no-configuration-cache --console=plain --warning-mode summary -x lint -x lintVitalAnalyzeUniversalGmsRelease
+          ./gradlew assembleUniversalGmsRelease -Pnightly=true -PnightlyRun=${{ github.run_number }} --no-configuration-cache --console=plain --warning-mode summary -x lint
 
       - name: Upload Signed APK
         uses: actions/upload-artifact@v4
