@@ -326,7 +326,25 @@ internal object QuickJsExecutor {
         }
     }
 
+    private fun isRestrictedHost(rawUrl: String): Boolean {
+        return try {
+            val uri = java.net.URI(rawUrl)
+            val host = uri.host?.lowercase() ?: return false
+            if (host == "localhost" || host == "127.0.0.1" || host == "::1" || host.endsWith(".local") || host.endsWith(".internal")) {
+                return true
+            }
+            val address = java.net.InetAddress.getByName(host)
+            address.isLoopbackAddress || address.isSiteLocalAddress || address.isLinkLocalAddress || address.isAnyLocalAddress
+        } catch (_: Exception) {
+            false
+        }
+    }
+
     private fun fetchUrlSync(url: String, method: String, headersJson: String, body: String?): Pair<Int, String> {
+        if (isRestrictedHost(url)) {
+            Log.e(TAG, "    fetch BLOCKED: SSRF prevention restricted access to $url")
+            throw SecurityException("Access to local or private network address is restricted: $url")
+        }
         return try {
             val builder = Request.Builder()
                 .url(url)

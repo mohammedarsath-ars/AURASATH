@@ -176,7 +176,9 @@ abstract class InternalDatabase : RoomDatabase() {
                         MIGRATION_24_25,
                         MIGRATION_35_36,
                     )
-                    .fallbackToDestructiveMigration(dropAllTables = true)
+                    // Strictly prevent destructive table drops on upgrade so user playlists,
+                    // favorites, and local library metadata are never wiped.
+                    .fallbackToDestructiveMigrationOnDowngrade(dropAllTables = false)
                     .setJournalMode(RoomDatabase.JournalMode.WRITE_AHEAD_LOGGING)
                     .setTransactionExecutor(java.util.concurrent.Executors.newFixedThreadPool(4))
                     .setQueryExecutor(java.util.concurrent.Executors.newFixedThreadPool(4))

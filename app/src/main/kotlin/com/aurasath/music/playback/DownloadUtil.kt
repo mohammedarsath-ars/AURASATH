@@ -186,16 +186,18 @@ constructor(
             }
 
             val playbackData = runBlocking(Dispatchers.IO) {
-                YTPlayerUtils.playerResponseForPlayback(
-                    mediaId,
-                    audioQuality = audioQuality,
-                    connectivityManager = connectivityManager,
-                    // Pass context so the JioSaavn intercept fires when the toggle is ON
-                    context = appContext,
-                    // Lossless is streaming-only for now: downloads stay YouTube so the
-                    // offline cache (keyed by videoId) never mixes FLAC and Opus bytes.
-                    allowLossless = false,
-                )
+                kotlinx.coroutines.withTimeout(20_000L) {
+                    YTPlayerUtils.playerResponseForPlayback(
+                        mediaId,
+                        audioQuality = audioQuality,
+                        connectivityManager = connectivityManager,
+                        // Pass context so the JioSaavn intercept fires when the toggle is ON
+                        context = appContext,
+                        // Lossless is streaming-only for now: downloads stay YouTube so the
+                        // offline cache (keyed by videoId) never mixes FLAC and Opus bytes.
+                        allowLossless = false,
+                    )
+                }
             }.getOrThrow()
             val format = playbackData.format
 

@@ -169,6 +169,8 @@ android {
                 signingConfig = signingConfigs.getByName("release")
             } else if (file("persistent-debug.keystore").exists()) {
                 signingConfig = signingConfigs.getByName("persistentDebug")
+            } else if (System.getenv("CI") == "true") {
+                throw GradleException("Official release build on CI requires a valid release keystore. Falling back to debug signing on CI is strictly prohibited.")
             } else {
                 signingConfig = signingConfigs.getByName("debug")
             }

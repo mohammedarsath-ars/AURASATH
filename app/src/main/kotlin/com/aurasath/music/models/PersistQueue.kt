@@ -17,7 +17,11 @@ data class PersistQueue(
     val position: Long,
     val queueType: QueueType = QueueType.LIST,
     val queueData: QueueData? = null,
-) : Serializable
+) : Serializable {
+    companion object {
+        private const val serialVersionUID = 1L
+    }
+}
 
 @Immutable
 sealed class QueueType : Serializable {
@@ -25,10 +29,17 @@ sealed class QueueType : Serializable {
     object YOUTUBE : QueueType()
     object YOUTUBE_ALBUM_RADIO : QueueType()
     object LOCAL_ALBUM_RADIO : QueueType()
+
+    companion object {
+        private const val serialVersionUID = 1L
+    }
 }
 
 @Stable
 sealed class QueueData : Serializable {
+    companion object {
+        private const val serialVersionUID = 1L
+    }
     data class YouTubeData(
         val endpoint: String,
         val continuation: String? = null

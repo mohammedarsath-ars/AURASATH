@@ -18,4 +18,8 @@ data class PersistPlayerState(
     val currentMediaItemIndex: Int,
     val playbackState: Int,
     val timestamp: Long = System.currentTimeMillis()
-) : Serializable
+) : Serializable {
+    companion object {
+        private const val serialVersionUID = 1L
+    }
+}

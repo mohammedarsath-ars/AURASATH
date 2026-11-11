@@ -772,15 +772,13 @@ class MusicService :
                     // Clear cached URL to force fresh fetch
                     songUrlCache.remove(mediaId)
 
-                    // CRITICAL: Clear caches synchronously to prevent format parsing errors
-                    runBlocking(Dispatchers.IO) {
-                        try {
-                            playerCache.removeResource(mediaId)
-                            downloadCache.removeResource(mediaId)
-                            Timber.tag("MusicService").d("Cleared player and download cache for $mediaId")
-                        } catch (e: Exception) {
-                            Timber.tag("MusicService").e(e, "Failed to clear cache for $mediaId")
-                        }
+                    // Clear caches to prevent format parsing errors
+                    try {
+                        playerCache.removeResource(mediaId)
+                        downloadCache.removeResource(mediaId)
+                        Timber.tag("MusicService").d("Cleared player and download cache for $mediaId")
+                    } catch (e: Exception) {
+                        Timber.tag("MusicService").e(e, "Failed to clear cache for $mediaId")
                     }
 
                     // Set bypass flag so resolver skips cache checks
@@ -1122,12 +1120,10 @@ class MusicService :
                             }
                         }
                     }.onFailure { error ->
-                        Timber.tag(TAG).w(error, "Failed to restore persisted queue, clearing data")
-                        clearPersistedQueueFiles()
+                        Timber.tag(TAG).w(error, "Failed to restore persisted queue into player")
                     }
                 }.onFailure { error ->
-                    Timber.tag(TAG).w(error, "Failed to read persisted queue, clearing data")
-                    clearPersistedQueueFiles()
+                    Timber.tag(TAG).w(error, "Failed to read persisted queue")
                 }
             }
 
@@ -1143,12 +1139,10 @@ class MusicService :
                     runCatching {
                         automixItems.value = queue.items.map { it.toMediaItem() }
                     }.onFailure { error ->
-                        Timber.tag(TAG).w(error, "Failed to restore automix queue, clearing data")
-                        clearPersistedQueueFiles()
+                        Timber.tag(TAG).w(error, "Failed to restore automix queue")
                     }
                 }.onFailure { error ->
-                    Timber.tag(TAG).w(error, "Failed to read automix queue, clearing data")
-                    clearPersistedQueueFiles()
+                    Timber.tag(TAG).w(error, "Failed to read automix queue")
                 }
             }
 
@@ -2315,8 +2309,8 @@ class MusicService :
         )
         // Force Repeat One if the player ignored it and auto-advanced
         if (reason == Player.MEDIA_ITEM_TRANSITION_REASON_AUTO) {
-            val repeatMode = runBlocking { dataStore.get(RepeatModeKey, REPEAT_MODE_OFF) }
-            if (repeatMode == REPEAT_MODE_ONE &&
+            val repeatMode = player.repeatMode
+            if (repeatMode == Player.REPEAT_MODE_ONE &&
                 previousMediaItemIndex != C.INDEX_UNSET &&
                 previousMediaItemIndex != player.currentMediaItemIndex) {
 
@@ -2416,12 +2410,12 @@ class MusicService :
 
         // Force Repeat All if the player ignored it and ended playback, or auto-continue with similar songs
         if (playbackState == Player.STATE_ENDED) {
-            val repeatMode = runBlocking { dataStore.get(RepeatModeKey, REPEAT_MODE_OFF) }
-            if (repeatMode == REPEAT_MODE_ALL && player.mediaItemCount > 0) {
+            val repeatMode = player.repeatMode
+            if (repeatMode == Player.REPEAT_MODE_ALL && player.mediaItemCount > 0) {
                 player.seekTo(0, 0)
                 player.prepare()
                 player.play()
-            } else if (repeatMode == REPEAT_MODE_OFF && dataStore.get(AutoLoadMoreKey, true)) {
+            } else if (repeatMode == Player.REPEAT_MODE_OFF && dataStore.get(AutoLoadMoreKey, true)) {
                 startRadioSeamlessly()
             }
         }
@@ -3521,13 +3515,15 @@ class MusicService :
             val fetchStart = SystemClock.elapsedRealtime()
             val playbackData = try {
                 runBlocking(Dispatchers.IO) {
-                    YTPlayerUtils.playerResponseForPlayback(
-                        mediaId,
-                        audioQuality = audioQuality,
-                        connectivityManager = connectivityManager,
-                        context = this@MusicService,
-                        forceStandardAudio = forceStandardAudioMediaIds.contains(mediaId),
-                    )
+                    kotlinx.coroutines.withTimeout(15_000L) {
+                        YTPlayerUtils.playerResponseForPlayback(
+                            mediaId,
+                            audioQuality = audioQuality,
+                            connectivityManager = connectivityManager,
+                            context = this@MusicService,
+                            forceStandardAudio = forceStandardAudioMediaIds.contains(mediaId),
+                        )
+                    }
                 }.getOrElse { throwable ->
                     when (throwable) {
                         is PlaybackException -> throw throwable
@@ -3540,7 +3536,7 @@ class MusicService :
                             )
                         }
 
-                        is java.net.SocketTimeoutException -> {
+                        is java.net.SocketTimeoutException, is kotlinx.coroutines.TimeoutCancellationException -> {
                             throw PlaybackException(
                                 getString(R.string.error_timeout),
                                 throwable,

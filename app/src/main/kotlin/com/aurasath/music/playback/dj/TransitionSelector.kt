@@ -102,15 +102,10 @@ object TransitionSelector {
             DjMixTier.PLAIN_CROSSFADE -> 0.20f
         }
 
-        // A frozen delay loop only reads as a deliberate move over a matched
-        // beat grid — FULL_DJ is the only tier with one. Scoring it at
-        // SMART_CROSSFADE/PLAIN_CROSSFADE too (it used to) meant it beat
-        // TRANSPARENT's deliberately-low score there on every mismatched pair,
-        // which is most real-world transitions — heard as the outgoing track
-        // stuttering/repeating instead of an intentional effect. DjMixPlanner's
-        // own tier doc already says SMART_CROSSFADE carries no EQ/effects
-        // camouflage; this was the one place that contract wasn't enforced.
-        if (tier == DjMixTier.FULL_DJ) {
+        // A frozen delay loop earns its place on SMART_CROSSFADE where the
+        // keys fight or tempos are mismatched, masking the seam when the
+        // outgoing track ends at high energy rather than clashing.
+        if (tier == DjMixTier.SMART_CROSSFADE) {
             scores[TransitionStyle.ECHO_FREEZE] = 0.58f + (1f - outroEnergy) * 0.25f
         }
 
