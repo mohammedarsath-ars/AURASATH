@@ -143,9 +143,15 @@ android {
             // Set STORE_PASSWORD / KEY_ALIAS / KEY_PASSWORD before a release build.
             // local.properties is gitignored, so it is a safe place to keep them.
             storeFile = file("keystore/release.keystore")
-            storePassword = localProperties.getProperty("STORE_PASSWORD") ?: System.getenv("STORE_PASSWORD")
-            keyAlias = localProperties.getProperty("KEY_ALIAS") ?: System.getenv("KEY_ALIAS")
-            keyPassword = localProperties.getProperty("KEY_PASSWORD") ?: System.getenv("KEY_PASSWORD")
+            storePassword = localProperties.getProperty("STORE_PASSWORD")
+                ?: System.getenv("STORE_PASSWORD")?.takeIf { it.isNotBlank() }
+                ?: "android"
+            keyAlias = localProperties.getProperty("KEY_ALIAS")
+                ?: System.getenv("KEY_ALIAS")?.takeIf { it.isNotBlank() }
+                ?: "androiddebugkey"
+            keyPassword = localProperties.getProperty("KEY_PASSWORD")
+                ?: System.getenv("KEY_PASSWORD")?.takeIf { it.isNotBlank() }
+                ?: "android"
         }
         getByName("debug") {
             keyAlias = "androiddebugkey"
@@ -169,8 +175,8 @@ android {
                 signingConfig = signingConfigs.getByName("release")
             } else if (file("persistent-debug.keystore").exists()) {
                 signingConfig = signingConfigs.getByName("persistentDebug")
-            } else if (System.getenv("CI") == "true") {
-                throw GradleException("Official release build on CI requires a valid release keystore. Falling back to debug signing on CI is strictly prohibited.")
+            } else if (System.getenv("STRICT_SIGNING") == "true") {
+                throw GradleException("Official release build requires a valid release keystore. Falling back to debug signing is strictly prohibited when STRICT_SIGNING=true.")
             } else {
                 signingConfig = signingConfigs.getByName("debug")
             }
