@@ -34,9 +34,6 @@ jobs:
       - name: Set Up Gradle
         uses: gradle/actions/setup-gradle@v4
 
-      - name: Setup FFTW for Android
-        uses: ./.github/actions/setup-fftw
-
       - name: Setup persistent keystore
         run: |
           mkdir -p ~/.android

@@ -400,10 +400,6 @@ fun NavGraphBuilder.navigationBuilder(
         FontSelectionScreen(navController, scrollBehavior)
     }
 
-    sharedComposable("admin_panel") {
-        AdminPanelScreen(navController, scrollBehavior)
-    }
-
     sharedComposable("settings/suggestions") {
         SuggestionScreen(navController, scrollBehavior)
     }

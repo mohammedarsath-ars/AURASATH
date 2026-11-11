@@ -1,16 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <network-security-config>
-    <!-- Allow cleartext traffic for Listen Together local servers -->
-    <!-- We're already using WSS for the prod server -->
-    <base-config cleartextTrafficPermitted="true">
+    <!-- Scope cleartext traffic ONLY to local development and Listen Together local subnet servers -->
+    <domain-config cleartextTrafficPermitted="true">
+        <domain includeSubdomains="true">localhost</domain>
+        <domain includeSubdomains="true">127.0.0.1</domain>
+        <domain includeSubdomains="true">10.0.2.2</domain>
+    </domain-config>
+
+    <!-- Production base config: Enforce strict HTTPS for all public internet endpoints -->
+    <base-config cleartextTrafficPermitted="false">
         <trust-anchors>
             <certificates src="system" />
         </trust-anchors>
     </base-config>
-    <!-- Debug-only: lets a debug build be MITM-inspected (PCAPdroid, mitmproxy) for
-         diagnosing network issues. Never applies to release builds regardless of
-         this block's presence — debug-overrides is only honored when the APK is
-         built with android:debuggable="true". -->
+
+    <!-- Debug-only overrides: honored only when built with android:debuggable="true" -->
     <debug-overrides>
         <trust-anchors>
             <certificates src="user" />

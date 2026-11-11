@@ -82,7 +82,6 @@ import com.aurasath.music.constants.OpenRouterModelKey
 import com.aurasath.music.constants.DeeplFormalityKey
 import com.aurasath.music.lyrics.LyricsTranslationHelper
 import com.aurasath.music.utils.rememberPreference
-import androidx.compose.runtime.collectAsState
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

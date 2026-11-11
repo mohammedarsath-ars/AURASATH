@@ -183,7 +183,6 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.systemBars
-import androidx.compose.material3.CircularProgressIndicator
 import com.aurasath.music.playback.DownloadTarget
 import com.aurasath.music.playback.cancelDownloads
 import com.aurasath.music.playback.downloadSongs
