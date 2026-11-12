@@ -88,18 +88,117 @@
 
 ---
 
-## ✨ Signature Flagship Features
+## ✨ Signature Flagship Architecture
 
-- 🌊 **Live Waveform Seek Bar & Dynamic Aura** — Ultra-smooth, track-seeded waveform scrubber gliding with the audio clock and micro-tactile haptics, synchronized with real-time audio FFT bass energy pulsing through the liquid glass backdrop.
-- 🌌 **3D Gyroscope Kinetic Parallax Canvas** — Tilt your phone and watch album artwork physically rotate in 3D space with reactive specular sheen, light reflection glares, and battery-smart sensor sleep.
-- 🧊 **Liquid Glass 2.0 Ultra-Optics** — Apple-grade real-time GPU backdrop blur sampling, continuous-curve squircles, and AGSL runtime lens refraction.
-- 🎵 **Endless Music Sanctuary (Streaming + Local)** — Stream millions of tracks via YouTube Music with resilient multi-source fallback resolvers (JioSaavn / Tidal) or enjoy your local high-res offline FLAC/MP3 library.
-- 🔄 **Spotify Dual Wrapped Sync & 1-Click Importer** — Paste any playlist from Spotify, Apple Music, or Amazon Music to import in seconds. Your playback seamlessly syncs toward both your Spotify Wrapped and YouTube Recap.
-- 🎚️ **Pro DJ Automix & Smart Crossfade** — Dynamic tempo alignment, harmonic mixing, and club-style *Echo Freeze* transitions that keep the beat going without jarring silence.
-- 🎙️ **Studio-Grade Synced Karaoke Lyrics** — Syllable-by-syllable lyric scrolling powered by LRCLIB, KuGou, and Metrolist timing logic, complete with offline caching, romanization, and instant translation.
-- 🎛️ **10-Band Audiophile Equalizer** — Studio precision EQ, Bass Boost, Reverb, Spatial Virtualizer, and hardware pitch/tempo manipulation.
-- 🚗 **Android Auto & Google Cast Ready** — Complete in-car dashboard infotainment playback and seamless casting to home speakers and smart TVs.
-- 🛡️ **Zero Commercial Ads Forever** — No banner ads, no video popups, no audio interruptions, no tracking SDKs.
+<table width="100%">
+  <tr>
+    <td width="50%" valign="top">
+      <h3>🌊 Live Waveform Dynamics</h3>
+      <p>Ultra-smooth track-seeded waveform scrubber gliding with the audio clock and micro-tactile haptic feedback, paired with real-time audio FFT bass energy pulsing through the liquid glass backdrop.</p>
+    </td>
+    <td width="50%" valign="top">
+      <h3>🌌 3D Gyroscope Kinetic Canvas</h3>
+      <p>Tilt your smartphone to watch vinyl artwork physically rotate in real-time 3D space with reactive specular sheen, light reflection glares, and battery-smart sensor sleep.</p>
+    </td>
+  </tr>
+  <tr>
+    <td width="50%" valign="top">
+      <h3>🧊 Liquid Glass 2.0 Optics</h3>
+      <p>Apple-grade real-time GPU backdrop blur sampling, continuous-curve squircles, and AGSL runtime lens refraction with fluid physical feedback.</p>
+    </td>
+    <td width="50%" valign="top">
+      <h3>🎵 Endless Music Sanctuary</h3>
+      <p>Stream millions of tracks via YouTube Music with resilient multi-source fallback resolvers (JioSaavn / Tidal) or enjoy your local high-res offline FLAC/MP3 library.</p>
+    </td>
+  </tr>
+  <tr>
+    <td width="50%" valign="top">
+      <h3>🔄 Spotify Dual Wrapped Sync</h3>
+      <p>1-Click public playlist importer for Spotify, Apple Music, and Amazon Music. Your playback automatically counts toward both your Spotify Wrapped and YouTube Recap.</p>
+    </td>
+    <td width="50%" valign="top">
+      <h3>🎚️ Pro DJ Automix & Echo Freeze</h3>
+      <p>Studio-grade dynamic tempo alignment, harmonic mixing, and club-style <i>Echo Freeze</i> transitions that seamlessly blend tracks without jarring silence.</p>
+    </td>
+  </tr>
+  <tr>
+    <td width="50%" valign="top">
+      <h3>🎙️ Studio-Grade Synced Karaoke</h3>
+      <p>Syllable-by-syllable lyric scrolling powered by LRCLIB, KuGou, and Metrolist timing logic, complete with offline caching, romanization, and instant translation.</p>
+    </td>
+    <td width="50%" valign="top">
+      <h3>🎛️ 10-Band Audiophile Equalizer</h3>
+      <p>Studio precision EQ, Bass Boost, Reverb, Spatial Virtualizer, and hardware pitch/tempo manipulation with zero audio distortion.</p>
+    </td>
+  </tr>
+</table>
+
+---
+
+## 🏆 Why Choose AURASATH?
+
+<table align="center" width="100%">
+  <thead>
+    <tr align="center">
+      <th align="left">Feature</th>
+      <th align="center">✦ AURASATH ✦</th>
+      <th align="center">Spotify Premium</th>
+      <th align="center">YouTube Music</th>
+      <th align="center">Standard Players</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr align="center">
+      <td align="left"><b>💰 Pricing</b></td>
+      <td><b>100% Free Forever</b></td>
+      <td>$11.99 / mo</td>
+      <td>$10.99 / mo</td>
+      <td>Ad-Supported / Paid</td>
+    </tr>
+    <tr align="center">
+      <td align="left"><b>🚫 Commercial Ads</b></td>
+      <td><b>Zero Ads Ever</b></td>
+      <td>Zero</td>
+      <td>Zero</td>
+      <td>Video & Audio Popups</td>
+    </tr>
+    <tr align="center">
+      <td align="left"><b>🧊 Visual UI</b></td>
+      <td><b>Liquid Glass 2.0 & 3D Gyro</b></td>
+      <td>Standard Flat Dark</td>
+      <td>Standard Flat Material</td>
+      <td>Basic Android UI</td>
+    </tr>
+    <tr align="center">
+      <td align="left"><b>🎙️ Synced Lyrics</b></td>
+      <td><b>Word-by-word Syllable</b></td>
+      <td>Line-by-line</td>
+      <td>Line-by-line</td>
+      <td>None / Paid</td>
+    </tr>
+    <tr align="center">
+      <td align="left"><b>🎚️ DJ Transitions</b></td>
+      <td><b>Smart Crossfade & Echo Freeze</b></td>
+      <td>Standard Fade Only</td>
+      <td>Standard Fade Only</td>
+      <td>Abrupt Cut</td>
+    </tr>
+    <tr align="center">
+      <td align="left"><b>📥 Playlist Importer</b></td>
+      <td><b>Spotify, Apple, Amazon (1-Click)</b></td>
+      <td>None (Locked)</td>
+      <td>None (Locked)</td>
+      <td>None</td>
+    </tr>
+    <tr align="center">
+      <td align="left"><b>🔒 Privacy & Data</b></td>
+      <td><b>Zero Trackers • No Account Required</b></td>
+      <td>Mandatory Tracking</td>
+      <td>Mandatory Google ID</td>
+      <td>Device Only</td>
+    </tr>
+  </tbody>
+</table>
 
 ---
 
