@@ -8,7 +8,7 @@ Only the latest release (and the current nightly/beta build) are supported with 
 
 Please **do not** open a public GitHub issue for security vulnerabilities.
 
-Instead, report it privately via [GitHub Security Advisories](https://github.com/mohammedarsath-ars/AURASATH/security/advisories/new) for this repo, or reach out on [Discord](https://discord.gg/spbuDTePSR) to arrange a private disclosure.
+Instead, report it privately via [GitHub Security Advisories](https://github.com/mohammedarsath-ars/AURASATH/security/advisories/new) for this repo, or contact the maintainer directly via email at `mohammedarsath.dev@gmail.com` to arrange a private disclosure.
 
 Include:
 - A description of the vulnerability and its impact.

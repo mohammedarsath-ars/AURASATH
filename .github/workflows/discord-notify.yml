@@ -17,6 +17,11 @@ jobs:
           BODY: ${{ github.event.release.body }}
           PRERELEASE: ${{ github.event.release.prerelease }}
         run: |
+          if [ -z "$DISCORD_WEBHOOK_URL" ]; then
+            echo "No DISCORD_WEBHOOK_URL secret configured. Skipping notification."
+            exit 0
+          fi
+
           # Truncate to Discord's 4096-char description limit
           BODY_TRIMMED=$(printf '%s' "${BODY}" | head -c 4000)
 

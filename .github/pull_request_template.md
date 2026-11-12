@@ -6,6 +6,7 @@
 - [ ] 🧹 Code refactoring
 
 ## 📸 Screenshots / Recordings
+
 ## 🛠️ Checklist
 - [ ] My code follows the project's style guidelines.
 - [ ] I have tested my changes on an Android device/emulator.

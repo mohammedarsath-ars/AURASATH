@@ -50,7 +50,7 @@
 
   <!-- Panoramic Showcase Banner -->
   <a href="https://github.com/mohammedarsath-ars/AURASATH/releases/latest">
-    <img src="assets/showcase_banner.webp" width="100%" alt="AURASATH Flagship Preview" style="border-radius: 18px; box-shadow: 0 18px 45px rgba(0,0,0,0.65);" />
+    <img src="assets/aurasath_showcase.webp" width="100%" alt="AURASATH Flagship Preview" style="border-radius: 18px; box-shadow: 0 18px 45px rgba(0,0,0,0.65);" />
   </a>
 
   <br/><br/>

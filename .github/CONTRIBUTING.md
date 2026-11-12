@@ -35,4 +35,4 @@ Open an [issue](https://github.com/mohammedarsath-ars/AURASATH/issues) with repr
 
 ## 💬 Questions
 
-Ask in the [Discord](https://discord.gg/spbuDTePSR) before starting anything large — happy to point you at the right file instead of you reverse-engineering it.
+Ask in [GitHub Discussions](https://github.com/mohammedarsath-ars/AURASATH/discussions) before starting anything large — happy to point you at the right file instead of you reverse-engineering it.
