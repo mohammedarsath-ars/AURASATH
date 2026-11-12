@@ -16,6 +16,9 @@
 
   <!-- Badges -->
   <p>
+    <a href="https://github.com/mohammedarsath-ars/AURASATH/stargazers">
+      <img src="https://img.shields.io/github/stars/mohammedarsath-ars/AURASATH?style=for-the-badge&logo=github&color=FFB800" alt="Stars">
+    </a>
     <a href="https://github.com/mohammedarsath-ars/AURASATH/releases/latest">
       <img src="https://img.shields.io/badge/Release-v1.0.0%20Flagship-7928CA?style=for-the-badge&logo=android&logoColor=white" alt="Release">
     </a>
@@ -52,6 +55,18 @@
   <a href="https://github.com/mohammedarsath-ars/AURASATH/releases/latest">
     <img src="assets/showcase_banner.webp" width="100%" alt="AURASATH Flagship Preview" style="border-radius: 18px; box-shadow: 0 18px 45px rgba(0,0,0,0.65);" />
   </a>
+
+  <br/><br/>
+
+  <!-- Quick Jump Interactive Navigation -->
+  <p align="center">
+    <a href="#-signature-flagship-architecture"><b>✨ Architecture</b></a> &nbsp;•&nbsp;
+    <a href="#-why-choose-aurasath"><b>🏆 Comparison</b></a> &nbsp;•&nbsp;
+    <a href="#-audiophile-engine-specifications"><b>🔊 Audio Specs</b></a> &nbsp;•&nbsp;
+    <a href="#-system-requirements--compatibility"><b>📱 Compatibility</b></a> &nbsp;•&nbsp;
+    <a href="#-download--installation"><b>⚡ Download</b></a> &nbsp;•&nbsp;
+    <a href="#-frequently-asked-questions-faq"><b>❓ FAQ</b></a>
+  </p>
 
 </div>
 
@@ -173,6 +188,49 @@
 
 ---
 
+## 🔊 Audiophile Engine Specifications
+
+<table align="center" width="100%">
+  <tr align="center">
+    <td width="25%">
+      <b>🎛️ Audio Pipeline</b><br/>
+      <sub>192kHz / 24-bit Hi-Res Passthrough</sub>
+    </td>
+    <td width="25%">
+      <b>⚡ Media Engine</b><br/>
+      <sub>Headless Media3 ExoPlayer Service</sub>
+    </td>
+    <td width="25%">
+      <b>🧊 Shaders</b><br/>
+      <sub>Hardware AGSL Runtime Shaders</sub>
+    </td>
+    <td width="25%">
+      <b>🔋 Power Efficiency</b><br/>
+      <sub>Battery-Smart Gyroscope Sensor Sleep</sub>
+    </td>
+  </tr>
+  <tr align="center">
+    <td width="25%">
+      <b>🔊 Loudness Tech</b><br/>
+      <sub>ReplayGain v2 & Dynamic Limiter</sub>
+    </td>
+    <td width="25%">
+      <b>🎵 Multi-Stream Resolver</b><br/>
+      <sub>Triple Fallback (YT, JioSaavn, Tidal)</sub>
+    </td>
+    <td width="25%">
+      <b>🎙️ Lyrics Engine</b><br/>
+      <sub>Word-by-word LRCLIB & Metrolist Sync</sub>
+    </td>
+    <td width="25%">
+      <b>🛡️ Privacy Sandbox</b><br/>
+      <sub>100% Offline DB & Loopback Isolation</sub>
+    </td>
+  </tr>
+</table>
+
+---
+
 ## 📱 System Requirements & Compatibility
 
 | Feature | Minimum OS Version | Recommended | Behavior on Earlier Versions |
@@ -241,6 +299,48 @@ Every network connection is strictly functional and initiated by you:
 
 ---
 
+## ❓ Frequently Asked Questions (FAQ)
+
+<details>
+<summary><b>Is AURASATH really 100% free with zero advertisements forever?</b></summary>
+<br/>
+<b>Yes, unconditionally.</b> AURASATH is free open-source software built for music purists. There are no subscription paywalls, no banner ads, no interstitial video popups, and no audio interruptions. You get pure, unadulterated music playback forever.
+</details>
+
+<br/>
+
+<details>
+<summary><b>Why is AURASATH distributed via GitHub instead of the Google Play Store?</b></summary>
+<br/>
+Google Play Store policies strictly prohibit apps from streaming background YouTube Music audio without Google subscription fees. To remain 100% independent, ad-free, and open-source, AURASATH is distributed directly to users via GitHub Releases.
+</details>
+
+<br/>
+
+<details>
+<summary><b>How does the 1-Click Spotify & Apple Music Importer work?</b></summary>
+<br/>
+Simply copy the public share link of any playlist from Spotify, Apple Music, or Amazon Music, open <b>AURASATH &gt; Playlists &gt; Import</b>, and paste the URL. AURASATH automatically parses all tracks, matches the highest-fidelity audio streams, and saves the playlist locally to your library.
+</details>
+
+<br/>
+
+<details>
+<summary><b>Does the 3D Gyroscope Canvas drain smartphone battery?</b></summary>
+<br/>
+<b>No.</b> The 3D Gyroscope motion listener features battery-smart state handling: it automatically unregisters all hardware motion sensors when the player is minimized, when your screen turns off, or when music is paused. Zero background battery consumption.
+</details>
+
+<br/>
+
+<details>
+<summary><b>Can I play my local offline FLAC, MP3, and WAV music files?</b></summary>
+<br/>
+<b>Yes!</b> AURASATH contains a built-in high-performance local audio scanner with folder exclusion filters, multi-genre indexing, and embedded album art extraction for all local device storage files.
+</details>
+
+---
+
 ## 💎 Exclusive Flagship Innovations
 
 AURASATH is engineered with bespoke, flagship-tier capabilities designed for true audiophiles:
@@ -271,6 +371,18 @@ AURASATH is proudly open-source and respects foundational open-source engineerin
 - **[mpvEx](https://github.com/marlboro-advance/mpvEx)** — Seekbar slider components.
 
 </details>
+
+---
+
+## 📈 Community & Star Growth
+
+<div align="center">
+  <a href="https://star-history.com/#mohammedarsath-ars/AURASATH&Date">
+    <img src="https://api.star-history.com/svg?repos=mohammedarsath-ars/AURASATH&type=Date&theme=dark" width="95%" alt="AURASATH Star History" style="border-radius: 14px; box-shadow: 0 10px 30px rgba(0,0,0,0.5);" />
+  </a>
+  <br/><br/>
+  <p>⭐ <b>Star the repository on GitHub if you enjoy AURASATH!</b></p>
+</div>
 
 ---
 
