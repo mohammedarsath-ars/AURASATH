@@ -171,9 +171,9 @@ Every network connection is strictly functional and initiated by you:
 
 ---
 
-## 💡 What's Different from Upstream?
+## 💎 Exclusive Flagship Innovations
 
-While AURASATH builds upon legendary open-source foundations, it introduces major custom architectural innovations:
+AURASATH is engineered with bespoke, flagship-tier capabilities designed for true audiophiles:
 
 - 🧊 **Liquid Glass 2.0 Engine**: Custom AGSL runtime shaders, continuous squircle curvature, and adaptive resolution scaling based on hardware tier.
 - 🌌 **3D Gyroscope Kinetic Canvas**: Physics-driven album artwork rotation responding to real device orientation with specular glare.
@@ -184,20 +184,23 @@ While AURASATH builds upon legendary open-source foundations, it introduces majo
 
 ---
 
-## 📜 Credits & Acknowledgements
+<details>
+<summary><b>📜 Open-Source Libraries & Acknowledgements (Click to Expand)</b></summary>
+<br/>
 
-AURASATH is proudly open-source and stands on the shoulders of giants:
+AURASATH is proudly open-source and respects foundational open-source engineering:
 
-- **[ViMusic](https://github.com/vfsfitvnm/ViMusic)** & **[Vivi Music](https://github.com/vivizzz007/vivi-music)** — Foundational headless media service and core player layout.
-- **[BeatWave](https://github.com/CryptoLiveApp/vivimusic)** — Upstream project foundations.
-- **[Kyant0/backdrop & AndroidLiquidGlass](https://github.com/Kyant0/backdrop)** — GPU backdrop sampling, runtime AGSL shaders, and liquid glass physics.
-- **[Metrolist](https://github.com/Metrolist)** — Direct player connection lyrics timing logic in `MetroLyrics.kt`.
-- **[SimpMusic](https://github.com/dansp/SimpMusic)** — Audio DSP enhancements and UI components.
-- **[InnerTube](https://github.com/vfsfitvnm/ViMusic)** — Reverse-engineered YouTube Music client.
-- **[Kizzy / KizzyRPC](https://github.com/my-kizzy)** — Discord Rich Presence WebSocket gateway.
-- **[SongRec & MusicRecognizer](https://github.com/marin-m/SongRec)** — Shazam-style audio fingerprinting and acoustic recognition.
-- **[LRCLIB](https://lrclib.net/)** — Open-source synced lyrics community.
-- **[mpvEx](https://github.com/marlboro-advance/mpvEx)** — Squiggly seekbar slider components.
+- **[ViMusic](https://github.com/vfsfitvnm/ViMusic)** — Foundational headless media service and player layout architecture.
+- **[Kyant0/backdrop & AndroidLiquidGlass](https://github.com/Kyant0/backdrop)** — GPU backdrop sampling and runtime AGSL shader optics.
+- **[Metrolist](https://github.com/Metrolist)** — Direct player connection lyrics timing logic.
+- **[SimpMusic](https://github.com/dansp/SimpMusic)** — Audio DSP enhancements.
+- **[InnerTube](https://github.com/vfsfitvnm/ViMusic)** — Reverse-engineered YouTube Music streaming client.
+- **[LRCLIB](https://lrclib.net/)** — Synced lyrics community.
+- **[Kizzy / KizzyRPC](https://github.com/my-kizzy)** — Discord Rich Presence client.
+- **[SongRec](https://github.com/marin-m/SongRec)** — Shazam-style acoustic recognition.
+- **[mpvEx](https://github.com/marlboro-advance/mpvEx)** — Seekbar slider components.
+
+</details>
 
 ---
 
