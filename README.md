@@ -3,14 +3,14 @@
   <br/>
 
   <a href="https://github.com/mohammedarsath-ars/AURASATH">
-    <img src="aurasath_logo.png" width="110" alt="AURASATH Logo" style="border-radius: 28px; box-shadow: 0 10px 30px rgba(121, 40, 202, 0.5);" />
+    <img src="assets/aurasath_logo.png" width="115" alt="AURASATH Logo" style="border-radius: 30px; box-shadow: 0 12px 35px rgba(121, 40, 202, 0.55);" />
   </a>
 
   <br/><br/>
 
   <h1>✦ A U R A S A T H ✦</h1>
   <p><b>The Audiophile's Liquid Glass Music Sanctuary for Android</b></p>
-  <p><i>Music You Can See • Sound You Can Feel • 100% Ad-Free Forever</i></p>
+  <p><i>Music You Can See • Sound You Can Feel • 100% Commercial-Free Forever</i></p>
 
   <br/>
 
@@ -25,32 +25,32 @@
     <a href="LICENSE">
       <img src="https://img.shields.io/badge/License-GPL%20v3.0-00DF72?style=for-the-badge" alt="License">
     </a>
-    <a href="https://discord.gg/spbuDTePSR">
-      <img src="https://img.shields.io/badge/Discord-Join%20Community-5865F2?style=for-the-badge&logo=discord&logoColor=white" alt="Discord">
-    </a>
     <a href="https://www.instagram.com/freaky____arsu">
       <img src="https://img.shields.io/badge/Creator-%40freaky______arsu-E4405F?style=for-the-badge&logo=instagram&logoColor=white" alt="Instagram">
+    </a>
+    <a href="https://github.com/mohammedarsath-ars/AURASATH">
+      <img src="https://img.shields.io/badge/Built%20With-Jetpack%20Compose-4285F4?style=for-the-badge&logo=jetpackcompose&logoColor=white" alt="Compose">
     </a>
   </p>
 
   <!-- Big Download CTA Button -->
   <p>
     <a href="https://github.com/mohammedarsath-ars/AURASATH/releases/latest">
-      <img src="https://img.shields.io/badge/⚡_DOWNLOAD_LATEST_APK-000000?style=for-the-badge&logo=android&logoColor=00FF66" height="42" alt="Download APK">
+      <img src="https://img.shields.io/badge/⚡_DOWNLOAD_v1.0.0_APK-000000?style=for-the-badge&logo=android&logoColor=00FF66" height="44" alt="Download APK">
     </a>
     &nbsp;&nbsp;
-    <a href="https://discord.gg/spbuDTePSR">
-      <img src="https://img.shields.io/badge/💬_JOIN_DISCORD-5865F2?style=for-the-badge&logo=discord&logoColor=white" height="42" alt="Discord">
+    <a href="https://github.com/mohammedarsath-ars/AURASATH/releases">
+      <img src="https://img.shields.io/badge/📦_ALL_RELEASES-181717?style=for-the-badge&logo=github&logoColor=white" height="44" alt="All Releases">
     </a>
   </p>
 
-  <sub>⚡ Android 8.0+ • 64-bit ARM & Universal • Zero Ads • No Root Required</sub>
+  <sub>⚡ Android 8.0+ • 64-bit ARM & Universal • Zero Commercial Ads • No Account Required</sub>
 
   <br/><br/>
 
-  <!-- Panoramic Banner -->
+  <!-- Panoramic Showcase Banner -->
   <a href="https://github.com/mohammedarsath-ars/AURASATH/releases/latest">
-    <img src="assets/showcase_banner.webp" width="100%" alt="AURASATH Preview" style="border-radius: 16px; box-shadow: 0 16px 40px rgba(0,0,0,0.6);" />
+    <img src="assets/showcase_banner.webp" width="100%" alt="AURASATH Flagship Preview" style="border-radius: 18px; box-shadow: 0 18px 45px rgba(0,0,0,0.65);" />
   </a>
 
 </div>
@@ -59,57 +59,151 @@
 
 ---
 
-## 📱 App Preview
+## 📱 Flagship App Showcase
 
 <table align="center" width="100%">
   <tr align="center" valign="top">
     <td width="25%">
-      <img src="assets/previews/home_feed.webp" width="100%" style="border-radius: 12px;" alt="Home Screen" />
-      <br/><b>🏠 Home & Discovery</b><br/>
-      <sub>Tamil Trending & Mixes</sub>
+      <img src="assets/previews/home_feed.webp" width="100%" style="border-radius: 14px; border: 1px solid rgba(255,255,255,0.08);" alt="Home Screen" />
+      <br/><b>🏠 Living Home Feed</b><br/>
+      <sub>Tamil Trending & Dynamic Mixes</sub>
     </td>
     <td width="25%">
-      <img src="assets/previews/player_v2.webp" width="100%" style="border-radius: 12px;" alt="Player Screen" />
+      <img src="assets/previews/player_v2.webp" width="100%" style="border-radius: 14px; border: 1px solid rgba(255,255,255,0.08);" alt="Player Screen" />
       <br/><b>🎧 Liquid Glass Player</b><br/>
-      <sub>Live Waveform & 3D Gyro</sub>
+      <sub>Live Waveform & 3D Gyroscope</sub>
     </td>
     <td width="25%">
-      <img src="assets/previews/lyrics_karaoke.webp" width="100%" style="border-radius: 12px;" alt="Lyrics Screen" />
+      <img src="assets/previews/lyrics_karaoke.webp" width="100%" style="border-radius: 14px; border: 1px solid rgba(255,255,255,0.08);" alt="Lyrics Screen" />
       <br/><b>🎙️ Synced Karaoke</b><br/>
-      <sub>Word-by-word Lyrics</sub>
+      <sub>Word-by-word Syllable Lyrics</sub>
     </td>
     <td width="25%">
-      <img src="assets/previews/settings_themes.webp" width="100%" style="border-radius: 12px;" alt="Themes Screen" />
+      <img src="assets/previews/settings_themes.webp" width="100%" style="border-radius: 14px; border: 1px solid rgba(255,255,255,0.08);" alt="Themes Screen" />
       <br/><b>🎨 Luxury Themes</b><br/>
-      <sub>Ferrari Red, Gold & Neon</sub>
+      <sub>Ferrari Red, Gold & Neon Swatches</sub>
     </td>
   </tr>
 </table>
 
 ---
 
-## ✨ Key Features
+## ✨ Signature Flagship Features
 
-- 🌊 **Live Waveform Seek Bar** — Real-time dynamic audio waveform scrubber with tactile haptic ticks.
-- 🌌 **3D Gyroscope Parallax Canvas** — Tilt your phone to watch album art rotate in physical 3D space with specular lighting.
-- 🧊 **Liquid Glass 2.0 Optics** — Real GPU backdrop blur sampling & continuous-curve Apple squircles.
-- 🎨 **Luxury Player Presets** — Full-Screen Apple Music v2, Ferrari Red, Imperial Gold, Cosmic Nebula & custom swatch tinting.
-- 📥 **1-Click Universal Importer** — Paste any Spotify, Apple Music, or Amazon Music playlist link to import instantly.
-- 🔄 **Spotify Sync & Dual Wrapped** — Automatically tracks playback to both your Spotify Wrapped and YouTube Recap.
-- 🎙️ **Karaoke Synced Lyrics** — Real-time syllable-by-syllable highlight with offline caching.
-- 🚗 **Android Auto Ready** — Full in-car dashboard playback experience.
-- 🛡️ **100% Privacy & Zero Ads** — No commercials, no analytics, no tracking, 100% local library.
+- 🌊 **Live Waveform Seek Bar & Dynamic Aura** — Ultra-smooth, track-seeded waveform scrubber gliding with the audio clock and micro-tactile haptics, synchronized with real-time audio FFT bass energy pulsing through the liquid glass backdrop.
+- 🌌 **3D Gyroscope Kinetic Parallax Canvas** — Tilt your phone and watch album artwork physically rotate in 3D space with reactive specular sheen, light reflection glares, and battery-smart sensor sleep.
+- 🧊 **Liquid Glass 2.0 Ultra-Optics** — Apple-grade real-time GPU backdrop blur sampling, continuous-curve squircles, and AGSL runtime lens refraction.
+- 🎵 **Endless Music Sanctuary (Streaming + Local)** — Stream millions of tracks via YouTube Music with resilient multi-source fallback resolvers (JioSaavn / Tidal) or enjoy your local high-res offline FLAC/MP3 library.
+- 🔄 **Spotify Dual Wrapped Sync & 1-Click Importer** — Paste any playlist from Spotify, Apple Music, or Amazon Music to import in seconds. Your playback seamlessly syncs toward both your Spotify Wrapped and YouTube Recap.
+- 🎚️ **Pro DJ Automix & Smart Crossfade** — Dynamic tempo alignment, harmonic mixing, and club-style *Echo Freeze* transitions that keep the beat going without jarring silence.
+- 🎙️ **Studio-Grade Synced Karaoke Lyrics** — Syllable-by-syllable lyric scrolling powered by LRCLIB, KuGou, and Metrolist timing logic, complete with offline caching, romanization, and instant translation.
+- 🎛️ **10-Band Audiophile Equalizer** — Studio precision EQ, Bass Boost, Reverb, Spatial Virtualizer, and hardware pitch/tempo manipulation.
+- 🚗 **Android Auto & Google Cast Ready** — Complete in-car dashboard infotainment playback and seamless casting to home speakers and smart TVs.
+- 🛡️ **Zero Commercial Ads Forever** — No banner ads, no video popups, no audio interruptions, no tracking SDKs.
 
+---
+
+## 📱 System Requirements & Compatibility
+
+| Feature | Minimum OS Version | Recommended | Behavior on Earlier Versions |
+| :--- | :---: | :---: | :--- |
+| **Core Audio & Playback** | **Android 8.0** (API 26) | Android 12+ | Full streaming, local playback, lyrics & equalizer supported |
+| **Hardware Liquid Glass Blur** | **Android 12** (API 31) | Android 13+ | Uses hardware `RenderEffect`; gracefully falls back to frosted translucent scrim on Android 8.0–11 |
+| **AGSL RuntimeShader Lens** | **Android 13** (API 33) | Android 14+ | Real-time optical lens refraction; optimized fallback on low-RAM devices |
+| **Themed Dynamic Icons** | **Android 13** (API 33) | Android 13+ | Material You dynamic monochromatic launcher icons |
+| **Android Auto & Cast** | **Android 8.0** (API 26) | Any | Compatible across all Android Auto head units and Google Cast devices |
 
 ---
 
 ## 🚀 Download & Installation
 
-1. Go to [Latest Releases](https://github.com/mohammedarsath-ars/AURASATH/releases/latest) and pick the APK for your device:
-   - ⚡ **`AURASATH-v1.0.0-arm64.apk`** — Recommended for 99% of modern Android devices (Fastest performance & battery efficiency).
-   - 🌐 **`AURASATH-v1.0.0-Universal.apk`** — Universal build compatible with all Android devices, older architectures & tablets.
-2. Open the downloaded `.apk` file and tap **Install**.
-3. Enjoy pure, uninterrupted music with Liquid Glass 2.0!
+1. Head over to **[Latest Releases (v1.0.0)](https://github.com/mohammedarsath-ars/AURASATH/releases/latest)** and download the build for your device:
+   - ⚡ **`AURASATH-v1.0.0-arm64.apk`** — **Recommended for 99% of modern smartphones** (Snapdragon, MediaTek, Tensor, Exynos). Maximally optimized for speed, thermals, and battery efficiency.
+   - 🌐 **`AURASATH-v1.0.0-Universal.apk`** — Universal build compatible across all Android architectures, older devices, tablets, and emulators.
+2. Open the downloaded `.apk` file and tap **Install** (allow unknown sources if prompted).
+3. Experience pure, uninterrupted music wrapped in Liquid Glass 2.0!
+
+---
+
+## 🛠️ Build from Source
+
+AURASATH is built with standard Android tooling and requires **JDK 21** and Android SDK 36/37.
+
+```bash
+# 1. Clone the repository
+git clone https://github.com/mohammedarsath-ars/AURASATH.git
+cd AURASATH
+
+# 2. Setup environment configuration
+cp .env.example .env
+
+# 3. Build Universal FOSS Debug APK (no keys required)
+./gradlew assembleUniversalFossDebug
+
+# 4. Build Official Universal & ARM64 Release APKs
+./gradlew assembleUniversalGmsRelease assembleArm64GmsRelease
+```
+
+> [!TIP]
+> **Build Flavors**:
+> - **ABI**: `arm64` (modern devices), `universal` (all architectures), `x86_64` (emulators).
+> - **Variant**: `foss` (100% open-source without Google Play Services) or `gms` (with Google Cast support).
+
+---
+
+## 🔒 Privacy & Network Transparency
+
+AURASATH contains **zero commercial tracking SDKs, zero advertising networks, and zero telemetry frameworks** (no Google Analytics, Firebase Analytics, Crashlytics, or Adjust). 
+
+Every network connection is strictly functional and initiated by you:
+
+| Service | Endpoint | Data Transmitted | Purpose |
+| :--- | :--- | :--- | :--- |
+| **YouTube Music** | `music.youtube.com` | Search queries, track IDs | Streaming audio streams, album art, search metadata |
+| **Stream Resolvers** | JioSaavn / Tidal API | Song titles, artist metadata | Fallback audio stream resolution for unplayable tracks |
+| **Lyrics Providers** | LRCLIB, KuGou, Musixmatch | Song title & artist name | Real-time syllable & synced line lyrics |
+| **In-App Updater** | `api.github.com` | Anonymous version check | Checking latest GitHub release tags & changelog |
+| **Supabase** | `*.supabase.co` | User feedback / bug text | Anonymous update queries; bug reports only when submitted by you |
+| **Spotify Sync** | `api.spotify.com` | OAuth token (stored locally) | *(Optional)* Importing your playlists & Dual Wrapped sync |
+| **Last.fm** | `audioscrobbler.com` | Song title, artist, timestamp | *(Optional)* Scrobbling music to your Last.fm account |
+| **Discord RPC** | `gateway.discord.gg` | Song title, artist, elapsed time | *(Optional)* Displaying rich presence listening status |
+| **Listen Together** | WebSocket Gateway | Room code & playback position | *(Optional)* Real-time peer-to-peer group music sync |
+
+---
+
+## 💡 What's Different from Upstream?
+
+While AURASATH builds upon legendary open-source foundations, it introduces major custom architectural innovations:
+
+- 🧊 **Liquid Glass 2.0 Engine**: Custom AGSL runtime shaders, continuous squircle curvature, and adaptive resolution scaling based on hardware tier.
+- 🌌 **3D Gyroscope Kinetic Canvas**: Physics-driven album artwork rotation responding to real device orientation with specular glare.
+- 🎚️ **Pro DJ Automix with Echo Freeze**: Real-time tempo alignment and frequency-aware smart crossfades.
+- 🔄 **Spotify Dual Wrapped Tracking**: Full playback sync counting toward both Spotify Wrapped and YouTube Music Recap simultaneously.
+- 🎯 **Tamil Music Priority Engine**: Specialized home feed discovery & regional shelf filters designed for South Asian audiophiles.
+- 📱 **Zero-Clip 72dp Adaptive Launcher Icons**: Calibrated across all 5 screen densities (`mdpi` to `xxxhdpi`) with 0 clipped pixels on circular launchers.
+
+---
+
+## 📜 Credits & Acknowledgements
+
+AURASATH is proudly open-source and stands on the shoulders of giants:
+
+- **[ViMusic](https://github.com/vfsfitvnm/ViMusic)** & **[Vivi Music](https://github.com/vivizzz007/vivi-music)** — Foundational headless media service and core player layout.
+- **[BeatWave](https://github.com/CryptoLiveApp/vivimusic)** — Upstream project foundations.
+- **[Kyant0/backdrop & AndroidLiquidGlass](https://github.com/Kyant0/backdrop)** — GPU backdrop sampling, runtime AGSL shaders, and liquid glass physics.
+- **[Metrolist](https://github.com/Metrolist)** — Direct player connection lyrics timing logic in `MetroLyrics.kt`.
+- **[SimpMusic](https://github.com/dansp/SimpMusic)** — Audio DSP enhancements and UI components.
+- **[InnerTube](https://github.com/vfsfitvnm/ViMusic)** — Reverse-engineered YouTube Music client.
+- **[Kizzy / KizzyRPC](https://github.com/my-kizzy)** — Discord Rich Presence WebSocket gateway.
+- **[SongRec & MusicRecognizer](https://github.com/marin-m/SongRec)** — Shazam-style audio fingerprinting and acoustic recognition.
+- **[LRCLIB](https://lrclib.net/)** — Open-source synced lyrics community.
+- **[mpvEx](https://github.com/marlboro-advance/mpvEx)** — Squiggly seekbar slider components.
+
+---
+
+## ⚖️ Unofficial Affiliation Disclaimer
+
+*AURASATH is an independent, non-commercial open-source music player. It is NOT affiliated with, authorized, maintained, sponsored, or endorsed by Google LLC, YouTube, Spotify AB, Apple Inc., Amazon.com Inc., or any of their affiliates or subsidiaries. All product and company names, trademarks, and registered trademarks are the property of their respective holders.*
 
 ---
 
@@ -117,7 +211,7 @@
 
 <div align="center">
   <a href="https://github.com/mohammedarsath-ars">
-    <img src="aurasath_logo.png" width="90" style="border-radius: 50%; box-shadow: 0 8px 24px rgba(121, 40, 202, 0.4);" alt="Arsath Arsu" />
+    <img src="assets/aurasath_logo.png" width="90" style="border-radius: 50%; box-shadow: 0 8px 24px rgba(121, 40, 202, 0.4);" alt="Arsath Arsu" />
   </a>
   <br/>
   <b>Arsath Arsu</b>
@@ -139,5 +233,5 @@
 
 <div align="center">
   <p>⭐ <b>Star this repository if you enjoy AURASATH!</b></p>
-  <sub>Licensed under GPL-3.0 • Built on open-source foundations (BeatWave, vivi-music, Kyant0/backdrop, SimpMusic)</sub>
+  <sub>Licensed under GNU General Public License v3.0 (GPL-3.0)</sub>
 </div>
