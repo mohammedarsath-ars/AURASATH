@@ -16,9 +16,6 @@
 
   <!-- Badges -->
   <p>
-    <a href="https://github.com/mohammedarsath-ars/AURASATH/stargazers">
-      <img src="https://img.shields.io/github/stars/mohammedarsath-ars/AURASATH?style=for-the-badge&logo=github&color=FFB800" alt="Stars">
-    </a>
     <a href="https://github.com/mohammedarsath-ars/AURASATH/releases/latest">
       <img src="https://img.shields.io/badge/Release-v1.0.0%20Flagship-7928CA?style=for-the-badge&logo=android&logoColor=white" alt="Release">
     </a>
@@ -371,18 +368,6 @@ AURASATH is proudly open-source and respects foundational open-source engineerin
 - **[mpvEx](https://github.com/marlboro-advance/mpvEx)** — Seekbar slider components.
 
 </details>
-
----
-
-## 📈 Community & Star Growth
-
-<div align="center">
-  <a href="https://star-history.com/#mohammedarsath-ars/AURASATH&Date">
-    <img src="https://api.star-history.com/svg?repos=mohammedarsath-ars/AURASATH&type=Date&theme=dark" width="95%" alt="AURASATH Star History" style="border-radius: 14px; box-shadow: 0 10px 30px rgba(0,0,0,0.5);" />
-  </a>
-  <br/><br/>
-  <p>⭐ <b>Star the repository on GitHub if you enjoy AURASATH!</b></p>
-</div>
 
 ---
 
