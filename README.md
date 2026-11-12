@@ -59,35 +59,6 @@
 
 ---
 
-## 📱 Flagship App Showcase
-
-<table align="center" width="100%">
-  <tr align="center" valign="top">
-    <td width="25%">
-      <img src="assets/previews/home_feed.webp" width="100%" style="border-radius: 14px; border: 1px solid rgba(255,255,255,0.08);" alt="Home Screen" />
-      <br/><b>🏠 Living Home Feed</b><br/>
-      <sub>Tamil Trending & Dynamic Mixes</sub>
-    </td>
-    <td width="25%">
-      <img src="assets/previews/player_v2.webp" width="100%" style="border-radius: 14px; border: 1px solid rgba(255,255,255,0.08);" alt="Player Screen" />
-      <br/><b>🎧 Liquid Glass Player</b><br/>
-      <sub>Live Waveform & 3D Gyroscope</sub>
-    </td>
-    <td width="25%">
-      <img src="assets/previews/lyrics_karaoke.webp" width="100%" style="border-radius: 14px; border: 1px solid rgba(255,255,255,0.08);" alt="Lyrics Screen" />
-      <br/><b>🎙️ Synced Karaoke</b><br/>
-      <sub>Word-by-word Syllable Lyrics</sub>
-    </td>
-    <td width="25%">
-      <img src="assets/previews/settings_themes.webp" width="100%" style="border-radius: 14px; border: 1px solid rgba(255,255,255,0.08);" alt="Themes Screen" />
-      <br/><b>🎨 Luxury Themes</b><br/>
-      <sub>Ferrari Red, Gold & Neon Swatches</sub>
-    </td>
-  </tr>
-</table>
-
----
-
 ## ✨ Signature Flagship Architecture
 
 <table width="100%">
