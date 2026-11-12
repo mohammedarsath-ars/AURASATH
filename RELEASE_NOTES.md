@@ -1,20 +1,52 @@
-# ✦ AURASATH v1.0.0 Flagship Release ✦
+<div align="center">
 
-Welcome to **AURASATH v1.0.0** — the premier open-source, Liquid Glass music player for Android with YouTube Music streaming, 3D Gyroscope parallax, live waveform seekbars, synced lyrics, and Spotify account sync.
+  <a href="https://github.com/mohammedarsath-ars/AURASATH/releases/download/v1.0.0/AURASATH-v1.0.0-Universal.apk">
+    <img src="https://raw.githubusercontent.com/mohammedarsath-ars/AURASATH/main/assets/aurasath_showcase.webp" width="100%" style="border-radius: 16px; box-shadow: 0 16px 40px rgba(0,0,0,0.6);" alt="AURASATH Flagship Showcase" />
+  </a>
+
+  <br/><br/>
+
+  # ✦ AURASATH v1.0.0 Flagship Release ✦
+
+  **The Audiophile's Liquid Glass Music Sanctuary for Android**
+
+  *Music You Can See • Sound You Can Feel • 100% Commercial-Free Forever*
+
+  <br/>
+
+  <!-- Direct 1-Tap Download Action Buttons -->
+  <p>
+    <a href="https://github.com/mohammedarsath-ars/AURASATH/releases/download/v1.0.0/AURASATH-v1.0.0-Universal.apk">
+      <img src="https://img.shields.io/badge/%E2%9A%A1_DOWNLOAD_UNIVERSAL_APK_(54_MB)-000000?style=for-the-badge&logo=android&logoColor=00FF66" height="44" alt="Download Universal APK" />
+    </a>
+    &nbsp;&nbsp;
+    <a href="https://github.com/mohammedarsath-ars/AURASATH/releases/download/v1.0.0/AURASATH-v1.0.0-arm64.apk">
+      <img src="https://img.shields.io/badge/%E2%9A%A1_DOWNLOAD_ARM64_APK_(51_MB)-181717?style=for-the-badge&logo=android&logoColor=4285F4" height="44" alt="Download ARM64 APK" />
+    </a>
+  </p>
+
+  <sub>⚡ Android 8.0+ • 64-bit ARM & Universal • Zero Commercial Ads • No Account Required</sub>
+
+  <br/><br/>
+
+</div>
 
 ---
 
-### 🌟 What's New in Flagship v1.0.0
+### ✨ What's New in Flagship v1.0.0
 
 - 🌊 **Synchronized Live Waveform Seek Bar**:
   - Live scrolling waveform visualizer synchronized in real-time with track playback dynamics.
-  - 4 Selectable Seekbar Styles: *Waveform*, *Wavy* (fluid sine wave), *Slim* (touch-expanding track height), and *Default* (Material 3 precision thumb).
+  - **4 Selectable Seekbar Styles**: *Waveform*, *Wavy* (fluid sine wave), *Slim* (touch-expanding track height), and *Default* (Material 3 precision thumb).
   - Micro-tactile haptic ticks during dragging and scrubbing.
 
 - 🌌 **Gyroscope 3D Parallax Canvas**:
   - Album artwork physically rotates in real-time 3D space when you tilt your smartphone.
   - Reactive specular sheen and light reflection glare bouncing across vinyl and cover art.
   - Battery-smart listener automatically unregisters sensors when player is collapsed or screen is off.
+
+- 🧊 **Liquid Glass 2.0 Optics**:
+  - Apple-grade real-time GPU backdrop blur sampling, continuous-curve squircles, and AGSL runtime lens refraction with fluid physical feedback.
 
 - 🎨 **Luxury Player Presets & Custom Button Tints**:
   - Full-Screen Apple Music v2 Player with dynamic living aura backdrop blur.
@@ -42,9 +74,18 @@ Welcome to **AURASATH v1.0.0** — the premier open-source, Liquid Glass music p
 
 ---
 
-### 📲 Download & Installation
-- **`AURASATH-v1.0.0-Universal.apk`** (Recommended) — Works on all Android devices, tablets, and emulators.
-- **`AURASATH-v1.0.0-arm64.apk`** — Lightweight native build optimized for modern 64-bit smartphones.
+### 📲 Which Package Should I Download?
 
-Open the downloaded APK on your Android device and tap **Install**.
-**Compatibility**: Android 8.0 (Oreo) up to Android 15+.
+| Package | Recommended For | Architecture | Size |
+| :--- | :--- | :--- | :--- |
+| **`AURASATH-v1.0.0-Universal.apk`** | **Most Users (Recommended)** — Works on all phones, tablets, and emulators. | All ARM & x86 architectures | ~54 MB |
+| **`AURASATH-v1.0.0-arm64.apk`** | Modern 64-bit Android smartphones for optimal size and execution. | `arm64-v8a` only | ~51 MB |
+
+> [!TIP]
+> **First-Time Installation**: Since AURASATH is 100% open-source and independent, Android might prompt *"File might be harmful"* or ask to *"Allow from this source"*. Tap **Settings → Allow**, or on Samsung/Xiaomi devices tap **Install Anyway**.
+
+---
+
+<p align="center">
+  <sub>AURASATH Music • Designed with Jetpack Compose & Liquid Glass • Licensed under GPL v3.0</sub>
+</p>
